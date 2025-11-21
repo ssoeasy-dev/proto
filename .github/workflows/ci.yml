@@ -1,0 +1,103 @@
+name: Proto CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    name: Lint Proto Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lint
+        run: buf lint
+
+      - name: Format Check
+        run: |
+          buf format -d --exit-code
+          if [ $? -ne 0 ]; then
+            echo "❌ Proto files are not formatted. Run 'make format' locally."
+            exit 1
+          fi
+
+  breaking:
+    name: Check Breaking Changes
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Breaking Change Detection
+        run: |
+          buf breaking --against "https://github.com/${{ github.repository }}.git#branch=main"
+
+  generate:
+    name: Verify Generated Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate
+        run: buf generate
+
+      - name: Check Generated Code is Committed
+        run: |
+          git diff --exit-code gen/ || (
+            echo "❌ Generated code is out of sync!"
+            echo "Run 'make generate' and commit the changes."
+            git diff gen/
+            exit 1
+          )
+
+  test-import:
+    name: Test Go Import
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
+      - name: Verify Module
+        run: |
+          go mod verify
+          go mod tidy
+          git diff --exit-code go.mod go.sum
+
+      - name: Build Test
+        run: |
+          cd gen/go/companies/v1
+          go build .
+
