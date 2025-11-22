@@ -50,26 +50,31 @@ jobs:
           script: |
             const branchName = context.payload.pull_request.head.ref;
             const tagName = `dev-${branchName.replace(/\//g, '-')}`;
+            const repoFullName = `${context.repo.owner}/${context.repo.repo}`;
+            
+            const body = [
+              '## 📦 Dev Version Created',
+              '',
+              `Dev version \`${tagName}\` has been created for this PR.`,
+              '',
+              '**Usage in your services:**',
+              '```bash',
+              `go get github.com/${repoFullName}@${tagName}`,
+              '```',
+              '',
+              '**In go.mod:**',
+              '```go',
+              `require github.com/${repoFullName} ${tagName}`,
+              '```',
+              '',
+              '> ⚠️ This is a temporary development version. It will be deleted after merging this PR.'
+            ].join('\n');
             
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `## 📦 Dev Version Created
-
-Dev version \`${tagName}\` has been created for this PR.
-
-**Usage in your services:**
-\`\`\`bash
-go get github.com/${context.repo.owner}/${context.repo.repo}@${tagName}
-\`\`\`
-
-**In go.mod:**
-\`\`\`go
-require github.com/${context.repo.owner}/${context.repo.repo} ${tagName}
-\`\`\`
-
-> ⚠️ This is a temporary development version. It will be deleted after merging this PR.`
+              body: body
             });
 
   cleanup-and-release:
@@ -140,22 +145,27 @@ require github.com/${context.repo.owner}/${context.repo.repo} ${tagName}
             const branchName = context.payload.pull_request.head.ref;
             const devTag = `dev-${branchName.replace(/\//g, '-')}`;
             const betaVersion = '${{ steps.beta.outputs.version }}';
+            const repoFullName = `${context.repo.owner}/${context.repo.repo}`;
+            
+            const body = [
+              '## ✅ PR Merged - Versions Updated',
+              '',
+              `- 🗑️ Dev version \`${devTag}\` has been deleted`,
+              `- 📦 New beta version \`${betaVersion}\` has been created`,
+              '',
+              '**Update your services:**',
+              '```bash',
+              `go get github.com/${repoFullName}@${betaVersion}`,
+              '```',
+              '',
+              '> This beta version is now available on the develop environment.'
+            ].join('\n');
             
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `## ✅ PR Merged - Versions Updated
-
-- 🗑️ Dev version \`${devTag}\` has been deleted
-- 📦 New beta version \`${betaVersion}\` has been created
-
-**Update your services:**
-\`\`\`bash
-go get github.com/${context.repo.owner}/${context.repo.repo}@${betaVersion}
-\`\`\`
-
-> This beta version is now available on the develop environment.`
+              body: body
             });
 
       - name: Comment on PR (closed without merge)
@@ -166,13 +176,17 @@ go get github.com/${context.repo.owner}/${context.repo.repo}@${betaVersion}
             const branchName = context.payload.pull_request.head.ref;
             const devTag = `dev-${branchName.replace(/\//g, '-')}`;
             
+            const body = [
+              '## 🗑️ Dev Version Cleaned Up',
+              '',
+              `Dev version \`${devTag}\` has been deleted since this PR was closed without merging.`
+            ].join('\n');
+            
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `## 🗑️ Dev Version Cleaned Up
-
-Dev version \`${devTag}\` has been deleted since this PR was closed without merging.`
+              body: body
             });
 
 
