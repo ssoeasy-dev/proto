@@ -1,6 +1,5 @@
 # SSO Easy - Protocol Buffers
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/MoreWiktor/ssoeasy.proto.svg)](https://pkg.go.dev/github.com/MoreWiktor/ssoeasy.proto)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Централизованный репозиторий Protocol Buffers контрактов для SSO Easy микросервисной архитектуры.
@@ -8,13 +7,13 @@
 ## 📦 Установка
 
 ```bash
-go get github.com/MoreWiktor/ssoeasy.proto@latest
+go get github.com/ssoeasy-dev/proto@latest
 ```
 
 Или конкретная версия:
 
 ```bash
-go get github.com/MoreWiktor/ssoeasy.proto@v1.0.0
+go get github.com/ssoeasy-dev/proto@v1.0.0
 ```
 
 ## 🚀 Использование
@@ -25,7 +24,7 @@ go get github.com/MoreWiktor/ssoeasy.proto@v1.0.0
 package main
 
 import (
-    pb "github.com/MoreWiktor/ssoeasy.proto/gen/go/companies/v1"
+    pb "github.com/ssoeasy-dev/proto/gen/go/companies/v1"
     "google.golang.org/grpc"
 )
 
@@ -137,10 +136,10 @@ make tag VERSION=v1.1.0
 cd <Микросервис>
 
 # Обновить до последней версии
-go get github.com/MoreWiktor/ssoeasy.proto@latest
+go get github.com/ssoeasy-dev/proto@latest
 
 # Или до конкретной версии
-go get github.com/MoreWiktor/ssoeasy.proto@v1.2.0
+go get github.com/ssoeasy-dev/proto@v1.2.0
 
 go mod tidy
 ```
@@ -152,4 +151,4 @@ MIT License - см. [LICENSE](LICENSE) файл.
 ## 📞 Контакты
 
 - GitHub: [@MoreWiktor](https://github.com/MoreWiktor)
-- Проект: [https://github.com/MoreWiktor/ssoeasy.proto](https://github.com/MoreWiktor/ssoeasy.proto)
+- Проект: [https://github.com/ssoeasy-dev/proto](https://github.com/ssoeasy-dev/proto)

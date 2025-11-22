@@ -1,4 +1,4 @@
-module github.com/MoreWiktor/ssoeasy.proto
+module github.com/ssoeasy-dev/proto
 
 go 1.24.1
 

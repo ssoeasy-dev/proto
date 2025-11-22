@@ -194,8 +194,8 @@ const file_companies_v1_company_proto_rawDesc = "" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAtB\x0e\n" +
 	"\f_description2d\n" +
 	"\x0eCompanyService\x12R\n" +
-	"\rCreateCompany\x12\".companies.v1.CreateCompanyRequest\x1a\x1d.companies.v1.CompanyResponseB\xb6\x01\n" +
-	"\x10com.companies.v1B\fCompanyProtoP\x01ZCgithub.com/MoreWiktor/ssoeasy.proto/gen/go/companies/v1;companiesv1\xa2\x02\x03CXX\xaa\x02\fCompanies.V1\xca\x02\fCompanies\\V1\xe2\x02\x18Companies\\V1\\GPBMetadata\xea\x02\rCompanies::V1b\x06proto3"
+	"\rCreateCompany\x12\".companies.v1.CreateCompanyRequest\x1a\x1d.companies.v1.CompanyResponseB\xaf\x01\n" +
+	"\x10com.companies.v1B\fCompanyProtoP\x01Z<github.com/ssoeasy-dev/proto/gen/go/companies/v1;companiesv1\xa2\x02\x03CXX\xaa\x02\fCompanies.V1\xca\x02\fCompanies\\V1\xe2\x02\x18Companies\\V1\\GPBMetadata\xea\x02\rCompanies::V1b\x06proto3"
 
 var (
 	file_companies_v1_company_proto_rawDescOnce sync.Once
