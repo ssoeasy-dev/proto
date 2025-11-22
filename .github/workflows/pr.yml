@@ -33,17 +33,14 @@ jobs:
       - name: Checkout PR Branch
         uses: actions/checkout@v4
         with:
-            fetch-depth: 0
-  
+          fetch-depth: 0
+
       - name: Setup Buf
         uses: bufbuild/buf-setup-action@v1
-  
-      - name: Fetch main branch
-        run: git fetch origin main
-  
+
       - name: Breaking Change Detection
         run: |
-          buf breaking --against ".git#branch=origin/main"
+          buf breaking --against "https://github.com/${{ github.repository }}.git#branch=main"
 
   generate:
     name: Verify Generated Code
@@ -99,3 +96,4 @@ jobs:
         run: |
           cd gen/go/companies/v1
           go build .
+          
