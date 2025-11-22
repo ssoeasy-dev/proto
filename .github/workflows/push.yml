@@ -1,0 +1,26 @@
+name: Proto CI - Push
+
+on:
+  push:
+
+jobs:
+  lint:
+    name: Lint Proto Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Lint
+        run: buf lint
+
+      - name: Format Check
+        run: |
+          buf format -d --exit-code
+          if [ $? -ne 0 ]; then
+            echo "❌ Proto files are not formatted. Run 'make format' locally."
+            exit 1
+          fi

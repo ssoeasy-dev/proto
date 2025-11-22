@@ -1,8 +1,6 @@
-name: Proto CI
+name: Proto CI - PR
 
 on:
-  push:
-    branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
@@ -11,13 +9,11 @@ jobs:
     name: Lint Proto Files
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout PR Branch
         uses: actions/checkout@v4
 
       - name: Setup Buf
         uses: bufbuild/buf-setup-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint
         run: buf lint
@@ -33,27 +29,25 @@ jobs:
   breaking:
     name: Check Breaking Changes
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     steps:
-      - name: Checkout
+      - name: Checkout PR Branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Buf
         uses: bufbuild/buf-setup-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Breaking Change Detection
         run: |
-          buf breaking --against "https://github.com/${{ github.repository }}.git#branch=main"
+          buf breaking --against ".git#branch=main"
 
   generate:
     name: Verify Generated Code
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout PR Branch
         uses: actions/checkout@v4
 
       - name: Setup Go
@@ -68,8 +62,6 @@ jobs:
 
       - name: Setup Buf
         uses: bufbuild/buf-setup-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate
         run: buf generate
@@ -87,7 +79,7 @@ jobs:
     name: Test Go Import
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout PR Branch
         uses: actions/checkout@v4
 
       - name: Setup Go
@@ -105,4 +97,3 @@ jobs:
         run: |
           cd gen/go/companies/v1
           go build .
-
