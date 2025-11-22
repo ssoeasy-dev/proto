@@ -40,7 +40,7 @@ jobs:
 
       - name: Breaking Change Detection
         run: |
-            buf breaking --against "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git#branch=main"
+            buf breaking --against "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git#branch=main,subdir=proto"
 
   generate:
     name: Verify Generated Code
