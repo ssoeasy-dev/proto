@@ -1,0 +1,178 @@
+name: Dev Version Management
+
+on:
+  pull_request:
+    types: [opened, reopened, closed]
+    branches: [develop, main]
+
+jobs:
+  create-dev-version:
+    name: Create Dev Version
+    if: github.event.action == 'opened' || github.event.action == 'reopened'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Create Dev Tag
+        run: |
+          # Преобразуем имя ветки в валидный тег (заменяем / на -)
+          BRANCH_NAME="${{ github.head_ref }}"
+          TAG_NAME="dev-${BRANCH_NAME//\//-}"
+          
+          echo "📦 Creating dev version: $TAG_NAME"
+          echo "🔗 Branch: $BRANCH_NAME"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Удаляем тег если он уже существует
+          git tag -d "$TAG_NAME" 2>/dev/null || true
+          git push origin ":refs/tags/$TAG_NAME" 2>/dev/null || true
+          
+          # Создаем новый тег
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
+          
+          echo "✅ Dev version $TAG_NAME created!"
+          echo ""
+          echo "📋 Use in your services:"
+          echo "   go get github.com/${{ github.repository }}@$TAG_NAME"
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchName = context.payload.pull_request.head.ref;
+            const tagName = `dev-${branchName.replace(/\//g, '-')}`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## 📦 Dev Version Created
+
+Dev version \`${tagName}\` has been created for this PR.
+
+**Usage in your services:**
+\`\`\`bash
+go get github.com/${context.repo.owner}/${context.repo.repo}@${tagName}
+\`\`\`
+
+**In go.mod:**
+\`\`\`go
+require github.com/${context.repo.owner}/${context.repo.repo} ${tagName}
+\`\`\`
+
+> ⚠️ This is a temporary development version. It will be deleted after merging this PR.`
+            });
+
+  cleanup-and-release:
+    name: Cleanup Dev Version and Create Beta
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Delete Dev Tag
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          TAG_NAME="dev-${BRANCH_NAME//\//-}"
+          
+          echo "🗑️  Deleting dev version: $TAG_NAME"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Удаляем тег
+          git push origin ":refs/tags/$TAG_NAME" 2>/dev/null || {
+            echo "⚠️  Tag $TAG_NAME not found (already deleted or never created)"
+          }
+          
+          echo "✅ Dev version $TAG_NAME deleted"
+
+      - name: Create Beta Version (if merged to develop)
+        if: github.event.pull_request.merged == true && github.base_ref == 'develop'
+        run: |
+          echo "🎯 PR was merged to develop, creating beta version..."
+          
+          # Получаем последнюю beta версию
+          LAST_BETA=$(git tag -l 'v*-beta.*' | sort -V | tail -n 1)
+          
+          if [ -z "$LAST_BETA" ]; then
+            # Нет beta версий, начинаем с v0.1.0-beta.1
+            NEW_VERSION="v0.1.0-beta.1"
+          else
+            # Извлекаем номер beta версии и инкрементируем
+            BASE_VERSION=$(echo "$LAST_BETA" | sed -E 's/v([0-9]+\.[0-9]+\.[0-9]+)-beta\.[0-9]+/\1/')
+            BETA_NUM=$(echo "$LAST_BETA" | sed -E 's/v[0-9]+\.[0-9]+\.[0-9]+-beta\.([0-9]+)/\1/')
+            BETA_NUM=$((BETA_NUM + 1))
+            NEW_VERSION="v${BASE_VERSION}-beta.${BETA_NUM}"
+          fi
+          
+          echo "📦 Creating beta version: $NEW_VERSION"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git tag "$NEW_VERSION"
+          git push origin "$NEW_VERSION"
+          
+          echo "✅ Beta version $NEW_VERSION created!"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+        id: beta
+
+      - name: Comment on PR (merged)
+        if: github.event.pull_request.merged == true && github.base_ref == 'develop'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchName = context.payload.pull_request.head.ref;
+            const devTag = `dev-${branchName.replace(/\//g, '-')}`;
+            const betaVersion = '${{ steps.beta.outputs.version }}';
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## ✅ PR Merged - Versions Updated
+
+- 🗑️ Dev version \`${devTag}\` has been deleted
+- 📦 New beta version \`${betaVersion}\` has been created
+
+**Update your services:**
+\`\`\`bash
+go get github.com/${context.repo.owner}/${context.repo.repo}@${betaVersion}
+\`\`\`
+
+> This beta version is now available on the develop environment.`
+            });
+
+      - name: Comment on PR (closed without merge)
+        if: github.event.pull_request.merged == false
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchName = context.payload.pull_request.head.ref;
+            const devTag = `dev-${branchName.replace(/\//g, '-')}`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## 🗑️ Dev Version Cleaned Up
+
+Dev version \`${devTag}\` has been deleted since this PR was closed without merging.`
+            });
+
+
