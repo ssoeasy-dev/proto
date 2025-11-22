@@ -26,21 +26,21 @@ jobs:
             exit 1
           fi
 
-          breaking:
-            name: Check Breaking Changes
-            runs-on: ubuntu-latest
-            steps:
-              - name: Checkout PR Branch
-                uses: actions/checkout@v4
-                with:
-                  fetch-depth: 0
-        
-              - name: Setup Buf
-                uses: bufbuild/buf-setup-action@v1
-        
-              - name: Breaking Change Detection
-                run: |
-                  buf breaking --against "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git#branch=main"
+  breaking:
+    name: Check Breaking Changes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Breaking Change Detection
+        run: |
+            buf breaking --against "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git#branch=main"
 
   generate:
     name: Verify Generated Code
