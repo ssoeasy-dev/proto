@@ -33,15 +33,17 @@ jobs:
       - name: Checkout PR Branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-
+            fetch-depth: 0
+  
       - name: Setup Buf
         uses: bufbuild/buf-setup-action@v1
-
+  
+      - name: Fetch main branch
+        run: git fetch origin main
+  
       - name: Breaking Change Detection
         run: |
-          buf breaking --against ".git#branch=main"
+          buf breaking --against ".git#branch=origin/main"
 
   generate:
     name: Verify Generated Code
