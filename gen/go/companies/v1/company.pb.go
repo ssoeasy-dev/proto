@@ -617,6 +617,451 @@ func (x *SubscriptionResponse) GetCreatedAt() int64 {
 	return 0
 }
 
+// Compensating transaction messages
+type DeleteCompanyRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CompanyId     string                 `protobuf:"bytes,1,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCompanyRequest) Reset() {
+	*x = DeleteCompanyRequest{}
+	mi := &file_companies_v1_company_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCompanyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCompanyRequest) ProtoMessage() {}
+
+func (x *DeleteCompanyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCompanyRequest.ProtoReflect.Descriptor instead.
+func (*DeleteCompanyRequest) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DeleteCompanyRequest) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
+type DeleteCompanyResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCompanyResponse) Reset() {
+	*x = DeleteCompanyResponse{}
+	mi := &file_companies_v1_company_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCompanyResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCompanyResponse) ProtoMessage() {}
+
+func (x *DeleteCompanyResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCompanyResponse.ProtoReflect.Descriptor instead.
+func (*DeleteCompanyResponse) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *DeleteCompanyResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *DeleteCompanyResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type DeleteEmployeeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EmployeeId    string                 `protobuf:"bytes,1,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteEmployeeRequest) Reset() {
+	*x = DeleteEmployeeRequest{}
+	mi := &file_companies_v1_company_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteEmployeeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteEmployeeRequest) ProtoMessage() {}
+
+func (x *DeleteEmployeeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteEmployeeRequest.ProtoReflect.Descriptor instead.
+func (*DeleteEmployeeRequest) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *DeleteEmployeeRequest) GetEmployeeId() string {
+	if x != nil {
+		return x.EmployeeId
+	}
+	return ""
+}
+
+type DeleteEmployeeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteEmployeeResponse) Reset() {
+	*x = DeleteEmployeeResponse{}
+	mi := &file_companies_v1_company_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteEmployeeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteEmployeeResponse) ProtoMessage() {}
+
+func (x *DeleteEmployeeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteEmployeeResponse.ProtoReflect.Descriptor instead.
+func (*DeleteEmployeeResponse) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *DeleteEmployeeResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *DeleteEmployeeResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type UnlinkEmployeeFromCompanyRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EmployeeId    string                 `protobuf:"bytes,1,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
+	CompanyId     string                 `protobuf:"bytes,2,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnlinkEmployeeFromCompanyRequest) Reset() {
+	*x = UnlinkEmployeeFromCompanyRequest{}
+	mi := &file_companies_v1_company_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnlinkEmployeeFromCompanyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnlinkEmployeeFromCompanyRequest) ProtoMessage() {}
+
+func (x *UnlinkEmployeeFromCompanyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnlinkEmployeeFromCompanyRequest.ProtoReflect.Descriptor instead.
+func (*UnlinkEmployeeFromCompanyRequest) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *UnlinkEmployeeFromCompanyRequest) GetEmployeeId() string {
+	if x != nil {
+		return x.EmployeeId
+	}
+	return ""
+}
+
+func (x *UnlinkEmployeeFromCompanyRequest) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
+type UnlinkEmployeeFromCompanyResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UnlinkEmployeeFromCompanyResponse) Reset() {
+	*x = UnlinkEmployeeFromCompanyResponse{}
+	mi := &file_companies_v1_company_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UnlinkEmployeeFromCompanyResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnlinkEmployeeFromCompanyResponse) ProtoMessage() {}
+
+func (x *UnlinkEmployeeFromCompanyResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnlinkEmployeeFromCompanyResponse.ProtoReflect.Descriptor instead.
+func (*UnlinkEmployeeFromCompanyResponse) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *UnlinkEmployeeFromCompanyResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *UnlinkEmployeeFromCompanyResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type DeleteSubscriptionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CompanyId     string                 `protobuf:"bytes,1,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	ServiceId     string                 `protobuf:"bytes,2,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteSubscriptionRequest) Reset() {
+	*x = DeleteSubscriptionRequest{}
+	mi := &file_companies_v1_company_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteSubscriptionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSubscriptionRequest) ProtoMessage() {}
+
+func (x *DeleteSubscriptionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSubscriptionRequest.ProtoReflect.Descriptor instead.
+func (*DeleteSubscriptionRequest) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *DeleteSubscriptionRequest) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
+func (x *DeleteSubscriptionRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+type DeleteSubscriptionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteSubscriptionResponse) Reset() {
+	*x = DeleteSubscriptionResponse{}
+	mi := &file_companies_v1_company_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteSubscriptionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteSubscriptionResponse) ProtoMessage() {}
+
+func (x *DeleteSubscriptionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteSubscriptionResponse.ProtoReflect.Descriptor instead.
+func (*DeleteSubscriptionResponse) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *DeleteSubscriptionResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *DeleteSubscriptionResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type ClearCompanyOwnerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CompanyId     string                 `protobuf:"bytes,1,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClearCompanyOwnerRequest) Reset() {
+	*x = ClearCompanyOwnerRequest{}
+	mi := &file_companies_v1_company_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClearCompanyOwnerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClearCompanyOwnerRequest) ProtoMessage() {}
+
+func (x *ClearCompanyOwnerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClearCompanyOwnerRequest.ProtoReflect.Descriptor instead.
+func (*ClearCompanyOwnerRequest) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ClearCompanyOwnerRequest) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
 var File_companies_v1_company_proto protoreflect.FileDescriptor
 
 const file_companies_v1_company_proto_rawDesc = "" +
@@ -688,13 +1133,49 @@ const file_companies_v1_company_proto_rawDesc = "" +
 	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x1b\n" +
 	"\tis_active\x18\x04 \x01(\bR\bisActive\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\x03R\tcreatedAt2\xee\x03\n" +
+	"created_at\x18\x05 \x01(\x03R\tcreatedAt\"5\n" +
+	"\x14DeleteCompanyRequest\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x01 \x01(\tR\tcompanyId\"K\n" +
+	"\x15DeleteCompanyResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"8\n" +
+	"\x15DeleteEmployeeRequest\x12\x1f\n" +
+	"\vemployee_id\x18\x01 \x01(\tR\n" +
+	"employeeId\"L\n" +
+	"\x16DeleteEmployeeResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"b\n" +
+	" UnlinkEmployeeFromCompanyRequest\x12\x1f\n" +
+	"\vemployee_id\x18\x01 \x01(\tR\n" +
+	"employeeId\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x02 \x01(\tR\tcompanyId\"W\n" +
+	"!UnlinkEmployeeFromCompanyResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"Y\n" +
+	"\x19DeleteSubscriptionRequest\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x01 \x01(\tR\tcompanyId\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x02 \x01(\tR\tserviceId\"P\n" +
+	"\x1aDeleteSubscriptionResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"9\n" +
+	"\x18ClearCompanyOwnerRequest\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x01 \x01(\tR\tcompanyId2\xe8\a\n" +
 	"\x0eCompanyService\x12R\n" +
 	"\rCreateCompany\x12\".companies.v1.CreateCompanyRequest\x1a\x1d.companies.v1.CompanyResponse\x12\\\n" +
 	"\x12UpdateCompanyOwner\x12'.companies.v1.UpdateCompanyOwnerRequest\x1a\x1d.companies.v1.CompanyResponse\x12U\n" +
 	"\x0eCreateEmployee\x12#.companies.v1.CreateEmployeeRequest\x1a\x1e.companies.v1.EmployeeResponse\x12p\n" +
 	"\x15LinkEmployeeToCompany\x12*.companies.v1.LinkEmployeeToCompanyRequest\x1a+.companies.v1.LinkEmployeeToCompanyResponse\x12a\n" +
-	"\x12CreateSubscription\x12'.companies.v1.CreateSubscriptionRequest\x1a\".companies.v1.SubscriptionResponseB\xaf\x01\n" +
+	"\x12CreateSubscription\x12'.companies.v1.CreateSubscriptionRequest\x1a\".companies.v1.SubscriptionResponse\x12X\n" +
+	"\rDeleteCompany\x12\".companies.v1.DeleteCompanyRequest\x1a#.companies.v1.DeleteCompanyResponse\x12[\n" +
+	"\x0eDeleteEmployee\x12#.companies.v1.DeleteEmployeeRequest\x1a$.companies.v1.DeleteEmployeeResponse\x12|\n" +
+	"\x19UnlinkEmployeeFromCompany\x12..companies.v1.UnlinkEmployeeFromCompanyRequest\x1a/.companies.v1.UnlinkEmployeeFromCompanyResponse\x12g\n" +
+	"\x12DeleteSubscription\x12'.companies.v1.DeleteSubscriptionRequest\x1a(.companies.v1.DeleteSubscriptionResponse\x12Z\n" +
+	"\x11ClearCompanyOwner\x12&.companies.v1.ClearCompanyOwnerRequest\x1a\x1d.companies.v1.CompanyResponseB\xaf\x01\n" +
 	"\x10com.companies.v1B\fCompanyProtoP\x01Z<github.com/ssoeasy-dev/proto/gen/go/companies/v1;companiesv1\xa2\x02\x03CXX\xaa\x02\fCompanies.V1\xca\x02\fCompanies\\V1\xe2\x02\x18Companies\\V1\\GPBMetadata\xea\x02\rCompanies::V1b\x06proto3"
 
 var (
@@ -709,34 +1190,53 @@ func file_companies_v1_company_proto_rawDescGZIP() []byte {
 	return file_companies_v1_company_proto_rawDescData
 }
 
-var file_companies_v1_company_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_companies_v1_company_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_companies_v1_company_proto_goTypes = []any{
-	(*CreateCompanyRequest)(nil),          // 0: companies.v1.CreateCompanyRequest
-	(*UpdateCompanyOwnerRequest)(nil),     // 1: companies.v1.UpdateCompanyOwnerRequest
-	(*CompanyResponse)(nil),               // 2: companies.v1.CompanyResponse
-	(*CreateEmployeeRequest)(nil),         // 3: companies.v1.CreateEmployeeRequest
-	(*EmployeeResponse)(nil),              // 4: companies.v1.EmployeeResponse
-	(*LinkEmployeeToCompanyRequest)(nil),  // 5: companies.v1.LinkEmployeeToCompanyRequest
-	(*LinkEmployeeToCompanyResponse)(nil), // 6: companies.v1.LinkEmployeeToCompanyResponse
-	(*CreateSubscriptionRequest)(nil),     // 7: companies.v1.CreateSubscriptionRequest
-	(*SubscriptionResponse)(nil),          // 8: companies.v1.SubscriptionResponse
+	(*CreateCompanyRequest)(nil),              // 0: companies.v1.CreateCompanyRequest
+	(*UpdateCompanyOwnerRequest)(nil),         // 1: companies.v1.UpdateCompanyOwnerRequest
+	(*CompanyResponse)(nil),                   // 2: companies.v1.CompanyResponse
+	(*CreateEmployeeRequest)(nil),             // 3: companies.v1.CreateEmployeeRequest
+	(*EmployeeResponse)(nil),                  // 4: companies.v1.EmployeeResponse
+	(*LinkEmployeeToCompanyRequest)(nil),      // 5: companies.v1.LinkEmployeeToCompanyRequest
+	(*LinkEmployeeToCompanyResponse)(nil),     // 6: companies.v1.LinkEmployeeToCompanyResponse
+	(*CreateSubscriptionRequest)(nil),         // 7: companies.v1.CreateSubscriptionRequest
+	(*SubscriptionResponse)(nil),              // 8: companies.v1.SubscriptionResponse
+	(*DeleteCompanyRequest)(nil),              // 9: companies.v1.DeleteCompanyRequest
+	(*DeleteCompanyResponse)(nil),             // 10: companies.v1.DeleteCompanyResponse
+	(*DeleteEmployeeRequest)(nil),             // 11: companies.v1.DeleteEmployeeRequest
+	(*DeleteEmployeeResponse)(nil),            // 12: companies.v1.DeleteEmployeeResponse
+	(*UnlinkEmployeeFromCompanyRequest)(nil),  // 13: companies.v1.UnlinkEmployeeFromCompanyRequest
+	(*UnlinkEmployeeFromCompanyResponse)(nil), // 14: companies.v1.UnlinkEmployeeFromCompanyResponse
+	(*DeleteSubscriptionRequest)(nil),         // 15: companies.v1.DeleteSubscriptionRequest
+	(*DeleteSubscriptionResponse)(nil),        // 16: companies.v1.DeleteSubscriptionResponse
+	(*ClearCompanyOwnerRequest)(nil),          // 17: companies.v1.ClearCompanyOwnerRequest
 }
 var file_companies_v1_company_proto_depIdxs = []int32{
-	0, // 0: companies.v1.CompanyService.CreateCompany:input_type -> companies.v1.CreateCompanyRequest
-	1, // 1: companies.v1.CompanyService.UpdateCompanyOwner:input_type -> companies.v1.UpdateCompanyOwnerRequest
-	3, // 2: companies.v1.CompanyService.CreateEmployee:input_type -> companies.v1.CreateEmployeeRequest
-	5, // 3: companies.v1.CompanyService.LinkEmployeeToCompany:input_type -> companies.v1.LinkEmployeeToCompanyRequest
-	7, // 4: companies.v1.CompanyService.CreateSubscription:input_type -> companies.v1.CreateSubscriptionRequest
-	2, // 5: companies.v1.CompanyService.CreateCompany:output_type -> companies.v1.CompanyResponse
-	2, // 6: companies.v1.CompanyService.UpdateCompanyOwner:output_type -> companies.v1.CompanyResponse
-	4, // 7: companies.v1.CompanyService.CreateEmployee:output_type -> companies.v1.EmployeeResponse
-	6, // 8: companies.v1.CompanyService.LinkEmployeeToCompany:output_type -> companies.v1.LinkEmployeeToCompanyResponse
-	8, // 9: companies.v1.CompanyService.CreateSubscription:output_type -> companies.v1.SubscriptionResponse
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: companies.v1.CompanyService.CreateCompany:input_type -> companies.v1.CreateCompanyRequest
+	1,  // 1: companies.v1.CompanyService.UpdateCompanyOwner:input_type -> companies.v1.UpdateCompanyOwnerRequest
+	3,  // 2: companies.v1.CompanyService.CreateEmployee:input_type -> companies.v1.CreateEmployeeRequest
+	5,  // 3: companies.v1.CompanyService.LinkEmployeeToCompany:input_type -> companies.v1.LinkEmployeeToCompanyRequest
+	7,  // 4: companies.v1.CompanyService.CreateSubscription:input_type -> companies.v1.CreateSubscriptionRequest
+	9,  // 5: companies.v1.CompanyService.DeleteCompany:input_type -> companies.v1.DeleteCompanyRequest
+	11, // 6: companies.v1.CompanyService.DeleteEmployee:input_type -> companies.v1.DeleteEmployeeRequest
+	13, // 7: companies.v1.CompanyService.UnlinkEmployeeFromCompany:input_type -> companies.v1.UnlinkEmployeeFromCompanyRequest
+	15, // 8: companies.v1.CompanyService.DeleteSubscription:input_type -> companies.v1.DeleteSubscriptionRequest
+	17, // 9: companies.v1.CompanyService.ClearCompanyOwner:input_type -> companies.v1.ClearCompanyOwnerRequest
+	2,  // 10: companies.v1.CompanyService.CreateCompany:output_type -> companies.v1.CompanyResponse
+	2,  // 11: companies.v1.CompanyService.UpdateCompanyOwner:output_type -> companies.v1.CompanyResponse
+	4,  // 12: companies.v1.CompanyService.CreateEmployee:output_type -> companies.v1.EmployeeResponse
+	6,  // 13: companies.v1.CompanyService.LinkEmployeeToCompany:output_type -> companies.v1.LinkEmployeeToCompanyResponse
+	8,  // 14: companies.v1.CompanyService.CreateSubscription:output_type -> companies.v1.SubscriptionResponse
+	10, // 15: companies.v1.CompanyService.DeleteCompany:output_type -> companies.v1.DeleteCompanyResponse
+	12, // 16: companies.v1.CompanyService.DeleteEmployee:output_type -> companies.v1.DeleteEmployeeResponse
+	14, // 17: companies.v1.CompanyService.UnlinkEmployeeFromCompany:output_type -> companies.v1.UnlinkEmployeeFromCompanyResponse
+	16, // 18: companies.v1.CompanyService.DeleteSubscription:output_type -> companies.v1.DeleteSubscriptionResponse
+	2,  // 19: companies.v1.CompanyService.ClearCompanyOwner:output_type -> companies.v1.CompanyResponse
+	10, // [10:20] is the sub-list for method output_type
+	0,  // [0:10] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_companies_v1_company_proto_init() }
@@ -754,7 +1254,7 @@ func file_companies_v1_company_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_companies_v1_company_proto_rawDesc), len(file_companies_v1_company_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

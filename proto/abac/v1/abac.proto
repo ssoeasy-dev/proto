@@ -4,6 +4,7 @@ package abac.v1;
 
 service AbacService {
   rpc CreateEmployeeAttribute(CreateEmployeeAttributeRequest) returns (CreateEmployeeAttributeResponse);
+  rpc DeleteEmployeeAttribute(DeleteEmployeeAttributeRequest) returns (DeleteEmployeeAttributeResponse);
 }
 
 message CreateEmployeeAttributeRequest {
@@ -20,5 +21,16 @@ message CreateEmployeeAttributeResponse {
   string attribute_id = 4;
   string value = 5;
   int64 created_at = 6;
+}
+
+message DeleteEmployeeAttributeRequest {
+  string employee_id = 1;
+  string company_id = 2;
+  string attribute_name = 3;
+}
+
+message DeleteEmployeeAttributeResponse {
+  bool success = 1;
+  string message = 2;
 }
 

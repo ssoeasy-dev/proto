@@ -173,6 +173,118 @@ func (x *CreateEmployeeAttributeResponse) GetCreatedAt() int64 {
 	return 0
 }
 
+type DeleteEmployeeAttributeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EmployeeId    string                 `protobuf:"bytes,1,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
+	CompanyId     string                 `protobuf:"bytes,2,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	AttributeName string                 `protobuf:"bytes,3,opt,name=attribute_name,json=attributeName,proto3" json:"attribute_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteEmployeeAttributeRequest) Reset() {
+	*x = DeleteEmployeeAttributeRequest{}
+	mi := &file_abac_v1_abac_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteEmployeeAttributeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteEmployeeAttributeRequest) ProtoMessage() {}
+
+func (x *DeleteEmployeeAttributeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_abac_v1_abac_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteEmployeeAttributeRequest.ProtoReflect.Descriptor instead.
+func (*DeleteEmployeeAttributeRequest) Descriptor() ([]byte, []int) {
+	return file_abac_v1_abac_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *DeleteEmployeeAttributeRequest) GetEmployeeId() string {
+	if x != nil {
+		return x.EmployeeId
+	}
+	return ""
+}
+
+func (x *DeleteEmployeeAttributeRequest) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
+func (x *DeleteEmployeeAttributeRequest) GetAttributeName() string {
+	if x != nil {
+		return x.AttributeName
+	}
+	return ""
+}
+
+type DeleteEmployeeAttributeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteEmployeeAttributeResponse) Reset() {
+	*x = DeleteEmployeeAttributeResponse{}
+	mi := &file_abac_v1_abac_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteEmployeeAttributeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteEmployeeAttributeResponse) ProtoMessage() {}
+
+func (x *DeleteEmployeeAttributeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_abac_v1_abac_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteEmployeeAttributeResponse.ProtoReflect.Descriptor instead.
+func (*DeleteEmployeeAttributeResponse) Descriptor() ([]byte, []int) {
+	return file_abac_v1_abac_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *DeleteEmployeeAttributeResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *DeleteEmployeeAttributeResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_abac_v1_abac_proto protoreflect.FileDescriptor
 
 const file_abac_v1_abac_proto_rawDesc = "" +
@@ -194,9 +306,19 @@ const file_abac_v1_abac_proto_rawDesc = "" +
 	"\fattribute_id\x18\x04 \x01(\tR\vattributeId\x12\x14\n" +
 	"\x05value\x18\x05 \x01(\tR\x05value\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\x03R\tcreatedAt2{\n" +
+	"created_at\x18\x06 \x01(\x03R\tcreatedAt\"\x87\x01\n" +
+	"\x1eDeleteEmployeeAttributeRequest\x12\x1f\n" +
+	"\vemployee_id\x18\x01 \x01(\tR\n" +
+	"employeeId\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x02 \x01(\tR\tcompanyId\x12%\n" +
+	"\x0eattribute_name\x18\x03 \x01(\tR\rattributeName\"U\n" +
+	"\x1fDeleteEmployeeAttributeResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2\xe9\x01\n" +
 	"\vAbacService\x12l\n" +
-	"\x17CreateEmployeeAttribute\x12'.abac.v1.CreateEmployeeAttributeRequest\x1a(.abac.v1.CreateEmployeeAttributeResponseB\x89\x01\n" +
+	"\x17CreateEmployeeAttribute\x12'.abac.v1.CreateEmployeeAttributeRequest\x1a(.abac.v1.CreateEmployeeAttributeResponse\x12l\n" +
+	"\x17DeleteEmployeeAttribute\x12'.abac.v1.DeleteEmployeeAttributeRequest\x1a(.abac.v1.DeleteEmployeeAttributeResponseB\x89\x01\n" +
 	"\vcom.abac.v1B\tAbacProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/abac/v1;abacv1\xa2\x02\x03AXX\xaa\x02\aAbac.V1\xca\x02\aAbac\\V1\xe2\x02\x13Abac\\V1\\GPBMetadata\xea\x02\bAbac::V1b\x06proto3"
 
 var (
@@ -211,16 +333,20 @@ func file_abac_v1_abac_proto_rawDescGZIP() []byte {
 	return file_abac_v1_abac_proto_rawDescData
 }
 
-var file_abac_v1_abac_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_abac_v1_abac_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_abac_v1_abac_proto_goTypes = []any{
 	(*CreateEmployeeAttributeRequest)(nil),  // 0: abac.v1.CreateEmployeeAttributeRequest
 	(*CreateEmployeeAttributeResponse)(nil), // 1: abac.v1.CreateEmployeeAttributeResponse
+	(*DeleteEmployeeAttributeRequest)(nil),  // 2: abac.v1.DeleteEmployeeAttributeRequest
+	(*DeleteEmployeeAttributeResponse)(nil), // 3: abac.v1.DeleteEmployeeAttributeResponse
 }
 var file_abac_v1_abac_proto_depIdxs = []int32{
 	0, // 0: abac.v1.AbacService.CreateEmployeeAttribute:input_type -> abac.v1.CreateEmployeeAttributeRequest
-	1, // 1: abac.v1.AbacService.CreateEmployeeAttribute:output_type -> abac.v1.CreateEmployeeAttributeResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 1: abac.v1.AbacService.DeleteEmployeeAttribute:input_type -> abac.v1.DeleteEmployeeAttributeRequest
+	1, // 2: abac.v1.AbacService.CreateEmployeeAttribute:output_type -> abac.v1.CreateEmployeeAttributeResponse
+	3, // 3: abac.v1.AbacService.DeleteEmployeeAttribute:output_type -> abac.v1.DeleteEmployeeAttributeResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -237,7 +363,7 @@ func file_abac_v1_abac_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_abac_v1_abac_proto_rawDesc), len(file_abac_v1_abac_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -19,11 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CompanyService_CreateCompany_FullMethodName         = "/companies.v1.CompanyService/CreateCompany"
-	CompanyService_UpdateCompanyOwner_FullMethodName    = "/companies.v1.CompanyService/UpdateCompanyOwner"
-	CompanyService_CreateEmployee_FullMethodName        = "/companies.v1.CompanyService/CreateEmployee"
-	CompanyService_LinkEmployeeToCompany_FullMethodName = "/companies.v1.CompanyService/LinkEmployeeToCompany"
-	CompanyService_CreateSubscription_FullMethodName    = "/companies.v1.CompanyService/CreateSubscription"
+	CompanyService_CreateCompany_FullMethodName             = "/companies.v1.CompanyService/CreateCompany"
+	CompanyService_UpdateCompanyOwner_FullMethodName        = "/companies.v1.CompanyService/UpdateCompanyOwner"
+	CompanyService_CreateEmployee_FullMethodName            = "/companies.v1.CompanyService/CreateEmployee"
+	CompanyService_LinkEmployeeToCompany_FullMethodName     = "/companies.v1.CompanyService/LinkEmployeeToCompany"
+	CompanyService_CreateSubscription_FullMethodName        = "/companies.v1.CompanyService/CreateSubscription"
+	CompanyService_DeleteCompany_FullMethodName             = "/companies.v1.CompanyService/DeleteCompany"
+	CompanyService_DeleteEmployee_FullMethodName            = "/companies.v1.CompanyService/DeleteEmployee"
+	CompanyService_UnlinkEmployeeFromCompany_FullMethodName = "/companies.v1.CompanyService/UnlinkEmployeeFromCompany"
+	CompanyService_DeleteSubscription_FullMethodName        = "/companies.v1.CompanyService/DeleteSubscription"
+	CompanyService_ClearCompanyOwner_FullMethodName         = "/companies.v1.CompanyService/ClearCompanyOwner"
 )
 
 // CompanyServiceClient is the client API for CompanyService service.
@@ -35,6 +40,12 @@ type CompanyServiceClient interface {
 	CreateEmployee(ctx context.Context, in *CreateEmployeeRequest, opts ...grpc.CallOption) (*EmployeeResponse, error)
 	LinkEmployeeToCompany(ctx context.Context, in *LinkEmployeeToCompanyRequest, opts ...grpc.CallOption) (*LinkEmployeeToCompanyResponse, error)
 	CreateSubscription(ctx context.Context, in *CreateSubscriptionRequest, opts ...grpc.CallOption) (*SubscriptionResponse, error)
+	// Compensating transactions
+	DeleteCompany(ctx context.Context, in *DeleteCompanyRequest, opts ...grpc.CallOption) (*DeleteCompanyResponse, error)
+	DeleteEmployee(ctx context.Context, in *DeleteEmployeeRequest, opts ...grpc.CallOption) (*DeleteEmployeeResponse, error)
+	UnlinkEmployeeFromCompany(ctx context.Context, in *UnlinkEmployeeFromCompanyRequest, opts ...grpc.CallOption) (*UnlinkEmployeeFromCompanyResponse, error)
+	DeleteSubscription(ctx context.Context, in *DeleteSubscriptionRequest, opts ...grpc.CallOption) (*DeleteSubscriptionResponse, error)
+	ClearCompanyOwner(ctx context.Context, in *ClearCompanyOwnerRequest, opts ...grpc.CallOption) (*CompanyResponse, error)
 }
 
 type companyServiceClient struct {
@@ -95,6 +106,56 @@ func (c *companyServiceClient) CreateSubscription(ctx context.Context, in *Creat
 	return out, nil
 }
 
+func (c *companyServiceClient) DeleteCompany(ctx context.Context, in *DeleteCompanyRequest, opts ...grpc.CallOption) (*DeleteCompanyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteCompanyResponse)
+	err := c.cc.Invoke(ctx, CompanyService_DeleteCompany_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *companyServiceClient) DeleteEmployee(ctx context.Context, in *DeleteEmployeeRequest, opts ...grpc.CallOption) (*DeleteEmployeeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteEmployeeResponse)
+	err := c.cc.Invoke(ctx, CompanyService_DeleteEmployee_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *companyServiceClient) UnlinkEmployeeFromCompany(ctx context.Context, in *UnlinkEmployeeFromCompanyRequest, opts ...grpc.CallOption) (*UnlinkEmployeeFromCompanyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UnlinkEmployeeFromCompanyResponse)
+	err := c.cc.Invoke(ctx, CompanyService_UnlinkEmployeeFromCompany_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *companyServiceClient) DeleteSubscription(ctx context.Context, in *DeleteSubscriptionRequest, opts ...grpc.CallOption) (*DeleteSubscriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteSubscriptionResponse)
+	err := c.cc.Invoke(ctx, CompanyService_DeleteSubscription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *companyServiceClient) ClearCompanyOwner(ctx context.Context, in *ClearCompanyOwnerRequest, opts ...grpc.CallOption) (*CompanyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CompanyResponse)
+	err := c.cc.Invoke(ctx, CompanyService_ClearCompanyOwner_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CompanyServiceServer is the server API for CompanyService service.
 // All implementations must embed UnimplementedCompanyServiceServer
 // for forward compatibility.
@@ -104,6 +165,12 @@ type CompanyServiceServer interface {
 	CreateEmployee(context.Context, *CreateEmployeeRequest) (*EmployeeResponse, error)
 	LinkEmployeeToCompany(context.Context, *LinkEmployeeToCompanyRequest) (*LinkEmployeeToCompanyResponse, error)
 	CreateSubscription(context.Context, *CreateSubscriptionRequest) (*SubscriptionResponse, error)
+	// Compensating transactions
+	DeleteCompany(context.Context, *DeleteCompanyRequest) (*DeleteCompanyResponse, error)
+	DeleteEmployee(context.Context, *DeleteEmployeeRequest) (*DeleteEmployeeResponse, error)
+	UnlinkEmployeeFromCompany(context.Context, *UnlinkEmployeeFromCompanyRequest) (*UnlinkEmployeeFromCompanyResponse, error)
+	DeleteSubscription(context.Context, *DeleteSubscriptionRequest) (*DeleteSubscriptionResponse, error)
+	ClearCompanyOwner(context.Context, *ClearCompanyOwnerRequest) (*CompanyResponse, error)
 	mustEmbedUnimplementedCompanyServiceServer()
 }
 
@@ -128,6 +195,21 @@ func (UnimplementedCompanyServiceServer) LinkEmployeeToCompany(context.Context, 
 }
 func (UnimplementedCompanyServiceServer) CreateSubscription(context.Context, *CreateSubscriptionRequest) (*SubscriptionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSubscription not implemented")
+}
+func (UnimplementedCompanyServiceServer) DeleteCompany(context.Context, *DeleteCompanyRequest) (*DeleteCompanyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCompany not implemented")
+}
+func (UnimplementedCompanyServiceServer) DeleteEmployee(context.Context, *DeleteEmployeeRequest) (*DeleteEmployeeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEmployee not implemented")
+}
+func (UnimplementedCompanyServiceServer) UnlinkEmployeeFromCompany(context.Context, *UnlinkEmployeeFromCompanyRequest) (*UnlinkEmployeeFromCompanyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnlinkEmployeeFromCompany not implemented")
+}
+func (UnimplementedCompanyServiceServer) DeleteSubscription(context.Context, *DeleteSubscriptionRequest) (*DeleteSubscriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubscription not implemented")
+}
+func (UnimplementedCompanyServiceServer) ClearCompanyOwner(context.Context, *ClearCompanyOwnerRequest) (*CompanyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ClearCompanyOwner not implemented")
 }
 func (UnimplementedCompanyServiceServer) mustEmbedUnimplementedCompanyServiceServer() {}
 func (UnimplementedCompanyServiceServer) testEmbeddedByValue()                        {}
@@ -240,6 +322,96 @@ func _CompanyService_CreateSubscription_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CompanyService_DeleteCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCompanyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompanyServiceServer).DeleteCompany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompanyService_DeleteCompany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompanyServiceServer).DeleteCompany(ctx, req.(*DeleteCompanyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CompanyService_DeleteEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteEmployeeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompanyServiceServer).DeleteEmployee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompanyService_DeleteEmployee_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompanyServiceServer).DeleteEmployee(ctx, req.(*DeleteEmployeeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CompanyService_UnlinkEmployeeFromCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnlinkEmployeeFromCompanyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompanyServiceServer).UnlinkEmployeeFromCompany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompanyService_UnlinkEmployeeFromCompany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompanyServiceServer).UnlinkEmployeeFromCompany(ctx, req.(*UnlinkEmployeeFromCompanyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CompanyService_DeleteSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSubscriptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompanyServiceServer).DeleteSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompanyService_DeleteSubscription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompanyServiceServer).DeleteSubscription(ctx, req.(*DeleteSubscriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CompanyService_ClearCompanyOwner_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClearCompanyOwnerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompanyServiceServer).ClearCompanyOwner(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompanyService_ClearCompanyOwner_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompanyServiceServer).ClearCompanyOwner(ctx, req.(*ClearCompanyOwnerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CompanyService_ServiceDesc is the grpc.ServiceDesc for CompanyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -266,6 +438,26 @@ var CompanyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateSubscription",
 			Handler:    _CompanyService_CreateSubscription_Handler,
+		},
+		{
+			MethodName: "DeleteCompany",
+			Handler:    _CompanyService_DeleteCompany_Handler,
+		},
+		{
+			MethodName: "DeleteEmployee",
+			Handler:    _CompanyService_DeleteEmployee_Handler,
+		},
+		{
+			MethodName: "UnlinkEmployeeFromCompany",
+			Handler:    _CompanyService_UnlinkEmployeeFromCompany_Handler,
+		},
+		{
+			MethodName: "DeleteSubscription",
+			Handler:    _CompanyService_DeleteSubscription_Handler,
+		},
+		{
+			MethodName: "ClearCompanyOwner",
+			Handler:    _CompanyService_ClearCompanyOwner_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

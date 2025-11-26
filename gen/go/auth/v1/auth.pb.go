@@ -133,6 +133,102 @@ func (x *CreateCredentialsResponse) GetCreatedAt() int64 {
 	return 0
 }
 
+type DeleteCredentialsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EmployeeId    string                 `protobuf:"bytes,1,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCredentialsRequest) Reset() {
+	*x = DeleteCredentialsRequest{}
+	mi := &file_auth_v1_auth_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCredentialsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCredentialsRequest) ProtoMessage() {}
+
+func (x *DeleteCredentialsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCredentialsRequest.ProtoReflect.Descriptor instead.
+func (*DeleteCredentialsRequest) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *DeleteCredentialsRequest) GetEmployeeId() string {
+	if x != nil {
+		return x.EmployeeId
+	}
+	return ""
+}
+
+type DeleteCredentialsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteCredentialsResponse) Reset() {
+	*x = DeleteCredentialsResponse{}
+	mi := &file_auth_v1_auth_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteCredentialsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteCredentialsResponse) ProtoMessage() {}
+
+func (x *DeleteCredentialsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteCredentialsResponse.ProtoReflect.Descriptor instead.
+func (*DeleteCredentialsResponse) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *DeleteCredentialsResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *DeleteCredentialsResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_auth_v1_auth_proto_rawDesc = "" +
@@ -147,9 +243,16 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\vemployee_id\x18\x02 \x01(\tR\n" +
 	"employeeId\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x03 \x01(\x03R\tcreatedAt2i\n" +
+	"created_at\x18\x03 \x01(\x03R\tcreatedAt\";\n" +
+	"\x18DeleteCredentialsRequest\x12\x1f\n" +
+	"\vemployee_id\x18\x01 \x01(\tR\n" +
+	"employeeId\"O\n" +
+	"\x19DeleteCredentialsResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2\xc5\x01\n" +
 	"\vAuthService\x12Z\n" +
-	"\x11CreateCredentials\x12!.auth.v1.CreateCredentialsRequest\x1a\".auth.v1.CreateCredentialsResponseB\x89\x01\n" +
+	"\x11CreateCredentials\x12!.auth.v1.CreateCredentialsRequest\x1a\".auth.v1.CreateCredentialsResponse\x12Z\n" +
+	"\x11DeleteCredentials\x12!.auth.v1.DeleteCredentialsRequest\x1a\".auth.v1.DeleteCredentialsResponseB\x89\x01\n" +
 	"\vcom.auth.v1B\tAuthProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var (
@@ -164,16 +267,20 @@ func file_auth_v1_auth_proto_rawDescGZIP() []byte {
 	return file_auth_v1_auth_proto_rawDescData
 }
 
-var file_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_auth_v1_auth_proto_goTypes = []any{
 	(*CreateCredentialsRequest)(nil),  // 0: auth.v1.CreateCredentialsRequest
 	(*CreateCredentialsResponse)(nil), // 1: auth.v1.CreateCredentialsResponse
+	(*DeleteCredentialsRequest)(nil),  // 2: auth.v1.DeleteCredentialsRequest
+	(*DeleteCredentialsResponse)(nil), // 3: auth.v1.DeleteCredentialsResponse
 }
 var file_auth_v1_auth_proto_depIdxs = []int32{
 	0, // 0: auth.v1.AuthService.CreateCredentials:input_type -> auth.v1.CreateCredentialsRequest
-	1, // 1: auth.v1.AuthService.CreateCredentials:output_type -> auth.v1.CreateCredentialsResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 1: auth.v1.AuthService.DeleteCredentials:input_type -> auth.v1.DeleteCredentialsRequest
+	1, // 2: auth.v1.AuthService.CreateCredentials:output_type -> auth.v1.CreateCredentialsResponse
+	3, // 3: auth.v1.AuthService.DeleteCredentials:output_type -> auth.v1.DeleteCredentialsResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -190,7 +297,7 @@ func file_auth_v1_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_v1_auth_proto_rawDesc), len(file_auth_v1_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

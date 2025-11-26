@@ -8,6 +8,13 @@ service CompanyService {
   rpc CreateEmployee(CreateEmployeeRequest) returns (EmployeeResponse);
   rpc LinkEmployeeToCompany(LinkEmployeeToCompanyRequest) returns (LinkEmployeeToCompanyResponse);
   rpc CreateSubscription(CreateSubscriptionRequest) returns (SubscriptionResponse);
+  
+  // Compensating transactions
+  rpc DeleteCompany(DeleteCompanyRequest) returns (DeleteCompanyResponse);
+  rpc DeleteEmployee(DeleteEmployeeRequest) returns (DeleteEmployeeResponse);
+  rpc UnlinkEmployeeFromCompany(UnlinkEmployeeFromCompanyRequest) returns (UnlinkEmployeeFromCompanyResponse);
+  rpc DeleteSubscription(DeleteSubscriptionRequest) returns (DeleteSubscriptionResponse);
+  rpc ClearCompanyOwner(ClearCompanyOwnerRequest) returns (CompanyResponse);
 }
 
 message CreateCompanyRequest {
@@ -69,4 +76,47 @@ message SubscriptionResponse {
   string service_id = 3;
   bool is_active = 4;
   int64 created_at = 5;
+}
+
+// Compensating transaction messages
+message DeleteCompanyRequest {
+  string company_id = 1;
+}
+
+message DeleteCompanyResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteEmployeeRequest {
+  string employee_id = 1;
+}
+
+message DeleteEmployeeResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message UnlinkEmployeeFromCompanyRequest {
+  string employee_id = 1;
+  string company_id = 2;
+}
+
+message UnlinkEmployeeFromCompanyResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteSubscriptionRequest {
+  string company_id = 1;
+  string service_id = 2;
+}
+
+message DeleteSubscriptionResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ClearCompanyOwnerRequest {
+  string company_id = 1;
 }

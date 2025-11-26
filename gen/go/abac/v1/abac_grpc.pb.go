@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	AbacService_CreateEmployeeAttribute_FullMethodName = "/abac.v1.AbacService/CreateEmployeeAttribute"
+	AbacService_DeleteEmployeeAttribute_FullMethodName = "/abac.v1.AbacService/DeleteEmployeeAttribute"
 )
 
 // AbacServiceClient is the client API for AbacService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AbacServiceClient interface {
 	CreateEmployeeAttribute(ctx context.Context, in *CreateEmployeeAttributeRequest, opts ...grpc.CallOption) (*CreateEmployeeAttributeResponse, error)
+	DeleteEmployeeAttribute(ctx context.Context, in *DeleteEmployeeAttributeRequest, opts ...grpc.CallOption) (*DeleteEmployeeAttributeResponse, error)
 }
 
 type abacServiceClient struct {
@@ -47,11 +49,22 @@ func (c *abacServiceClient) CreateEmployeeAttribute(ctx context.Context, in *Cre
 	return out, nil
 }
 
+func (c *abacServiceClient) DeleteEmployeeAttribute(ctx context.Context, in *DeleteEmployeeAttributeRequest, opts ...grpc.CallOption) (*DeleteEmployeeAttributeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteEmployeeAttributeResponse)
+	err := c.cc.Invoke(ctx, AbacService_DeleteEmployeeAttribute_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AbacServiceServer is the server API for AbacService service.
 // All implementations must embed UnimplementedAbacServiceServer
 // for forward compatibility.
 type AbacServiceServer interface {
 	CreateEmployeeAttribute(context.Context, *CreateEmployeeAttributeRequest) (*CreateEmployeeAttributeResponse, error)
+	DeleteEmployeeAttribute(context.Context, *DeleteEmployeeAttributeRequest) (*DeleteEmployeeAttributeResponse, error)
 	mustEmbedUnimplementedAbacServiceServer()
 }
 
@@ -64,6 +77,9 @@ type UnimplementedAbacServiceServer struct{}
 
 func (UnimplementedAbacServiceServer) CreateEmployeeAttribute(context.Context, *CreateEmployeeAttributeRequest) (*CreateEmployeeAttributeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateEmployeeAttribute not implemented")
+}
+func (UnimplementedAbacServiceServer) DeleteEmployeeAttribute(context.Context, *DeleteEmployeeAttributeRequest) (*DeleteEmployeeAttributeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEmployeeAttribute not implemented")
 }
 func (UnimplementedAbacServiceServer) mustEmbedUnimplementedAbacServiceServer() {}
 func (UnimplementedAbacServiceServer) testEmbeddedByValue()                     {}
@@ -104,6 +120,24 @@ func _AbacService_CreateEmployeeAttribute_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AbacService_DeleteEmployeeAttribute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteEmployeeAttributeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AbacServiceServer).DeleteEmployeeAttribute(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AbacService_DeleteEmployeeAttribute_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AbacServiceServer).DeleteEmployeeAttribute(ctx, req.(*DeleteEmployeeAttributeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AbacService_ServiceDesc is the grpc.ServiceDesc for AbacService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +148,10 @@ var AbacService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateEmployeeAttribute",
 			Handler:    _AbacService_CreateEmployeeAttribute_Handler,
+		},
+		{
+			MethodName: "DeleteEmployeeAttribute",
+			Handler:    _AbacService_DeleteEmployeeAttribute_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
