@@ -19,7 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CompanyService_CreateCompany_FullMethodName = "/companies.v1.CompanyService/CreateCompany"
+	CompanyService_CreateCompany_FullMethodName         = "/companies.v1.CompanyService/CreateCompany"
+	CompanyService_UpdateCompanyOwner_FullMethodName    = "/companies.v1.CompanyService/UpdateCompanyOwner"
+	CompanyService_CreateEmployee_FullMethodName        = "/companies.v1.CompanyService/CreateEmployee"
+	CompanyService_LinkEmployeeToCompany_FullMethodName = "/companies.v1.CompanyService/LinkEmployeeToCompany"
+	CompanyService_CreateSubscription_FullMethodName    = "/companies.v1.CompanyService/CreateSubscription"
 )
 
 // CompanyServiceClient is the client API for CompanyService service.
@@ -27,6 +31,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CompanyServiceClient interface {
 	CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*CompanyResponse, error)
+	UpdateCompanyOwner(ctx context.Context, in *UpdateCompanyOwnerRequest, opts ...grpc.CallOption) (*CompanyResponse, error)
+	CreateEmployee(ctx context.Context, in *CreateEmployeeRequest, opts ...grpc.CallOption) (*EmployeeResponse, error)
+	LinkEmployeeToCompany(ctx context.Context, in *LinkEmployeeToCompanyRequest, opts ...grpc.CallOption) (*LinkEmployeeToCompanyResponse, error)
+	CreateSubscription(ctx context.Context, in *CreateSubscriptionRequest, opts ...grpc.CallOption) (*SubscriptionResponse, error)
 }
 
 type companyServiceClient struct {
@@ -47,11 +55,55 @@ func (c *companyServiceClient) CreateCompany(ctx context.Context, in *CreateComp
 	return out, nil
 }
 
+func (c *companyServiceClient) UpdateCompanyOwner(ctx context.Context, in *UpdateCompanyOwnerRequest, opts ...grpc.CallOption) (*CompanyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CompanyResponse)
+	err := c.cc.Invoke(ctx, CompanyService_UpdateCompanyOwner_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *companyServiceClient) CreateEmployee(ctx context.Context, in *CreateEmployeeRequest, opts ...grpc.CallOption) (*EmployeeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EmployeeResponse)
+	err := c.cc.Invoke(ctx, CompanyService_CreateEmployee_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *companyServiceClient) LinkEmployeeToCompany(ctx context.Context, in *LinkEmployeeToCompanyRequest, opts ...grpc.CallOption) (*LinkEmployeeToCompanyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LinkEmployeeToCompanyResponse)
+	err := c.cc.Invoke(ctx, CompanyService_LinkEmployeeToCompany_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *companyServiceClient) CreateSubscription(ctx context.Context, in *CreateSubscriptionRequest, opts ...grpc.CallOption) (*SubscriptionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SubscriptionResponse)
+	err := c.cc.Invoke(ctx, CompanyService_CreateSubscription_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CompanyServiceServer is the server API for CompanyService service.
 // All implementations must embed UnimplementedCompanyServiceServer
 // for forward compatibility.
 type CompanyServiceServer interface {
 	CreateCompany(context.Context, *CreateCompanyRequest) (*CompanyResponse, error)
+	UpdateCompanyOwner(context.Context, *UpdateCompanyOwnerRequest) (*CompanyResponse, error)
+	CreateEmployee(context.Context, *CreateEmployeeRequest) (*EmployeeResponse, error)
+	LinkEmployeeToCompany(context.Context, *LinkEmployeeToCompanyRequest) (*LinkEmployeeToCompanyResponse, error)
+	CreateSubscription(context.Context, *CreateSubscriptionRequest) (*SubscriptionResponse, error)
 	mustEmbedUnimplementedCompanyServiceServer()
 }
 
@@ -64,6 +116,18 @@ type UnimplementedCompanyServiceServer struct{}
 
 func (UnimplementedCompanyServiceServer) CreateCompany(context.Context, *CreateCompanyRequest) (*CompanyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCompany not implemented")
+}
+func (UnimplementedCompanyServiceServer) UpdateCompanyOwner(context.Context, *UpdateCompanyOwnerRequest) (*CompanyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCompanyOwner not implemented")
+}
+func (UnimplementedCompanyServiceServer) CreateEmployee(context.Context, *CreateEmployeeRequest) (*EmployeeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateEmployee not implemented")
+}
+func (UnimplementedCompanyServiceServer) LinkEmployeeToCompany(context.Context, *LinkEmployeeToCompanyRequest) (*LinkEmployeeToCompanyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LinkEmployeeToCompany not implemented")
+}
+func (UnimplementedCompanyServiceServer) CreateSubscription(context.Context, *CreateSubscriptionRequest) (*SubscriptionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSubscription not implemented")
 }
 func (UnimplementedCompanyServiceServer) mustEmbedUnimplementedCompanyServiceServer() {}
 func (UnimplementedCompanyServiceServer) testEmbeddedByValue()                        {}
@@ -104,6 +168,78 @@ func _CompanyService_CreateCompany_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CompanyService_UpdateCompanyOwner_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCompanyOwnerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompanyServiceServer).UpdateCompanyOwner(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompanyService_UpdateCompanyOwner_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompanyServiceServer).UpdateCompanyOwner(ctx, req.(*UpdateCompanyOwnerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CompanyService_CreateEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateEmployeeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompanyServiceServer).CreateEmployee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompanyService_CreateEmployee_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompanyServiceServer).CreateEmployee(ctx, req.(*CreateEmployeeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CompanyService_LinkEmployeeToCompany_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LinkEmployeeToCompanyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompanyServiceServer).LinkEmployeeToCompany(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompanyService_LinkEmployeeToCompany_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompanyServiceServer).LinkEmployeeToCompany(ctx, req.(*LinkEmployeeToCompanyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CompanyService_CreateSubscription_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSubscriptionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompanyServiceServer).CreateSubscription(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CompanyService_CreateSubscription_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompanyServiceServer).CreateSubscription(ctx, req.(*CreateSubscriptionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CompanyService_ServiceDesc is the grpc.ServiceDesc for CompanyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +250,22 @@ var CompanyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCompany",
 			Handler:    _CompanyService_CreateCompany_Handler,
+		},
+		{
+			MethodName: "UpdateCompanyOwner",
+			Handler:    _CompanyService_UpdateCompanyOwner_Handler,
+		},
+		{
+			MethodName: "CreateEmployee",
+			Handler:    _CompanyService_CreateEmployee_Handler,
+		},
+		{
+			MethodName: "LinkEmployeeToCompany",
+			Handler:    _CompanyService_LinkEmployeeToCompany_Handler,
+		},
+		{
+			MethodName: "CreateSubscription",
+			Handler:    _CompanyService_CreateSubscription_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

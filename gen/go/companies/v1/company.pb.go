@@ -26,7 +26,6 @@ type CreateCompanyRequest struct {
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	OwnerId       string                 `protobuf:"bytes,4,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -82,7 +81,52 @@ func (x *CreateCompanyRequest) GetDescription() string {
 	return ""
 }
 
-func (x *CreateCompanyRequest) GetOwnerId() string {
+type UpdateCompanyOwnerRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CompanyId     string                 `protobuf:"bytes,1,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	OwnerId       string                 `protobuf:"bytes,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateCompanyOwnerRequest) Reset() {
+	*x = UpdateCompanyOwnerRequest{}
+	mi := &file_companies_v1_company_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateCompanyOwnerRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateCompanyOwnerRequest) ProtoMessage() {}
+
+func (x *UpdateCompanyOwnerRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateCompanyOwnerRequest.ProtoReflect.Descriptor instead.
+func (*UpdateCompanyOwnerRequest) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *UpdateCompanyOwnerRequest) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
+func (x *UpdateCompanyOwnerRequest) GetOwnerId() string {
 	if x != nil {
 		return x.OwnerId
 	}
@@ -96,14 +140,15 @@ type CompanyResponse struct {
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	IsActive      bool                   `protobuf:"varint,5,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
-	CreatedAt     int64                  `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	OwnerId       *string                `protobuf:"bytes,6,opt,name=owner_id,json=ownerId,proto3,oneof" json:"owner_id,omitempty"`
+	CreatedAt     int64                  `protobuf:"varint,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CompanyResponse) Reset() {
 	*x = CompanyResponse{}
-	mi := &file_companies_v1_company_proto_msgTypes[1]
+	mi := &file_companies_v1_company_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -115,7 +160,7 @@ func (x *CompanyResponse) String() string {
 func (*CompanyResponse) ProtoMessage() {}
 
 func (x *CompanyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_companies_v1_company_proto_msgTypes[1]
+	mi := &file_companies_v1_company_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -128,7 +173,7 @@ func (x *CompanyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CompanyResponse.ProtoReflect.Descriptor instead.
 func (*CompanyResponse) Descriptor() ([]byte, []int) {
-	return file_companies_v1_company_proto_rawDescGZIP(), []int{1}
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CompanyResponse) GetId() string {
@@ -166,7 +211,406 @@ func (x *CompanyResponse) GetIsActive() bool {
 	return false
 }
 
+func (x *CompanyResponse) GetOwnerId() string {
+	if x != nil && x.OwnerId != nil {
+		return *x.OwnerId
+	}
+	return ""
+}
+
 func (x *CompanyResponse) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+type CreateEmployeeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	FirstName     *string                `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3,oneof" json:"first_name,omitempty"`
+	LastName      *string                `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3,oneof" json:"last_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateEmployeeRequest) Reset() {
+	*x = CreateEmployeeRequest{}
+	mi := &file_companies_v1_company_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateEmployeeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateEmployeeRequest) ProtoMessage() {}
+
+func (x *CreateEmployeeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateEmployeeRequest.ProtoReflect.Descriptor instead.
+func (*CreateEmployeeRequest) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CreateEmployeeRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *CreateEmployeeRequest) GetFirstName() string {
+	if x != nil && x.FirstName != nil {
+		return *x.FirstName
+	}
+	return ""
+}
+
+func (x *CreateEmployeeRequest) GetLastName() string {
+	if x != nil && x.LastName != nil {
+		return *x.LastName
+	}
+	return ""
+}
+
+type EmployeeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	FirstName     *string                `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3,oneof" json:"first_name,omitempty"`
+	LastName      *string                `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3,oneof" json:"last_name,omitempty"`
+	IsActive      bool                   `protobuf:"varint,5,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	CreatedAt     int64                  `protobuf:"varint,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EmployeeResponse) Reset() {
+	*x = EmployeeResponse{}
+	mi := &file_companies_v1_company_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EmployeeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EmployeeResponse) ProtoMessage() {}
+
+func (x *EmployeeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EmployeeResponse.ProtoReflect.Descriptor instead.
+func (*EmployeeResponse) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *EmployeeResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *EmployeeResponse) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *EmployeeResponse) GetFirstName() string {
+	if x != nil && x.FirstName != nil {
+		return *x.FirstName
+	}
+	return ""
+}
+
+func (x *EmployeeResponse) GetLastName() string {
+	if x != nil && x.LastName != nil {
+		return *x.LastName
+	}
+	return ""
+}
+
+func (x *EmployeeResponse) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
+}
+
+func (x *EmployeeResponse) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+type LinkEmployeeToCompanyRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EmployeeId    string                 `protobuf:"bytes,1,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
+	CompanyId     string                 `protobuf:"bytes,2,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LinkEmployeeToCompanyRequest) Reset() {
+	*x = LinkEmployeeToCompanyRequest{}
+	mi := &file_companies_v1_company_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LinkEmployeeToCompanyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LinkEmployeeToCompanyRequest) ProtoMessage() {}
+
+func (x *LinkEmployeeToCompanyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LinkEmployeeToCompanyRequest.ProtoReflect.Descriptor instead.
+func (*LinkEmployeeToCompanyRequest) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *LinkEmployeeToCompanyRequest) GetEmployeeId() string {
+	if x != nil {
+		return x.EmployeeId
+	}
+	return ""
+}
+
+func (x *LinkEmployeeToCompanyRequest) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
+type LinkEmployeeToCompanyResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	EmployeeId    string                 `protobuf:"bytes,2,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
+	CompanyId     string                 `protobuf:"bytes,3,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	CreatedAt     int64                  `protobuf:"varint,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LinkEmployeeToCompanyResponse) Reset() {
+	*x = LinkEmployeeToCompanyResponse{}
+	mi := &file_companies_v1_company_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LinkEmployeeToCompanyResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LinkEmployeeToCompanyResponse) ProtoMessage() {}
+
+func (x *LinkEmployeeToCompanyResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LinkEmployeeToCompanyResponse.ProtoReflect.Descriptor instead.
+func (*LinkEmployeeToCompanyResponse) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *LinkEmployeeToCompanyResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *LinkEmployeeToCompanyResponse) GetEmployeeId() string {
+	if x != nil {
+		return x.EmployeeId
+	}
+	return ""
+}
+
+func (x *LinkEmployeeToCompanyResponse) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
+func (x *LinkEmployeeToCompanyResponse) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+type CreateSubscriptionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CompanyId     string                 `protobuf:"bytes,1,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	ServiceId     string                 `protobuf:"bytes,2,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateSubscriptionRequest) Reset() {
+	*x = CreateSubscriptionRequest{}
+	mi := &file_companies_v1_company_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateSubscriptionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSubscriptionRequest) ProtoMessage() {}
+
+func (x *CreateSubscriptionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSubscriptionRequest.ProtoReflect.Descriptor instead.
+func (*CreateSubscriptionRequest) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *CreateSubscriptionRequest) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
+func (x *CreateSubscriptionRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+type SubscriptionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CompanyId     string                 `protobuf:"bytes,2,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	ServiceId     string                 `protobuf:"bytes,3,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	IsActive      bool                   `protobuf:"varint,4,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	CreatedAt     int64                  `protobuf:"varint,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SubscriptionResponse) Reset() {
+	*x = SubscriptionResponse{}
+	mi := &file_companies_v1_company_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubscriptionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubscriptionResponse) ProtoMessage() {}
+
+func (x *SubscriptionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_companies_v1_company_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubscriptionResponse.ProtoReflect.Descriptor instead.
+func (*SubscriptionResponse) Descriptor() ([]byte, []int) {
+	return file_companies_v1_company_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *SubscriptionResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *SubscriptionResponse) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
+func (x *SubscriptionResponse) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+func (x *SubscriptionResponse) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
+}
+
+func (x *SubscriptionResponse) GetCreatedAt() int64 {
 	if x != nil {
 		return x.CreatedAt
 	}
@@ -177,24 +621,80 @@ var File_companies_v1_company_proto protoreflect.FileDescriptor
 
 const file_companies_v1_company_proto_rawDesc = "" +
 	"\n" +
-	"\x1acompanies/v1/company.proto\x12\fcompanies.v1\"\x92\x01\n" +
+	"\x1acompanies/v1/company.proto\x12\fcompanies.v1\"w\n" +
 	"\x14CreateCompanyRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12%\n" +
-	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x19\n" +
-	"\bowner_id\x18\x04 \x01(\tR\aownerIdB\x0e\n" +
-	"\f_description\"\xbe\x01\n" +
+	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01B\x0e\n" +
+	"\f_description\"U\n" +
+	"\x19UpdateCompanyOwnerRequest\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x01 \x01(\tR\tcompanyId\x12\x19\n" +
+	"\bowner_id\x18\x02 \x01(\tR\aownerId\"\xeb\x01\n" +
 	"\x0fCompanyResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12%\n" +
 	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1b\n" +
+	"\tis_active\x18\x05 \x01(\bR\bisActive\x12\x1e\n" +
+	"\bowner_id\x18\x06 \x01(\tH\x01R\aownerId\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\a \x01(\x03R\tcreatedAtB\x0e\n" +
+	"\f_descriptionB\v\n" +
+	"\t_owner_id\"\x90\x01\n" +
+	"\x15CreateEmployeeRequest\x12\x14\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\"\n" +
+	"\n" +
+	"first_name\x18\x02 \x01(\tH\x00R\tfirstName\x88\x01\x01\x12 \n" +
+	"\tlast_name\x18\x03 \x01(\tH\x01R\blastName\x88\x01\x01B\r\n" +
+	"\v_first_nameB\f\n" +
+	"\n" +
+	"_last_name\"\xd7\x01\n" +
+	"\x10EmployeeResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\"\n" +
+	"\n" +
+	"first_name\x18\x03 \x01(\tH\x00R\tfirstName\x88\x01\x01\x12 \n" +
+	"\tlast_name\x18\x04 \x01(\tH\x01R\blastName\x88\x01\x01\x12\x1b\n" +
 	"\tis_active\x18\x05 \x01(\bR\bisActive\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\x03R\tcreatedAtB\x0e\n" +
-	"\f_description2d\n" +
+	"created_at\x18\x06 \x01(\x03R\tcreatedAtB\r\n" +
+	"\v_first_nameB\f\n" +
+	"\n" +
+	"_last_name\"^\n" +
+	"\x1cLinkEmployeeToCompanyRequest\x12\x1f\n" +
+	"\vemployee_id\x18\x01 \x01(\tR\n" +
+	"employeeId\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x02 \x01(\tR\tcompanyId\"\x8e\x01\n" +
+	"\x1dLinkEmployeeToCompanyResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vemployee_id\x18\x02 \x01(\tR\n" +
+	"employeeId\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x03 \x01(\tR\tcompanyId\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x04 \x01(\x03R\tcreatedAt\"Y\n" +
+	"\x19CreateSubscriptionRequest\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x01 \x01(\tR\tcompanyId\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x02 \x01(\tR\tserviceId\"\xa0\x01\n" +
+	"\x14SubscriptionResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x02 \x01(\tR\tcompanyId\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x03 \x01(\tR\tserviceId\x12\x1b\n" +
+	"\tis_active\x18\x04 \x01(\bR\bisActive\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x05 \x01(\x03R\tcreatedAt2\xee\x03\n" +
 	"\x0eCompanyService\x12R\n" +
-	"\rCreateCompany\x12\".companies.v1.CreateCompanyRequest\x1a\x1d.companies.v1.CompanyResponseB\xaf\x01\n" +
+	"\rCreateCompany\x12\".companies.v1.CreateCompanyRequest\x1a\x1d.companies.v1.CompanyResponse\x12\\\n" +
+	"\x12UpdateCompanyOwner\x12'.companies.v1.UpdateCompanyOwnerRequest\x1a\x1d.companies.v1.CompanyResponse\x12U\n" +
+	"\x0eCreateEmployee\x12#.companies.v1.CreateEmployeeRequest\x1a\x1e.companies.v1.EmployeeResponse\x12p\n" +
+	"\x15LinkEmployeeToCompany\x12*.companies.v1.LinkEmployeeToCompanyRequest\x1a+.companies.v1.LinkEmployeeToCompanyResponse\x12a\n" +
+	"\x12CreateSubscription\x12'.companies.v1.CreateSubscriptionRequest\x1a\".companies.v1.SubscriptionResponseB\xaf\x01\n" +
 	"\x10com.companies.v1B\fCompanyProtoP\x01Z<github.com/ssoeasy-dev/proto/gen/go/companies/v1;companiesv1\xa2\x02\x03CXX\xaa\x02\fCompanies.V1\xca\x02\fCompanies\\V1\xe2\x02\x18Companies\\V1\\GPBMetadata\xea\x02\rCompanies::V1b\x06proto3"
 
 var (
@@ -209,16 +709,31 @@ func file_companies_v1_company_proto_rawDescGZIP() []byte {
 	return file_companies_v1_company_proto_rawDescData
 }
 
-var file_companies_v1_company_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_companies_v1_company_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_companies_v1_company_proto_goTypes = []any{
-	(*CreateCompanyRequest)(nil), // 0: companies.v1.CreateCompanyRequest
-	(*CompanyResponse)(nil),      // 1: companies.v1.CompanyResponse
+	(*CreateCompanyRequest)(nil),          // 0: companies.v1.CreateCompanyRequest
+	(*UpdateCompanyOwnerRequest)(nil),     // 1: companies.v1.UpdateCompanyOwnerRequest
+	(*CompanyResponse)(nil),               // 2: companies.v1.CompanyResponse
+	(*CreateEmployeeRequest)(nil),         // 3: companies.v1.CreateEmployeeRequest
+	(*EmployeeResponse)(nil),              // 4: companies.v1.EmployeeResponse
+	(*LinkEmployeeToCompanyRequest)(nil),  // 5: companies.v1.LinkEmployeeToCompanyRequest
+	(*LinkEmployeeToCompanyResponse)(nil), // 6: companies.v1.LinkEmployeeToCompanyResponse
+	(*CreateSubscriptionRequest)(nil),     // 7: companies.v1.CreateSubscriptionRequest
+	(*SubscriptionResponse)(nil),          // 8: companies.v1.SubscriptionResponse
 }
 var file_companies_v1_company_proto_depIdxs = []int32{
 	0, // 0: companies.v1.CompanyService.CreateCompany:input_type -> companies.v1.CreateCompanyRequest
-	1, // 1: companies.v1.CompanyService.CreateCompany:output_type -> companies.v1.CompanyResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	1, // 1: companies.v1.CompanyService.UpdateCompanyOwner:input_type -> companies.v1.UpdateCompanyOwnerRequest
+	3, // 2: companies.v1.CompanyService.CreateEmployee:input_type -> companies.v1.CreateEmployeeRequest
+	5, // 3: companies.v1.CompanyService.LinkEmployeeToCompany:input_type -> companies.v1.LinkEmployeeToCompanyRequest
+	7, // 4: companies.v1.CompanyService.CreateSubscription:input_type -> companies.v1.CreateSubscriptionRequest
+	2, // 5: companies.v1.CompanyService.CreateCompany:output_type -> companies.v1.CompanyResponse
+	2, // 6: companies.v1.CompanyService.UpdateCompanyOwner:output_type -> companies.v1.CompanyResponse
+	4, // 7: companies.v1.CompanyService.CreateEmployee:output_type -> companies.v1.EmployeeResponse
+	6, // 8: companies.v1.CompanyService.LinkEmployeeToCompany:output_type -> companies.v1.LinkEmployeeToCompanyResponse
+	8, // 9: companies.v1.CompanyService.CreateSubscription:output_type -> companies.v1.SubscriptionResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -230,14 +745,16 @@ func file_companies_v1_company_proto_init() {
 		return
 	}
 	file_companies_v1_company_proto_msgTypes[0].OneofWrappers = []any{}
-	file_companies_v1_company_proto_msgTypes[1].OneofWrappers = []any{}
+	file_companies_v1_company_proto_msgTypes[2].OneofWrappers = []any{}
+	file_companies_v1_company_proto_msgTypes[3].OneofWrappers = []any{}
+	file_companies_v1_company_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_companies_v1_company_proto_rawDesc), len(file_companies_v1_company_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

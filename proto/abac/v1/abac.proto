@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package abac.v1;
+
+service AbacService {
+  rpc CreateEmployeeAttribute(CreateEmployeeAttributeRequest) returns (CreateEmployeeAttributeResponse);
+}
+
+message CreateEmployeeAttributeRequest {
+  string employee_id = 1;
+  string company_id = 2;
+  string attribute_name = 3;
+  string attribute_value = 4;
+}
+
+message CreateEmployeeAttributeResponse {
+  string id = 1;
+  string employee_id = 2;
+  string company_id = 3;
+  string attribute_id = 4;
+  string value = 5;
+  int64 created_at = 6;
+}
+
