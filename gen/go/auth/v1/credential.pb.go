@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        (unknown)
-// source: auth/v1/create_credential.proto
+// source: auth/v1/credential.proto
 
 package authv1
 
@@ -32,7 +32,7 @@ type CreateCredentialsRequest struct {
 
 func (x *CreateCredentialsRequest) Reset() {
 	*x = CreateCredentialsRequest{}
-	mi := &file_auth_v1_create_credential_proto_msgTypes[0]
+	mi := &file_auth_v1_credential_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +44,7 @@ func (x *CreateCredentialsRequest) String() string {
 func (*CreateCredentialsRequest) ProtoMessage() {}
 
 func (x *CreateCredentialsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_create_credential_proto_msgTypes[0]
+	mi := &file_auth_v1_credential_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +57,7 @@ func (x *CreateCredentialsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCredentialsRequest.ProtoReflect.Descriptor instead.
 func (*CreateCredentialsRequest) Descriptor() ([]byte, []int) {
-	return file_auth_v1_create_credential_proto_rawDescGZIP(), []int{0}
+	return file_auth_v1_credential_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *CreateCredentialsRequest) GetEmployeeId() string {
@@ -83,7 +83,7 @@ type CreateCredentialsResponse struct {
 
 func (x *CreateCredentialsResponse) Reset() {
 	*x = CreateCredentialsResponse{}
-	mi := &file_auth_v1_create_credential_proto_msgTypes[1]
+	mi := &file_auth_v1_credential_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -95,7 +95,7 @@ func (x *CreateCredentialsResponse) String() string {
 func (*CreateCredentialsResponse) ProtoMessage() {}
 
 func (x *CreateCredentialsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_create_credential_proto_msgTypes[1]
+	mi := &file_auth_v1_credential_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -108,7 +108,7 @@ func (x *CreateCredentialsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCredentialsResponse.ProtoReflect.Descriptor instead.
 func (*CreateCredentialsResponse) Descriptor() ([]byte, []int) {
-	return file_auth_v1_create_credential_proto_rawDescGZIP(), []int{1}
+	return file_auth_v1_credential_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CreateCredentialsResponse) GetCredential() *models.Credential {
@@ -127,7 +127,7 @@ type CreateCredentialsCompinsateRequest struct {
 
 func (x *CreateCredentialsCompinsateRequest) Reset() {
 	*x = CreateCredentialsCompinsateRequest{}
-	mi := &file_auth_v1_create_credential_proto_msgTypes[2]
+	mi := &file_auth_v1_credential_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -139,7 +139,7 @@ func (x *CreateCredentialsCompinsateRequest) String() string {
 func (*CreateCredentialsCompinsateRequest) ProtoMessage() {}
 
 func (x *CreateCredentialsCompinsateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_create_credential_proto_msgTypes[2]
+	mi := &file_auth_v1_credential_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -152,7 +152,7 @@ func (x *CreateCredentialsCompinsateRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use CreateCredentialsCompinsateRequest.ProtoReflect.Descriptor instead.
 func (*CreateCredentialsCompinsateRequest) Descriptor() ([]byte, []int) {
-	return file_auth_v1_create_credential_proto_rawDescGZIP(), []int{2}
+	return file_auth_v1_credential_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateCredentialsCompinsateRequest) GetCredentialId() string {
@@ -172,7 +172,7 @@ type CreateCredentialsCompinsateResponse struct {
 
 func (x *CreateCredentialsCompinsateResponse) Reset() {
 	*x = CreateCredentialsCompinsateResponse{}
-	mi := &file_auth_v1_create_credential_proto_msgTypes[3]
+	mi := &file_auth_v1_credential_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -184,7 +184,7 @@ func (x *CreateCredentialsCompinsateResponse) String() string {
 func (*CreateCredentialsCompinsateResponse) ProtoMessage() {}
 
 func (x *CreateCredentialsCompinsateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_create_credential_proto_msgTypes[3]
+	mi := &file_auth_v1_credential_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -197,7 +197,7 @@ func (x *CreateCredentialsCompinsateResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use CreateCredentialsCompinsateResponse.ProtoReflect.Descriptor instead.
 func (*CreateCredentialsCompinsateResponse) Descriptor() ([]byte, []int) {
-	return file_auth_v1_create_credential_proto_rawDescGZIP(), []int{3}
+	return file_auth_v1_credential_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateCredentialsCompinsateResponse) GetSuccess() bool {
@@ -214,11 +214,11 @@ func (x *CreateCredentialsCompinsateResponse) GetMessage() string {
 	return ""
 }
 
-var File_auth_v1_create_credential_proto protoreflect.FileDescriptor
+var File_auth_v1_credential_proto protoreflect.FileDescriptor
 
-const file_auth_v1_create_credential_proto_rawDesc = "" +
+const file_auth_v1_credential_proto_rawDesc = "" +
 	"\n" +
-	"\x1fauth/v1/create_credential.proto\x12\aauth.v1\x1a\x1fauth/v1/models/credential.proto\"W\n" +
+	"\x18auth/v1/credential.proto\x12\aauth.v1\x1a\x1fauth/v1/models/credential.proto\"W\n" +
 	"\x18CreateCredentialsRequest\x12\x1f\n" +
 	"\vemployee_id\x18\x01 \x01(\tR\n" +
 	"employeeId\x12\x1a\n" +
@@ -231,58 +231,65 @@ const file_auth_v1_create_credential_proto_rawDesc = "" +
 	"\rcredential_id\x18\x01 \x01(\tR\fcredentialId\"Y\n" +
 	"#CreateCredentialsCompinsateResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessageB\x95\x01\n" +
-	"\vcom.auth.v1B\x15CreateCredentialProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
+	"\amessage\x18\x02 \x01(\tR\amessage2\xe9\x01\n" +
+	"\x11CredentialService\x12Z\n" +
+	"\x11CreateCredentials\x12!.auth.v1.CreateCredentialsRequest\x1a\".auth.v1.CreateCredentialsResponse\x12x\n" +
+	"\x1bCreateCredentialsCompinsate\x12+.auth.v1.CreateCredentialsCompinsateRequest\x1a,.auth.v1.CreateCredentialsCompinsateResponseB\x8f\x01\n" +
+	"\vcom.auth.v1B\x0fCredentialProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var (
-	file_auth_v1_create_credential_proto_rawDescOnce sync.Once
-	file_auth_v1_create_credential_proto_rawDescData []byte
+	file_auth_v1_credential_proto_rawDescOnce sync.Once
+	file_auth_v1_credential_proto_rawDescData []byte
 )
 
-func file_auth_v1_create_credential_proto_rawDescGZIP() []byte {
-	file_auth_v1_create_credential_proto_rawDescOnce.Do(func() {
-		file_auth_v1_create_credential_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_auth_v1_create_credential_proto_rawDesc), len(file_auth_v1_create_credential_proto_rawDesc)))
+func file_auth_v1_credential_proto_rawDescGZIP() []byte {
+	file_auth_v1_credential_proto_rawDescOnce.Do(func() {
+		file_auth_v1_credential_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_auth_v1_credential_proto_rawDesc), len(file_auth_v1_credential_proto_rawDesc)))
 	})
-	return file_auth_v1_create_credential_proto_rawDescData
+	return file_auth_v1_credential_proto_rawDescData
 }
 
-var file_auth_v1_create_credential_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_auth_v1_create_credential_proto_goTypes = []any{
+var file_auth_v1_credential_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_auth_v1_credential_proto_goTypes = []any{
 	(*CreateCredentialsRequest)(nil),            // 0: auth.v1.CreateCredentialsRequest
 	(*CreateCredentialsResponse)(nil),           // 1: auth.v1.CreateCredentialsResponse
 	(*CreateCredentialsCompinsateRequest)(nil),  // 2: auth.v1.CreateCredentialsCompinsateRequest
 	(*CreateCredentialsCompinsateResponse)(nil), // 3: auth.v1.CreateCredentialsCompinsateResponse
 	(*models.Credential)(nil),                   // 4: auth.v1.models.Credential
 }
-var file_auth_v1_create_credential_proto_depIdxs = []int32{
+var file_auth_v1_credential_proto_depIdxs = []int32{
 	4, // 0: auth.v1.CreateCredentialsResponse.credential:type_name -> auth.v1.models.Credential
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
+	0, // 1: auth.v1.CredentialService.CreateCredentials:input_type -> auth.v1.CreateCredentialsRequest
+	2, // 2: auth.v1.CredentialService.CreateCredentialsCompinsate:input_type -> auth.v1.CreateCredentialsCompinsateRequest
+	1, // 3: auth.v1.CredentialService.CreateCredentials:output_type -> auth.v1.CreateCredentialsResponse
+	3, // 4: auth.v1.CredentialService.CreateCredentialsCompinsate:output_type -> auth.v1.CreateCredentialsCompinsateResponse
+	3, // [3:5] is the sub-list for method output_type
+	1, // [1:3] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_auth_v1_create_credential_proto_init() }
-func file_auth_v1_create_credential_proto_init() {
-	if File_auth_v1_create_credential_proto != nil {
+func init() { file_auth_v1_credential_proto_init() }
+func file_auth_v1_credential_proto_init() {
+	if File_auth_v1_credential_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_v1_create_credential_proto_rawDesc), len(file_auth_v1_create_credential_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_v1_credential_proto_rawDesc), len(file_auth_v1_credential_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
-		GoTypes:           file_auth_v1_create_credential_proto_goTypes,
-		DependencyIndexes: file_auth_v1_create_credential_proto_depIdxs,
-		MessageInfos:      file_auth_v1_create_credential_proto_msgTypes,
+		GoTypes:           file_auth_v1_credential_proto_goTypes,
+		DependencyIndexes: file_auth_v1_credential_proto_depIdxs,
+		MessageInfos:      file_auth_v1_credential_proto_msgTypes,
 	}.Build()
-	File_auth_v1_create_credential_proto = out.File
-	file_auth_v1_create_credential_proto_goTypes = nil
-	file_auth_v1_create_credential_proto_depIdxs = nil
+	File_auth_v1_credential_proto = out.File
+	file_auth_v1_credential_proto_goTypes = nil
+	file_auth_v1_credential_proto_depIdxs = nil
 }

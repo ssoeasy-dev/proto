@@ -4,6 +4,11 @@ package abac.v1;
 
 import "abac/v1/models/employee_attribute.proto";
 
+service EmployeeAttributeService {
+  rpc CreateEmployeeAttribute(CreateEmployeeAttributeRequest) returns (CreateEmployeeAttributeResponse);
+  rpc CreateEmployeeAttributeCompinsate(CreateEmployeeAttributeCompinsateRequest) returns (CreateEmployeeAttributeCompinsateResponse);
+}
+
 message CreateEmployeeAttributeRequest {
   string employee_id = 1;
   string company_id = 2;

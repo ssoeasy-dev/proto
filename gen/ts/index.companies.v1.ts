@@ -6,5 +6,4 @@
 /* eslint-disable */
 
 export * as models from "./index.companies.v1.models";
-export * from "./companies/v1/registration";
-export * from "./companies/v1/index";
+export * from "./companies/v1/owner";

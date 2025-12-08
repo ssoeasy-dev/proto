@@ -6,5 +6,4 @@
 /* eslint-disable */
 
 export * as models from "./index.abac.v1.models";
-export * from "./abac/v1/create_employee_attribute";
-export * from "./abac/v1/index";
+export * from "./abac/v1/employee_attribute";

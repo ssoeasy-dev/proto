@@ -14,8 +14,6 @@ generate-go: validate-proto ## Генерировать Go код из proto
 generate-ts: validate-proto ## Генерировать TypeScript код из proto
 	@echo "🔨 Генерация TypeScript кода..."
 	buf generate --template buf.gen.ts.yaml
-	@echo "📄 Создание index файлов..."
-	node scripts/generate-index.js
 	@echo "✅ TypeScript код сгенерирован в gen/ts/"
 	@echo "📊 Статистика:"
 	@find gen/ts -name "*.ts" | wc -l | xargs echo "  - Файлов TypeScript:"
@@ -68,10 +66,27 @@ tag: ## Создать git tag (использовать: make tag VERSION=v1.2.
 	git tag -a $(VERSION) -m "Release $(VERSION)"
 	git push origin $(VERSION)
 	@echo "✅ Тег $(VERSION) создан и отправлен"
+	@echo "📦 Для публикации npm пакета используйте: make publish-npm VERSION=$(VERSION)"
 
-publish: generate-ts ## Публикация npm пакета
+sync-version: ## Синхронизировать версию package.json с git тегом (использовать: make sync-version VERSION=v1.2.3)
+	@if [ -z "$(VERSION)" ]; then \
+		echo "🔄 Определение версии из git тега..."; \
+		./scripts/sync-version.sh; \
+	else \
+		./scripts/sync-version.sh $(VERSION); \
+	fi
+
+publish-npm: generate-ts sync-version ## Публикация npm пакета (использовать: make publish-npm VERSION=v1.2.3)
+	@if [ -z "$(VERSION)" ]; then \
+		echo "🔄 Определение версии из git тега..."; \
+		./scripts/sync-version.sh; \
+	else \
+		./scripts/sync-version.sh $(VERSION); \
+	fi
 	@echo "🚀 Публикация npm пакета..."
 	pnpm publish --no-git-checks
 	@echo "✅ Пакет опубликован!"
+
+publish: publish-npm ## Публикация npm пакета (alias для publish-npm)
 
 .DEFAULT_GOAL := help

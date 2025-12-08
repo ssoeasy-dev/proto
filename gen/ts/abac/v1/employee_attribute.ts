@@ -2,10 +2,11 @@
 // versions:
 //   protoc-gen-ts_proto  v2.6.1
 //   protoc               unknown
-// source: abac/v1/create_employee_attribute.proto
+// source: abac/v1/employee_attribute.proto
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { type CallContext, type CallOptions } from "nice-grpc-common";
 import { EmployeeAttribute } from "./models/employee_attribute";
 
 export interface CreateEmployeeAttributeRequest {
@@ -399,6 +400,52 @@ export const CreateEmployeeAttributeCompinsateResponse: MessageFns<
     return message;
   },
 };
+
+export type EmployeeAttributeServiceDefinition = typeof EmployeeAttributeServiceDefinition;
+export const EmployeeAttributeServiceDefinition = {
+  name: "EmployeeAttributeService",
+  fullName: "abac.v1.EmployeeAttributeService",
+  methods: {
+    createEmployeeAttribute: {
+      name: "CreateEmployeeAttribute",
+      requestType: CreateEmployeeAttributeRequest,
+      requestStream: false,
+      responseType: CreateEmployeeAttributeResponse,
+      responseStream: false,
+      options: {},
+    },
+    createEmployeeAttributeCompinsate: {
+      name: "CreateEmployeeAttributeCompinsate",
+      requestType: CreateEmployeeAttributeCompinsateRequest,
+      requestStream: false,
+      responseType: CreateEmployeeAttributeCompinsateResponse,
+      responseStream: false,
+      options: {},
+    },
+  },
+} as const;
+
+export interface EmployeeAttributeServiceImplementation<CallContextExt = {}> {
+  createEmployeeAttribute(
+    request: CreateEmployeeAttributeRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<CreateEmployeeAttributeResponse>>;
+  createEmployeeAttributeCompinsate(
+    request: CreateEmployeeAttributeCompinsateRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<CreateEmployeeAttributeCompinsateResponse>>;
+}
+
+export interface EmployeeAttributeServiceClient<CallOptionsExt = {}> {
+  createEmployeeAttribute(
+    request: DeepPartial<CreateEmployeeAttributeRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<CreateEmployeeAttributeResponse>;
+  createEmployeeAttributeCompinsate(
+    request: DeepPartial<CreateEmployeeAttributeCompinsateRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<CreateEmployeeAttributeCompinsateResponse>;
+}
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 

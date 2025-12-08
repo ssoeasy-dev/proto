@@ -14,12 +14,19 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      id-token: write
     steps:
       - name: Checkout PR Branch
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Create/Update Dev Tag
         run: |
@@ -54,6 +61,61 @@ jobs:
           echo ""
           echo "📋 Use in your services:"
           echo "   go get github.com/${{ github.repository }}@$TAG_NAME"
+          
+          # Сохраняем значения для следующих шагов
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate TypeScript code
+        run: pnpm generate
+
+      - name: Create npm dev version
+        id: npm-version
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          COMMIT_SHORT="${{ github.event.pull_request.head.sha }}"
+          COMMIT_SHORT="${COMMIT_SHORT:0:7}"
+          TIMESTAMP=$(date +%s)
+          
+          # Создаем валидную npm версию: 0.0.0-dev.<timestamp>.<commit-short>
+          # Нормализуем имя ветки для использования в dist-tag
+          BRANCH_NORMALIZED="${BRANCH_NAME//\//-}"
+          BRANCH_NORMALIZED="${BRANCH_NORMALIZED//_/-}"
+          BRANCH_NORMALIZED=$(echo "$BRANCH_NORMALIZED" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g')
+          
+          NPM_VERSION="0.0.0-dev.${TIMESTAMP}.${COMMIT_SHORT}"
+          NPM_DIST_TAG="dev-${BRANCH_NORMALIZED}"
+          
+          echo "📦 NPM version: $NPM_VERSION"
+          echo "🏷️  NPM dist-tag: $NPM_DIST_TAG"
+          
+          echo "npm_version=$NPM_VERSION" >> $GITHUB_OUTPUT
+          echo "npm_dist_tag=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
+          
+          # Обновляем package.json
+          node -e "
+          const fs = require('fs');
+          const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          package.version = '$NPM_VERSION';
+          fs.writeFileSync('package.json', JSON.stringify(package, null, 2) + '\n');
+          "
+
+      - name: Publish npm dev version
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm publish."
+            echo "To enable npm publishing, add NPM_TOKEN secret to GitHub repository settings."
+            exit 0
+          fi
+          pnpm publish --no-git-checks --tag ${{ steps.npm-version.outputs.npm_dist_tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Comment on PR (create/update)
         uses: actions/github-script@v7
@@ -74,12 +136,15 @@ jobs:
               message = `Dev version \`${tagName}\` has been created for this PR.`;
             }
             
+            const npmVersion = '${{ steps.npm-version.outputs.npm_version }}';
+            const npmDistTag = '${{ steps.npm-version.outputs.npm_dist_tag }}';
+            
             const body = [
               `## ${title}`,
               '',
               message,
               '',
-              '**Usage in your services:**',
+              '**Usage in Go services:**',
               '```bash',
               `go get github.com/${repoFullName}@${tagName}`,
               '```',
@@ -88,6 +153,13 @@ jobs:
               '```go',
               `require github.com/${repoFullName} ${tagName}`,
               '```',
+              '',
+              '**Usage in TypeScript/JavaScript:**',
+              '```bash',
+              `npm install @ssoeasy-dev/proto@${npmDistTag}`,
+              '```',
+              '',
+              `**NPM version:** \`${npmVersion}\``,
               '',
               '> ⚠️ This is a temporary development version. It will be automatically updated on each push and deleted after merging this PR.'
             ].join('\n');
@@ -130,13 +202,21 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
       - name: Delete Dev Tag
+        id: delete-tag
         run: |
           BRANCH_NAME="${{ github.head_ref }}"
           TAG_NAME="dev-${BRANCH_NAME//\//-}"
@@ -152,6 +232,36 @@ jobs:
           }
           
           echo "✅ Dev version $TAG_NAME deleted"
+          
+          # Нормализуем имя ветки для npm dist-tag
+          BRANCH_NORMALIZED="${BRANCH_NAME//\//-}"
+          BRANCH_NORMALIZED="${BRANCH_NORMALIZED//_/-}"
+          BRANCH_NORMALIZED=$(echo "$BRANCH_NORMALIZED" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g')
+          NPM_DIST_TAG="dev-${BRANCH_NORMALIZED}"
+          
+          echo "npm_dist_tag=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
+
+      - name: Unpublish npm dev version
+        if: github.event.pull_request.merged == false
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm unpublish."
+            exit 0
+          fi
+          
+          NPM_DIST_TAG="${{ steps.delete-tag.outputs.npm_dist_tag }}"
+          echo "🗑️  Attempting to unpublish npm versions with dist-tag: $NPM_DIST_TAG"
+          
+          # Получаем список версий с этим dist-tag
+          # Примечание: npm не позволяет удалять версии напрямую, но можно удалить dist-tag
+          # Версии останутся в registry, но не будут доступны через dist-tag
+          npm dist-tag rm @ssoeasy-dev/proto "$NPM_DIST_TAG" 2>/dev/null || {
+            echo "⚠️  Could not remove dist-tag $NPM_DIST_TAG (may not exist)"
+          }
+          
+          echo "✅ NPM dist-tag $NPM_DIST_TAG removed"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create Beta Version (if merged to develop)
         if: github.event.pull_request.merged == true && github.base_ref == 'develop'
@@ -194,15 +304,22 @@ jobs:
             const betaVersion = '${{ steps.beta.outputs.version }}';
             const repoFullName = `${context.repo.owner}/${context.repo.repo}`;
             
+            const npmBetaVersion = betaVersion.replace(/^v/, '');
+            
             const body = [
               '## ✅ PR Merged - Versions Updated',
               '',
               `- 🗑️ Dev version \`${devTag}\` has been deleted`,
               `- 📦 New beta version \`${betaVersion}\` has been created`,
               '',
-              '**Update your services:**',
+              '**Update your Go services:**',
               '```bash',
               `go get github.com/${repoFullName}@${betaVersion}`,
+              '```',
+              '',
+              '**Update your TypeScript/JavaScript services:**',
+              '```bash',
+              `npm install @ssoeasy-dev/proto@${npmBetaVersion}`,
               '```',
               '',
               '> This beta version is now available on the develop environment.'
@@ -222,11 +339,15 @@ jobs:
           script: |
             const branchName = context.payload.pull_request.head.ref;
             const devTag = `dev-${branchName.replace(/\//g, '-')}`;
+            const npmDistTag = `dev-${branchName.replace(/\//g, '-').replace(/_/g, '-').toLowerCase().replace(/[^a-z0-9-]/g, '')}`;
             
             const body = [
               '## 🗑️ Dev Version Cleaned Up',
               '',
-              `Dev version \`${devTag}\` has been deleted since this PR was closed without merging.`
+              `- Git tag \`${devTag}\` has been deleted`,
+              `- NPM dist-tag \`${npmDistTag}\` has been removed`,
+              '',
+              '> This dev version is no longer available since the PR was closed without merging.'
             ].join('\n');
             
             await github.rest.issues.createComment({

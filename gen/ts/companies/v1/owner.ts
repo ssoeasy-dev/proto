@@ -2,52 +2,53 @@
 // versions:
 //   protoc-gen-ts_proto  v2.6.1
 //   protoc               unknown
-// source: companies/v1/registration.proto
+// source: companies/v1/owner.proto
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { type CallContext, type CallOptions } from "nice-grpc-common";
 import { Company } from "./models/company";
 import { Employee } from "./models/employee";
 import { EmployeeCompany } from "./models/employee_company";
 import { Subscription } from "./models/subscription";
 
-export interface RegisterUserRequest {
-  $type: "companies.v1.RegisterUserRequest";
+export interface RegisterOwnerRequest {
+  $type: "companies.v1.RegisterOwnerRequest";
   email: string;
   firstName: string;
   lastName: string;
 }
 
-export interface RegisterUserResponse {
-  $type: "companies.v1.RegisterUserResponse";
+export interface RegisterOwnerResponse {
+  $type: "companies.v1.RegisterOwnerResponse";
   company?: Company | undefined;
   employee?: Employee | undefined;
   subscription?: Subscription | undefined;
   employeeCompany?: EmployeeCompany | undefined;
 }
 
-export interface RegisterUserCompinsateRequest {
-  $type: "companies.v1.RegisterUserCompinsateRequest";
+export interface RegisterOwnerCompinsateRequest {
+  $type: "companies.v1.RegisterOwnerCompinsateRequest";
   companyId: string;
   employeeId: string;
   subscriptionId: string;
   employeeCompanyId: string;
 }
 
-export interface RegisterUserCompinsateResponse {
-  $type: "companies.v1.RegisterUserCompinsateResponse";
+export interface RegisterOwnerCompinsateResponse {
+  $type: "companies.v1.RegisterOwnerCompinsateResponse";
   success: boolean;
   message: string;
 }
 
-function createBaseRegisterUserRequest(): RegisterUserRequest {
-  return { $type: "companies.v1.RegisterUserRequest", email: "", firstName: "", lastName: "" };
+function createBaseRegisterOwnerRequest(): RegisterOwnerRequest {
+  return { $type: "companies.v1.RegisterOwnerRequest", email: "", firstName: "", lastName: "" };
 }
 
-export const RegisterUserRequest: MessageFns<RegisterUserRequest, "companies.v1.RegisterUserRequest"> = {
-  $type: "companies.v1.RegisterUserRequest" as const,
+export const RegisterOwnerRequest: MessageFns<RegisterOwnerRequest, "companies.v1.RegisterOwnerRequest"> = {
+  $type: "companies.v1.RegisterOwnerRequest" as const,
 
-  encode(message: RegisterUserRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+  encode(message: RegisterOwnerRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.email !== "") {
       writer.uint32(10).string(message.email);
     }
@@ -60,10 +61,10 @@ export const RegisterUserRequest: MessageFns<RegisterUserRequest, "companies.v1.
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): RegisterUserRequest {
+  decode(input: BinaryReader | Uint8Array, length?: number): RegisterOwnerRequest {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRegisterUserRequest();
+    const message = createBaseRegisterOwnerRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -100,16 +101,16 @@ export const RegisterUserRequest: MessageFns<RegisterUserRequest, "companies.v1.
     return message;
   },
 
-  fromJSON(object: any): RegisterUserRequest {
+  fromJSON(object: any): RegisterOwnerRequest {
     return {
-      $type: RegisterUserRequest.$type,
+      $type: RegisterOwnerRequest.$type,
       email: isSet(object.email) ? globalThis.String(object.email) : "",
       firstName: isSet(object.firstName) ? globalThis.String(object.firstName) : "",
       lastName: isSet(object.lastName) ? globalThis.String(object.lastName) : "",
     };
   },
 
-  toJSON(message: RegisterUserRequest): unknown {
+  toJSON(message: RegisterOwnerRequest): unknown {
     const obj: any = {};
     if (message.email !== "") {
       obj.email = message.email;
@@ -123,11 +124,11 @@ export const RegisterUserRequest: MessageFns<RegisterUserRequest, "companies.v1.
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<RegisterUserRequest>, I>>(base?: I): RegisterUserRequest {
-    return RegisterUserRequest.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<RegisterOwnerRequest>, I>>(base?: I): RegisterOwnerRequest {
+    return RegisterOwnerRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<RegisterUserRequest>, I>>(object: I): RegisterUserRequest {
-    const message = createBaseRegisterUserRequest();
+  fromPartial<I extends Exact<DeepPartial<RegisterOwnerRequest>, I>>(object: I): RegisterOwnerRequest {
+    const message = createBaseRegisterOwnerRequest();
     message.email = object.email ?? "";
     message.firstName = object.firstName ?? "";
     message.lastName = object.lastName ?? "";
@@ -135,9 +136,9 @@ export const RegisterUserRequest: MessageFns<RegisterUserRequest, "companies.v1.
   },
 };
 
-function createBaseRegisterUserResponse(): RegisterUserResponse {
+function createBaseRegisterOwnerResponse(): RegisterOwnerResponse {
   return {
-    $type: "companies.v1.RegisterUserResponse",
+    $type: "companies.v1.RegisterOwnerResponse",
     company: undefined,
     employee: undefined,
     subscription: undefined,
@@ -145,10 +146,10 @@ function createBaseRegisterUserResponse(): RegisterUserResponse {
   };
 }
 
-export const RegisterUserResponse: MessageFns<RegisterUserResponse, "companies.v1.RegisterUserResponse"> = {
-  $type: "companies.v1.RegisterUserResponse" as const,
+export const RegisterOwnerResponse: MessageFns<RegisterOwnerResponse, "companies.v1.RegisterOwnerResponse"> = {
+  $type: "companies.v1.RegisterOwnerResponse" as const,
 
-  encode(message: RegisterUserResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+  encode(message: RegisterOwnerResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.company !== undefined) {
       Company.encode(message.company, writer.uint32(10).fork()).join();
     }
@@ -164,10 +165,10 @@ export const RegisterUserResponse: MessageFns<RegisterUserResponse, "companies.v
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): RegisterUserResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): RegisterOwnerResponse {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRegisterUserResponse();
+    const message = createBaseRegisterOwnerResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -212,9 +213,9 @@ export const RegisterUserResponse: MessageFns<RegisterUserResponse, "companies.v
     return message;
   },
 
-  fromJSON(object: any): RegisterUserResponse {
+  fromJSON(object: any): RegisterOwnerResponse {
     return {
-      $type: RegisterUserResponse.$type,
+      $type: RegisterOwnerResponse.$type,
       company: isSet(object.company) ? Company.fromJSON(object.company) : undefined,
       employee: isSet(object.employee) ? Employee.fromJSON(object.employee) : undefined,
       subscription: isSet(object.subscription) ? Subscription.fromJSON(object.subscription) : undefined,
@@ -222,7 +223,7 @@ export const RegisterUserResponse: MessageFns<RegisterUserResponse, "companies.v
     };
   },
 
-  toJSON(message: RegisterUserResponse): unknown {
+  toJSON(message: RegisterOwnerResponse): unknown {
     const obj: any = {};
     if (message.company !== undefined) {
       obj.company = Company.toJSON(message.company);
@@ -239,11 +240,11 @@ export const RegisterUserResponse: MessageFns<RegisterUserResponse, "companies.v
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<RegisterUserResponse>, I>>(base?: I): RegisterUserResponse {
-    return RegisterUserResponse.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<RegisterOwnerResponse>, I>>(base?: I): RegisterOwnerResponse {
+    return RegisterOwnerResponse.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<RegisterUserResponse>, I>>(object: I): RegisterUserResponse {
-    const message = createBaseRegisterUserResponse();
+  fromPartial<I extends Exact<DeepPartial<RegisterOwnerResponse>, I>>(object: I): RegisterOwnerResponse {
+    const message = createBaseRegisterOwnerResponse();
     message.company = (object.company !== undefined && object.company !== null)
       ? Company.fromPartial(object.company)
       : undefined;
@@ -260,9 +261,9 @@ export const RegisterUserResponse: MessageFns<RegisterUserResponse, "companies.v
   },
 };
 
-function createBaseRegisterUserCompinsateRequest(): RegisterUserCompinsateRequest {
+function createBaseRegisterOwnerCompinsateRequest(): RegisterOwnerCompinsateRequest {
   return {
-    $type: "companies.v1.RegisterUserCompinsateRequest",
+    $type: "companies.v1.RegisterOwnerCompinsateRequest",
     companyId: "",
     employeeId: "",
     subscriptionId: "",
@@ -270,13 +271,13 @@ function createBaseRegisterUserCompinsateRequest(): RegisterUserCompinsateReques
   };
 }
 
-export const RegisterUserCompinsateRequest: MessageFns<
-  RegisterUserCompinsateRequest,
-  "companies.v1.RegisterUserCompinsateRequest"
+export const RegisterOwnerCompinsateRequest: MessageFns<
+  RegisterOwnerCompinsateRequest,
+  "companies.v1.RegisterOwnerCompinsateRequest"
 > = {
-  $type: "companies.v1.RegisterUserCompinsateRequest" as const,
+  $type: "companies.v1.RegisterOwnerCompinsateRequest" as const,
 
-  encode(message: RegisterUserCompinsateRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+  encode(message: RegisterOwnerCompinsateRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.companyId !== "") {
       writer.uint32(10).string(message.companyId);
     }
@@ -292,10 +293,10 @@ export const RegisterUserCompinsateRequest: MessageFns<
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): RegisterUserCompinsateRequest {
+  decode(input: BinaryReader | Uint8Array, length?: number): RegisterOwnerCompinsateRequest {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRegisterUserCompinsateRequest();
+    const message = createBaseRegisterOwnerCompinsateRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -340,9 +341,9 @@ export const RegisterUserCompinsateRequest: MessageFns<
     return message;
   },
 
-  fromJSON(object: any): RegisterUserCompinsateRequest {
+  fromJSON(object: any): RegisterOwnerCompinsateRequest {
     return {
-      $type: RegisterUserCompinsateRequest.$type,
+      $type: RegisterOwnerCompinsateRequest.$type,
       companyId: isSet(object.companyId) ? globalThis.String(object.companyId) : "",
       employeeId: isSet(object.employeeId) ? globalThis.String(object.employeeId) : "",
       subscriptionId: isSet(object.subscriptionId) ? globalThis.String(object.subscriptionId) : "",
@@ -350,7 +351,7 @@ export const RegisterUserCompinsateRequest: MessageFns<
     };
   },
 
-  toJSON(message: RegisterUserCompinsateRequest): unknown {
+  toJSON(message: RegisterOwnerCompinsateRequest): unknown {
     const obj: any = {};
     if (message.companyId !== "") {
       obj.companyId = message.companyId;
@@ -367,13 +368,13 @@ export const RegisterUserCompinsateRequest: MessageFns<
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<RegisterUserCompinsateRequest>, I>>(base?: I): RegisterUserCompinsateRequest {
-    return RegisterUserCompinsateRequest.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<RegisterOwnerCompinsateRequest>, I>>(base?: I): RegisterOwnerCompinsateRequest {
+    return RegisterOwnerCompinsateRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<RegisterUserCompinsateRequest>, I>>(
+  fromPartial<I extends Exact<DeepPartial<RegisterOwnerCompinsateRequest>, I>>(
     object: I,
-  ): RegisterUserCompinsateRequest {
-    const message = createBaseRegisterUserCompinsateRequest();
+  ): RegisterOwnerCompinsateRequest {
+    const message = createBaseRegisterOwnerCompinsateRequest();
     message.companyId = object.companyId ?? "";
     message.employeeId = object.employeeId ?? "";
     message.subscriptionId = object.subscriptionId ?? "";
@@ -382,17 +383,17 @@ export const RegisterUserCompinsateRequest: MessageFns<
   },
 };
 
-function createBaseRegisterUserCompinsateResponse(): RegisterUserCompinsateResponse {
-  return { $type: "companies.v1.RegisterUserCompinsateResponse", success: false, message: "" };
+function createBaseRegisterOwnerCompinsateResponse(): RegisterOwnerCompinsateResponse {
+  return { $type: "companies.v1.RegisterOwnerCompinsateResponse", success: false, message: "" };
 }
 
-export const RegisterUserCompinsateResponse: MessageFns<
-  RegisterUserCompinsateResponse,
-  "companies.v1.RegisterUserCompinsateResponse"
+export const RegisterOwnerCompinsateResponse: MessageFns<
+  RegisterOwnerCompinsateResponse,
+  "companies.v1.RegisterOwnerCompinsateResponse"
 > = {
-  $type: "companies.v1.RegisterUserCompinsateResponse" as const,
+  $type: "companies.v1.RegisterOwnerCompinsateResponse" as const,
 
-  encode(message: RegisterUserCompinsateResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+  encode(message: RegisterOwnerCompinsateResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.success !== false) {
       writer.uint32(8).bool(message.success);
     }
@@ -402,10 +403,10 @@ export const RegisterUserCompinsateResponse: MessageFns<
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): RegisterUserCompinsateResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): RegisterOwnerCompinsateResponse {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseRegisterUserCompinsateResponse();
+    const message = createBaseRegisterOwnerCompinsateResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -434,15 +435,15 @@ export const RegisterUserCompinsateResponse: MessageFns<
     return message;
   },
 
-  fromJSON(object: any): RegisterUserCompinsateResponse {
+  fromJSON(object: any): RegisterOwnerCompinsateResponse {
     return {
-      $type: RegisterUserCompinsateResponse.$type,
+      $type: RegisterOwnerCompinsateResponse.$type,
       success: isSet(object.success) ? globalThis.Boolean(object.success) : false,
       message: isSet(object.message) ? globalThis.String(object.message) : "",
     };
   },
 
-  toJSON(message: RegisterUserCompinsateResponse): unknown {
+  toJSON(message: RegisterOwnerCompinsateResponse): unknown {
     const obj: any = {};
     if (message.success !== false) {
       obj.success = message.success;
@@ -453,18 +454,64 @@ export const RegisterUserCompinsateResponse: MessageFns<
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<RegisterUserCompinsateResponse>, I>>(base?: I): RegisterUserCompinsateResponse {
-    return RegisterUserCompinsateResponse.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<RegisterOwnerCompinsateResponse>, I>>(base?: I): RegisterOwnerCompinsateResponse {
+    return RegisterOwnerCompinsateResponse.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<RegisterUserCompinsateResponse>, I>>(
+  fromPartial<I extends Exact<DeepPartial<RegisterOwnerCompinsateResponse>, I>>(
     object: I,
-  ): RegisterUserCompinsateResponse {
-    const message = createBaseRegisterUserCompinsateResponse();
+  ): RegisterOwnerCompinsateResponse {
+    const message = createBaseRegisterOwnerCompinsateResponse();
     message.success = object.success ?? false;
     message.message = object.message ?? "";
     return message;
   },
 };
+
+export type OwnerServiceDefinition = typeof OwnerServiceDefinition;
+export const OwnerServiceDefinition = {
+  name: "OwnerService",
+  fullName: "companies.v1.OwnerService",
+  methods: {
+    registerOwner: {
+      name: "RegisterOwner",
+      requestType: RegisterOwnerRequest,
+      requestStream: false,
+      responseType: RegisterOwnerResponse,
+      responseStream: false,
+      options: {},
+    },
+    registerOwnerCompinsate: {
+      name: "RegisterOwnerCompinsate",
+      requestType: RegisterOwnerCompinsateRequest,
+      requestStream: false,
+      responseType: RegisterOwnerCompinsateResponse,
+      responseStream: false,
+      options: {},
+    },
+  },
+} as const;
+
+export interface OwnerServiceImplementation<CallContextExt = {}> {
+  registerOwner(
+    request: RegisterOwnerRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<RegisterOwnerResponse>>;
+  registerOwnerCompinsate(
+    request: RegisterOwnerCompinsateRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<RegisterOwnerCompinsateResponse>>;
+}
+
+export interface OwnerServiceClient<CallOptionsExt = {}> {
+  registerOwner(
+    request: DeepPartial<RegisterOwnerRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<RegisterOwnerResponse>;
+  registerOwnerCompinsate(
+    request: DeepPartial<RegisterOwnerCompinsateRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<RegisterOwnerCompinsateResponse>;
+}
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 

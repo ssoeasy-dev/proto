@@ -7,27 +7,32 @@ import "companies/v1/models/employee.proto";
 import "companies/v1/models/employee_company.proto";
 import "companies/v1/models/subscription.proto";
 
-message RegisterUserRequest {
+service OwnerService {
+    rpc RegisterOwner(RegisterOwnerRequest) returns (RegisterOwnerResponse);
+    rpc RegisterOwnerCompinsate(RegisterOwnerCompinsateRequest) returns (RegisterOwnerCompinsateResponse);
+  }
+
+message RegisterOwnerRequest {
   string email = 1;
   string first_name = 2;
   string last_name = 3;
 }
 
-message RegisterUserResponse {
+message RegisterOwnerResponse {
   companies.v1.models.Company company = 1;
   companies.v1.models.Employee employee = 2;
   companies.v1.models.Subscription subscription = 3;
   companies.v1.models.EmployeeCompany employee_company = 4;
 }
 
-message RegisterUserCompinsateRequest {
+message RegisterOwnerCompinsateRequest {
   string company_id = 1;
   string employee_id = 2;
   string subscription_id = 3;
   string employee_company_id = 4;
 }
 
-message RegisterUserCompinsateResponse {
+message RegisterOwnerCompinsateResponse {
   bool success = 1;
   string message = 2;
 }

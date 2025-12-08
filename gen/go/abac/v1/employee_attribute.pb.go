@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        (unknown)
-// source: abac/v1/create_employee_attribute.proto
+// source: abac/v1/employee_attribute.proto
 
 package abacv1
 
@@ -35,7 +35,7 @@ type CreateEmployeeAttributeRequest struct {
 
 func (x *CreateEmployeeAttributeRequest) Reset() {
 	*x = CreateEmployeeAttributeRequest{}
-	mi := &file_abac_v1_create_employee_attribute_proto_msgTypes[0]
+	mi := &file_abac_v1_employee_attribute_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -47,7 +47,7 @@ func (x *CreateEmployeeAttributeRequest) String() string {
 func (*CreateEmployeeAttributeRequest) ProtoMessage() {}
 
 func (x *CreateEmployeeAttributeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_abac_v1_create_employee_attribute_proto_msgTypes[0]
+	mi := &file_abac_v1_employee_attribute_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -60,7 +60,7 @@ func (x *CreateEmployeeAttributeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEmployeeAttributeRequest.ProtoReflect.Descriptor instead.
 func (*CreateEmployeeAttributeRequest) Descriptor() ([]byte, []int) {
-	return file_abac_v1_create_employee_attribute_proto_rawDescGZIP(), []int{0}
+	return file_abac_v1_employee_attribute_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *CreateEmployeeAttributeRequest) GetEmployeeId() string {
@@ -107,7 +107,7 @@ type CreateEmployeeAttributeResponse struct {
 
 func (x *CreateEmployeeAttributeResponse) Reset() {
 	*x = CreateEmployeeAttributeResponse{}
-	mi := &file_abac_v1_create_employee_attribute_proto_msgTypes[1]
+	mi := &file_abac_v1_employee_attribute_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -119,7 +119,7 @@ func (x *CreateEmployeeAttributeResponse) String() string {
 func (*CreateEmployeeAttributeResponse) ProtoMessage() {}
 
 func (x *CreateEmployeeAttributeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_abac_v1_create_employee_attribute_proto_msgTypes[1]
+	mi := &file_abac_v1_employee_attribute_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -132,7 +132,7 @@ func (x *CreateEmployeeAttributeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEmployeeAttributeResponse.ProtoReflect.Descriptor instead.
 func (*CreateEmployeeAttributeResponse) Descriptor() ([]byte, []int) {
-	return file_abac_v1_create_employee_attribute_proto_rawDescGZIP(), []int{1}
+	return file_abac_v1_employee_attribute_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CreateEmployeeAttributeResponse) GetEmployeeAttribute() *models.EmployeeAttribute {
@@ -151,7 +151,7 @@ type CreateEmployeeAttributeCompinsateRequest struct {
 
 func (x *CreateEmployeeAttributeCompinsateRequest) Reset() {
 	*x = CreateEmployeeAttributeCompinsateRequest{}
-	mi := &file_abac_v1_create_employee_attribute_proto_msgTypes[2]
+	mi := &file_abac_v1_employee_attribute_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -163,7 +163,7 @@ func (x *CreateEmployeeAttributeCompinsateRequest) String() string {
 func (*CreateEmployeeAttributeCompinsateRequest) ProtoMessage() {}
 
 func (x *CreateEmployeeAttributeCompinsateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_abac_v1_create_employee_attribute_proto_msgTypes[2]
+	mi := &file_abac_v1_employee_attribute_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -176,7 +176,7 @@ func (x *CreateEmployeeAttributeCompinsateRequest) ProtoReflect() protoreflect.M
 
 // Deprecated: Use CreateEmployeeAttributeCompinsateRequest.ProtoReflect.Descriptor instead.
 func (*CreateEmployeeAttributeCompinsateRequest) Descriptor() ([]byte, []int) {
-	return file_abac_v1_create_employee_attribute_proto_rawDescGZIP(), []int{2}
+	return file_abac_v1_employee_attribute_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateEmployeeAttributeCompinsateRequest) GetEmployeeAttributeId() string {
@@ -196,7 +196,7 @@ type CreateEmployeeAttributeCompinsateResponse struct {
 
 func (x *CreateEmployeeAttributeCompinsateResponse) Reset() {
 	*x = CreateEmployeeAttributeCompinsateResponse{}
-	mi := &file_abac_v1_create_employee_attribute_proto_msgTypes[3]
+	mi := &file_abac_v1_employee_attribute_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -208,7 +208,7 @@ func (x *CreateEmployeeAttributeCompinsateResponse) String() string {
 func (*CreateEmployeeAttributeCompinsateResponse) ProtoMessage() {}
 
 func (x *CreateEmployeeAttributeCompinsateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_abac_v1_create_employee_attribute_proto_msgTypes[3]
+	mi := &file_abac_v1_employee_attribute_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -221,7 +221,7 @@ func (x *CreateEmployeeAttributeCompinsateResponse) ProtoReflect() protoreflect.
 
 // Deprecated: Use CreateEmployeeAttributeCompinsateResponse.ProtoReflect.Descriptor instead.
 func (*CreateEmployeeAttributeCompinsateResponse) Descriptor() ([]byte, []int) {
-	return file_abac_v1_create_employee_attribute_proto_rawDescGZIP(), []int{3}
+	return file_abac_v1_employee_attribute_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateEmployeeAttributeCompinsateResponse) GetSuccess() bool {
@@ -238,11 +238,11 @@ func (x *CreateEmployeeAttributeCompinsateResponse) GetMessage() string {
 	return ""
 }
 
-var File_abac_v1_create_employee_attribute_proto protoreflect.FileDescriptor
+var File_abac_v1_employee_attribute_proto protoreflect.FileDescriptor
 
-const file_abac_v1_create_employee_attribute_proto_rawDesc = "" +
+const file_abac_v1_employee_attribute_proto_rawDesc = "" +
 	"\n" +
-	"'abac/v1/create_employee_attribute.proto\x12\aabac.v1\x1a'abac/v1/models/employee_attribute.proto\"\xcf\x01\n" +
+	" abac/v1/employee_attribute.proto\x12\aabac.v1\x1a'abac/v1/models/employee_attribute.proto\"\xcf\x01\n" +
 	"\x1eCreateEmployeeAttributeRequest\x12\x1f\n" +
 	"\vemployee_id\x18\x01 \x01(\tR\n" +
 	"employeeId\x12\x1d\n" +
@@ -258,58 +258,65 @@ const file_abac_v1_create_employee_attribute_proto_rawDesc = "" +
 	"\x15employee_attribute_id\x18\x01 \x01(\tR\x13employeeAttributeId\"_\n" +
 	")CreateEmployeeAttributeCompinsateResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessageB\x9c\x01\n" +
-	"\vcom.abac.v1B\x1cCreateEmployeeAttributeProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/abac/v1;abacv1\xa2\x02\x03AXX\xaa\x02\aAbac.V1\xca\x02\aAbac\\V1\xe2\x02\x13Abac\\V1\\GPBMetadata\xea\x02\bAbac::V1b\x06proto3"
+	"\amessage\x18\x02 \x01(\tR\amessage2\x95\x02\n" +
+	"\x18EmployeeAttributeService\x12l\n" +
+	"\x17CreateEmployeeAttribute\x12'.abac.v1.CreateEmployeeAttributeRequest\x1a(.abac.v1.CreateEmployeeAttributeResponse\x12\x8a\x01\n" +
+	"!CreateEmployeeAttributeCompinsate\x121.abac.v1.CreateEmployeeAttributeCompinsateRequest\x1a2.abac.v1.CreateEmployeeAttributeCompinsateResponseB\x96\x01\n" +
+	"\vcom.abac.v1B\x16EmployeeAttributeProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/abac/v1;abacv1\xa2\x02\x03AXX\xaa\x02\aAbac.V1\xca\x02\aAbac\\V1\xe2\x02\x13Abac\\V1\\GPBMetadata\xea\x02\bAbac::V1b\x06proto3"
 
 var (
-	file_abac_v1_create_employee_attribute_proto_rawDescOnce sync.Once
-	file_abac_v1_create_employee_attribute_proto_rawDescData []byte
+	file_abac_v1_employee_attribute_proto_rawDescOnce sync.Once
+	file_abac_v1_employee_attribute_proto_rawDescData []byte
 )
 
-func file_abac_v1_create_employee_attribute_proto_rawDescGZIP() []byte {
-	file_abac_v1_create_employee_attribute_proto_rawDescOnce.Do(func() {
-		file_abac_v1_create_employee_attribute_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_abac_v1_create_employee_attribute_proto_rawDesc), len(file_abac_v1_create_employee_attribute_proto_rawDesc)))
+func file_abac_v1_employee_attribute_proto_rawDescGZIP() []byte {
+	file_abac_v1_employee_attribute_proto_rawDescOnce.Do(func() {
+		file_abac_v1_employee_attribute_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_abac_v1_employee_attribute_proto_rawDesc), len(file_abac_v1_employee_attribute_proto_rawDesc)))
 	})
-	return file_abac_v1_create_employee_attribute_proto_rawDescData
+	return file_abac_v1_employee_attribute_proto_rawDescData
 }
 
-var file_abac_v1_create_employee_attribute_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_abac_v1_create_employee_attribute_proto_goTypes = []any{
+var file_abac_v1_employee_attribute_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_abac_v1_employee_attribute_proto_goTypes = []any{
 	(*CreateEmployeeAttributeRequest)(nil),            // 0: abac.v1.CreateEmployeeAttributeRequest
 	(*CreateEmployeeAttributeResponse)(nil),           // 1: abac.v1.CreateEmployeeAttributeResponse
 	(*CreateEmployeeAttributeCompinsateRequest)(nil),  // 2: abac.v1.CreateEmployeeAttributeCompinsateRequest
 	(*CreateEmployeeAttributeCompinsateResponse)(nil), // 3: abac.v1.CreateEmployeeAttributeCompinsateResponse
 	(*models.EmployeeAttribute)(nil),                  // 4: abac.v1.models.EmployeeAttribute
 }
-var file_abac_v1_create_employee_attribute_proto_depIdxs = []int32{
+var file_abac_v1_employee_attribute_proto_depIdxs = []int32{
 	4, // 0: abac.v1.CreateEmployeeAttributeResponse.employee_attribute:type_name -> abac.v1.models.EmployeeAttribute
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
+	0, // 1: abac.v1.EmployeeAttributeService.CreateEmployeeAttribute:input_type -> abac.v1.CreateEmployeeAttributeRequest
+	2, // 2: abac.v1.EmployeeAttributeService.CreateEmployeeAttributeCompinsate:input_type -> abac.v1.CreateEmployeeAttributeCompinsateRequest
+	1, // 3: abac.v1.EmployeeAttributeService.CreateEmployeeAttribute:output_type -> abac.v1.CreateEmployeeAttributeResponse
+	3, // 4: abac.v1.EmployeeAttributeService.CreateEmployeeAttributeCompinsate:output_type -> abac.v1.CreateEmployeeAttributeCompinsateResponse
+	3, // [3:5] is the sub-list for method output_type
+	1, // [1:3] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_abac_v1_create_employee_attribute_proto_init() }
-func file_abac_v1_create_employee_attribute_proto_init() {
-	if File_abac_v1_create_employee_attribute_proto != nil {
+func init() { file_abac_v1_employee_attribute_proto_init() }
+func file_abac_v1_employee_attribute_proto_init() {
+	if File_abac_v1_employee_attribute_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_abac_v1_create_employee_attribute_proto_rawDesc), len(file_abac_v1_create_employee_attribute_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_abac_v1_employee_attribute_proto_rawDesc), len(file_abac_v1_employee_attribute_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
-		GoTypes:           file_abac_v1_create_employee_attribute_proto_goTypes,
-		DependencyIndexes: file_abac_v1_create_employee_attribute_proto_depIdxs,
-		MessageInfos:      file_abac_v1_create_employee_attribute_proto_msgTypes,
+		GoTypes:           file_abac_v1_employee_attribute_proto_goTypes,
+		DependencyIndexes: file_abac_v1_employee_attribute_proto_depIdxs,
+		MessageInfos:      file_abac_v1_employee_attribute_proto_msgTypes,
 	}.Build()
-	File_abac_v1_create_employee_attribute_proto = out.File
-	file_abac_v1_create_employee_attribute_proto_goTypes = nil
-	file_abac_v1_create_employee_attribute_proto_depIdxs = nil
+	File_abac_v1_employee_attribute_proto = out.File
+	file_abac_v1_employee_attribute_proto_goTypes = nil
+	file_abac_v1_employee_attribute_proto_depIdxs = nil
 }

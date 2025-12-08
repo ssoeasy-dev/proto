@@ -2,10 +2,11 @@
 // versions:
 //   protoc-gen-ts_proto  v2.6.1
 //   protoc               unknown
-// source: auth/v1/create_credential.proto
+// source: auth/v1/credential.proto
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
+import { type CallContext, type CallOptions } from "nice-grpc-common";
 import { Credential } from "./models/credential";
 
 export interface CreateCredentialsRequest {
@@ -329,6 +330,52 @@ export const CreateCredentialsCompinsateResponse: MessageFns<
     return message;
   },
 };
+
+export type CredentialServiceDefinition = typeof CredentialServiceDefinition;
+export const CredentialServiceDefinition = {
+  name: "CredentialService",
+  fullName: "auth.v1.CredentialService",
+  methods: {
+    createCredentials: {
+      name: "CreateCredentials",
+      requestType: CreateCredentialsRequest,
+      requestStream: false,
+      responseType: CreateCredentialsResponse,
+      responseStream: false,
+      options: {},
+    },
+    createCredentialsCompinsate: {
+      name: "CreateCredentialsCompinsate",
+      requestType: CreateCredentialsCompinsateRequest,
+      requestStream: false,
+      responseType: CreateCredentialsCompinsateResponse,
+      responseStream: false,
+      options: {},
+    },
+  },
+} as const;
+
+export interface CredentialServiceImplementation<CallContextExt = {}> {
+  createCredentials(
+    request: CreateCredentialsRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<CreateCredentialsResponse>>;
+  createCredentialsCompinsate(
+    request: CreateCredentialsCompinsateRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<CreateCredentialsCompinsateResponse>>;
+}
+
+export interface CredentialServiceClient<CallOptionsExt = {}> {
+  createCredentials(
+    request: DeepPartial<CreateCredentialsRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<CreateCredentialsResponse>;
+  createCredentialsCompinsate(
+    request: DeepPartial<CreateCredentialsCompinsateRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<CreateCredentialsCompinsateResponse>;
+}
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
