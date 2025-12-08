@@ -44,6 +44,48 @@ function getDirectlyExportedFiles(mod) {
     directlyExported.add(match[1]);
   }
   
+  // Также проверяем, какие типы экспортируются из напрямую экспортированных файлов
+  // чтобы исключить файлы, которые экспортируют те же типы
+  const v1Dir = path.join(GEN_TS_DIR, mod, 'v1');
+  if (fs.existsSync(v1Dir)) {
+    directlyExported.forEach(fileName => {
+      const filePath = path.join(v1Dir, `${fileName}.ts`);
+      if (fs.existsSync(filePath)) {
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+        // Извлекаем имена экспортируемых типов/интерфейсов
+        const exportRegex = /export\s+(?:interface|type|const|class)\s+(\w+)/g;
+        const exportedTypes = new Set();
+        let typeMatch;
+        while ((typeMatch = exportRegex.exec(fileContent)) !== null) {
+          exportedTypes.add(typeMatch[1]);
+        }
+        
+        // Проверяем другие файлы в той же директории на дубликаты
+        const otherFiles = fs.readdirSync(v1Dir).filter(f => 
+          f.endsWith('.ts') && 
+          f !== `${fileName}.ts` && 
+          f !== 'index.ts'
+        );
+        
+        otherFiles.forEach(otherFile => {
+          const otherFilePath = path.join(v1Dir, otherFile);
+          const otherContent = fs.readFileSync(otherFilePath, 'utf8');
+          // Проверяем, экспортирует ли этот файл те же типы
+          const hasDuplicate = Array.from(exportedTypes).some(type => {
+            const typeRegex = new RegExp(`export\\s+(?:interface|type|const|class)\\s+${type}\\b`);
+            return typeRegex.test(otherContent);
+          });
+          
+          if (hasDuplicate) {
+            // Исключаем файл с дубликатами
+            const otherFileName = otherFile.replace('.ts', '');
+            directlyExported.add(otherFileName);
+          }
+        });
+      }
+    });
+  }
+  
   return directlyExported;
 }
 
