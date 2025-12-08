@@ -10,24 +10,24 @@
       "default": "./gen/ts/index.ts"
     },
     "./auth": {
-      "types": "./gen/ts/auth/v1/auth.ts",
-      "default": "./gen/ts/auth/v1/auth.ts"
+      "types": "./gen/ts/auth/v1/index.ts",
+      "default": "./gen/ts/auth/v1/index.ts"
     },
     "./companies": {
-      "types": "./gen/ts/companies/v1/company.ts",
-      "default": "./gen/ts/companies/v1/company.ts"
+      "types": "./gen/ts/companies/v1/index.ts",
+      "default": "./gen/ts/companies/v1/index.ts"
     },
     "./services": {
-      "types": "./gen/ts/services/v1/services.ts",
-      "default": "./gen/ts/services/v1/services.ts"
+      "types": "./gen/ts/services/v1/index.ts",
+      "default": "./gen/ts/services/v1/index.ts"
     },
     "./abac": {
-      "types": "./gen/ts/abac/v1/abac.ts",
-      "default": "./gen/ts/abac/v1/abac.ts"
+      "types": "./gen/ts/abac/v1/index.ts",
+      "default": "./gen/ts/abac/v1/index.ts"
     },
     "./common": {
-      "types": "./gen/ts/common/v1/types.ts",
-      "default": "./gen/ts/common/v1/types.ts"
+      "types": "./gen/ts/common/v1/index.ts",
+      "default": "./gen/ts/common/v1/index.ts"
     }
   },
   "files": [
