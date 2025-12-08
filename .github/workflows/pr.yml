@@ -192,16 +192,12 @@ jobs:
           # Проверяем что основные файлы существуют и имеют правильную структуру
           node -e "
             const fs = require('fs');
-            const path = require('path');
+            const pkg = require('./package.json');
             
-            const mainFiles = [
-              'gen/ts/index.ts',
-              'gen/ts/auth/v1/index.ts',
-              'gen/ts/companies/v1/index.ts',
-              'gen/ts/services/v1/index.ts',
-              'gen/ts/abac/v1/index.ts',
-              'gen/ts/common/v1/index.ts'
-            ];
+            // Получаем список файлов из package.json exports
+            const mainFiles = Object.values(pkg.exports).map(exp => {
+              return exp.types || exp.default;
+            }).filter(Boolean);
             
             const errors = [];
             
