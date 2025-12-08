@@ -99,3 +99,130 @@ jobs:
         run: |
           cd gen/go/companies/v1
           go build .
+
+  test-import-ts:
+    name: Test TypeScript Import
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Verify Package Files
+        run: |
+          pnpm install --frozen-lockfile
+          git diff --exit-code package.json pnpm-lock.yaml || (
+            echo "❌ Package files are out of sync!"
+            echo "Run 'pnpm install' and commit the changes."
+            git diff package.json pnpm-lock.yaml
+            exit 1
+          )
+
+      - name: Install TypeScript
+        run: |
+          pnpm add -D typescript @types/node
+
+      - name: Create tsconfig.json for type checking
+        run: |
+          cat > tsconfig.json << 'EOF'
+          {
+            "compilerOptions": {
+              "target": "ES2020",
+              "module": "ESNext",
+              "lib": ["ES2020"],
+              "moduleResolution": "node",
+              "strict": true,
+              "esModuleInterop": true,
+              "skipLibCheck": true,
+              "forceConsistentCasingInFileNames": true,
+              "resolveJsonModule": true,
+              "declaration": true,
+              "declarationMap": true,
+              "outDir": "./dist",
+              "rootDir": "./gen/ts"
+            },
+            "include": ["gen/ts/**/*"],
+            "exclude": ["node_modules", "dist"]
+          }
+          EOF
+
+      - name: Type Check
+        run: |
+          pnpm exec tsc --noEmit
+
+      - name: Test Exports
+        run: |
+          # Проверяем основные экспорты из package.json
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            
+            const exports = Object.keys(pkg.exports || {});
+            const errors = [];
+            
+            for (const exportPath of exports) {
+              const exportConfig = pkg.exports[exportPath];
+              const filePath = exportConfig.types || exportConfig.default || exportPath;
+              
+              if (!fs.existsSync(filePath)) {
+                errors.push(\`Export '\${exportPath}' points to non-existent file: \${filePath}\`);
+              }
+            }
+            
+            if (errors.length > 0) {
+              console.error('❌ Export errors:');
+              errors.forEach(e => console.error('  -', e));
+              process.exit(1);
+            }
+            
+            console.log('✅ All exports are valid');
+          "
+
+      - name: Test Import Syntax
+        run: |
+          # Проверяем что основные файлы существуют и имеют правильную структуру
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            
+            const mainFiles = [
+              'gen/ts/index.ts',
+              'gen/ts/auth/v1/index.ts',
+              'gen/ts/companies/v1/index.ts',
+              'gen/ts/services/v1/index.ts',
+              'gen/ts/abac/v1/index.ts',
+              'gen/ts/common/v1/index.ts'
+            ];
+            
+            const errors = [];
+            
+            for (const file of mainFiles) {
+              if (!fs.existsSync(file)) {
+                errors.push(\`Missing file: \${file}\`);
+                continue;
+              }
+              
+              const content = fs.readFileSync(file, 'utf8');
+              // Проверяем базовый синтаксис экспорта
+              if (!content.includes('export')) {
+                errors.push(\`File \${file} does not contain exports\`);
+              }
+            }
+            
+            if (errors.length > 0) {
+              console.error('❌ TypeScript file errors:');
+              errors.forEach(e => console.error('  -', e));
+              process.exit(1);
+            }
+            
+            console.log('✅ All TypeScript entry points are valid');
+          "
