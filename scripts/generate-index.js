@@ -111,8 +111,19 @@ function createModuleIndexes() {
       return !directlyExported.has(fileName);
     });
 
+    // Если все файлы исключены, все равно создаем index.ts со всеми файлами
+    // чтобы корневой index.ts мог импортировать модуль
     if (tsFiles.length === 0) {
-      console.log(`⚠️  Skipping ${mod}: no .ts files to export (all exported directly)`);
+      // Получаем все .ts файлы для создания index.ts
+      const allTsFiles = fs.readdirSync(v1Dir).filter((f) => f.endsWith('.ts') && f !== 'index.ts');
+      if (allTsFiles.length === 0) {
+        console.log(`⚠️  Skipping ${mod}: no .ts files found`);
+        continue;
+      }
+      // Создаем index.ts со всеми файлами
+      const v1Exports = allTsFiles.map((f) => `export * from './${f.replace('.ts', '')}';`).join('\n');
+      fs.writeFileSync(path.join(v1Dir, 'index.ts'), `// Auto-generated\n${v1Exports}\n`);
+      console.log(`✅ Created gen/ts/${mod}/v1/index.ts (all files exported, ${allTsFiles.length} files)`);
       continue;
     }
 
