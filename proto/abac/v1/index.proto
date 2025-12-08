@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package abac.v1;
+
+import "abac/v1/create_employee_attribute.proto";
+
+service AbacService {
+  rpc CreateEmployeeAttribute(CreateEmployeeAttributeRequest) returns (CreateEmployeeAttributeResponse);
+  rpc CreateEmployeeAttributeCompinsate(CreateEmployeeAttributeCompinsateRequest) returns (CreateEmployeeAttributeCompinsateResponse);
+}

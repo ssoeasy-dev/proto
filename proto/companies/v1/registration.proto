@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package companies.v1;
+
+import "companies/v1/models/company.proto";
+import "companies/v1/models/employee.proto";
+import "companies/v1/models/subscription.proto";
+import "companies/v1/models/employee_company.proto";
+
+message RegisterUserRequest {
+  string email = 1;
+  string first_name = 2;
+  string last_name = 3;
+}
+
+message RegisterUserResponse {
+  companies.v1.models.Company company = 1;
+  companies.v1.models.Employee employee = 2;
+  companies.v1.models.Subscription subscription = 3;
+  companies.v1.models.EmployeeCompany employee_company = 4;
+}
+
+message RegisterUserCompinsateRequest {
+  string company_id = 1;
+  string employee_id = 2;
+  string subscription_id = 3;
+  string employee_company_id = 4;
+}
+
+message RegisterUserCompinsateResponse {
+  bool success = 1;
+  string message = 2;
+}
+

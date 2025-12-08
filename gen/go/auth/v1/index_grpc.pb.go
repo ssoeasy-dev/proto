@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             (unknown)
-// source: auth/v1/auth.proto
+// source: auth/v1/index.proto
 
 package authv1
 
@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_CreateCredentials_FullMethodName = "/auth.v1.AuthService/CreateCredentials"
-	AuthService_DeleteCredentials_FullMethodName = "/auth.v1.AuthService/DeleteCredentials"
+	AuthService_CreateCredentials_FullMethodName           = "/auth.v1.AuthService/CreateCredentials"
+	AuthService_CreateCredentialsCompinsate_FullMethodName = "/auth.v1.AuthService/CreateCredentialsCompinsate"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
 	CreateCredentials(ctx context.Context, in *CreateCredentialsRequest, opts ...grpc.CallOption) (*CreateCredentialsResponse, error)
-	DeleteCredentials(ctx context.Context, in *DeleteCredentialsRequest, opts ...grpc.CallOption) (*DeleteCredentialsResponse, error)
+	CreateCredentialsCompinsate(ctx context.Context, in *CreateCredentialsCompinsateRequest, opts ...grpc.CallOption) (*CreateCredentialsCompinsateResponse, error)
 }
 
 type authServiceClient struct {
@@ -49,10 +49,10 @@ func (c *authServiceClient) CreateCredentials(ctx context.Context, in *CreateCre
 	return out, nil
 }
 
-func (c *authServiceClient) DeleteCredentials(ctx context.Context, in *DeleteCredentialsRequest, opts ...grpc.CallOption) (*DeleteCredentialsResponse, error) {
+func (c *authServiceClient) CreateCredentialsCompinsate(ctx context.Context, in *CreateCredentialsCompinsateRequest, opts ...grpc.CallOption) (*CreateCredentialsCompinsateResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteCredentialsResponse)
-	err := c.cc.Invoke(ctx, AuthService_DeleteCredentials_FullMethodName, in, out, cOpts...)
+	out := new(CreateCredentialsCompinsateResponse)
+	err := c.cc.Invoke(ctx, AuthService_CreateCredentialsCompinsate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (c *authServiceClient) DeleteCredentials(ctx context.Context, in *DeleteCre
 // for forward compatibility.
 type AuthServiceServer interface {
 	CreateCredentials(context.Context, *CreateCredentialsRequest) (*CreateCredentialsResponse, error)
-	DeleteCredentials(context.Context, *DeleteCredentialsRequest) (*DeleteCredentialsResponse, error)
+	CreateCredentialsCompinsate(context.Context, *CreateCredentialsCompinsateRequest) (*CreateCredentialsCompinsateResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -78,8 +78,8 @@ type UnimplementedAuthServiceServer struct{}
 func (UnimplementedAuthServiceServer) CreateCredentials(context.Context, *CreateCredentialsRequest) (*CreateCredentialsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCredentials not implemented")
 }
-func (UnimplementedAuthServiceServer) DeleteCredentials(context.Context, *DeleteCredentialsRequest) (*DeleteCredentialsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteCredentials not implemented")
+func (UnimplementedAuthServiceServer) CreateCredentialsCompinsate(context.Context, *CreateCredentialsCompinsateRequest) (*CreateCredentialsCompinsateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCredentialsCompinsate not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -120,20 +120,20 @@ func _AuthService_CreateCredentials_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_DeleteCredentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteCredentialsRequest)
+func _AuthService_CreateCredentialsCompinsate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCredentialsCompinsateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).DeleteCredentials(ctx, in)
+		return srv.(AuthServiceServer).CreateCredentialsCompinsate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_DeleteCredentials_FullMethodName,
+		FullMethod: AuthService_CreateCredentialsCompinsate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).DeleteCredentials(ctx, req.(*DeleteCredentialsRequest))
+		return srv.(AuthServiceServer).CreateCredentialsCompinsate(ctx, req.(*CreateCredentialsCompinsateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -150,10 +150,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_CreateCredentials_Handler,
 		},
 		{
-			MethodName: "DeleteCredentials",
-			Handler:    _AuthService_DeleteCredentials_Handler,
+			MethodName: "CreateCredentialsCompinsate",
+			Handler:    _AuthService_CreateCredentialsCompinsate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "auth/v1/auth.proto",
+	Metadata: "auth/v1/index.proto",
 }

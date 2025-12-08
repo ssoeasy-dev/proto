@@ -1,0 +1,67 @@
+{
+  "name": "@ssoeasy-dev/proto",
+  "version": "1.0.0",
+  "description": "gRPC proto contracts and generated TypeScript clients for SSOEasy",
+  "main": "gen/ts/index.ts",
+  "types": "gen/ts/index.ts",
+  "exports": {
+    ".": {
+      "types": "./gen/ts/index.ts",
+      "default": "./gen/ts/index.ts"
+    },
+    "./auth": {
+      "types": "./gen/ts/auth/v1/auth.ts",
+      "default": "./gen/ts/auth/v1/auth.ts"
+    },
+    "./companies": {
+      "types": "./gen/ts/companies/v1/company.ts",
+      "default": "./gen/ts/companies/v1/company.ts"
+    },
+    "./services": {
+      "types": "./gen/ts/services/v1/services.ts",
+      "default": "./gen/ts/services/v1/services.ts"
+    },
+    "./abac": {
+      "types": "./gen/ts/abac/v1/abac.ts",
+      "default": "./gen/ts/abac/v1/abac.ts"
+    },
+    "./common": {
+      "types": "./gen/ts/common/v1/types.ts",
+      "default": "./gen/ts/common/v1/types.ts"
+    }
+  },
+  "files": [
+    "gen/ts/**/*",
+    "proto/**/*.proto",
+    "README.md"
+  ],
+  "scripts": {
+    "generate": "buf generate --template buf.gen.ts.yaml && node scripts/generate-index.js",
+    "clean": "rm -rf gen/ts"
+  },
+  "dependencies": {
+    "@bufbuild/protobuf": "^2.0.0",
+    "nice-grpc": "^2.1.10",
+    "nice-grpc-common": "^2.0.2",
+    "long": "^5.2.3"
+  },
+  "peerDependencies": {
+    "@grpc/grpc-js": "^1.9.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ssoeasy-dev/proto.git"
+  },
+  "keywords": [
+    "grpc",
+    "proto",
+    "typescript",
+    "sso",
+    "ssoeasy"
+  ],
+  "license": "MIT"
+}

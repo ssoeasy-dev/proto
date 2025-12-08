@@ -31,6 +31,16 @@ Thumbs.db
 # Buf cache
 .buf/
 
+# Node.js
+node_modules/
+dist/
+
+# TypeScript tools (deprecated)
+ts-tools/
+
+# Temporary files
+buf.gen.ts.yaml.bak
+
 # ВАЖНО: gen/ НЕ игнорируется!
-# Сгенерированный Go код должен быть закоммичен для работы Go modules
+# Сгенерированный код должен быть закоммичен для работы Go modules и npm пакета
 

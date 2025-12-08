@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package auth.v1;
+
+import "auth/v1/create-credential.proto";
+
+service AuthService {
+  rpc CreateCredentials(CreateCredentialsRequest) returns (CreateCredentialsResponse);
+  rpc CreateCredentialsCompinsate(CreateCredentialsCompinsateRequest) returns (CreateCredentialsCompinsateResponse);
+}

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             (unknown)
-// source: abac/v1/abac.proto
+// source: abac/v1/index.proto
 
 package abacv1
 
@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AbacService_CreateEmployeeAttribute_FullMethodName = "/abac.v1.AbacService/CreateEmployeeAttribute"
-	AbacService_DeleteEmployeeAttribute_FullMethodName = "/abac.v1.AbacService/DeleteEmployeeAttribute"
+	AbacService_CreateEmployeeAttribute_FullMethodName           = "/abac.v1.AbacService/CreateEmployeeAttribute"
+	AbacService_CreateEmployeeAttributeCompinsate_FullMethodName = "/abac.v1.AbacService/CreateEmployeeAttributeCompinsate"
 )
 
 // AbacServiceClient is the client API for AbacService service.
@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AbacServiceClient interface {
 	CreateEmployeeAttribute(ctx context.Context, in *CreateEmployeeAttributeRequest, opts ...grpc.CallOption) (*CreateEmployeeAttributeResponse, error)
-	DeleteEmployeeAttribute(ctx context.Context, in *DeleteEmployeeAttributeRequest, opts ...grpc.CallOption) (*DeleteEmployeeAttributeResponse, error)
+	CreateEmployeeAttributeCompinsate(ctx context.Context, in *CreateEmployeeAttributeCompinsateRequest, opts ...grpc.CallOption) (*CreateEmployeeAttributeCompinsateResponse, error)
 }
 
 type abacServiceClient struct {
@@ -49,10 +49,10 @@ func (c *abacServiceClient) CreateEmployeeAttribute(ctx context.Context, in *Cre
 	return out, nil
 }
 
-func (c *abacServiceClient) DeleteEmployeeAttribute(ctx context.Context, in *DeleteEmployeeAttributeRequest, opts ...grpc.CallOption) (*DeleteEmployeeAttributeResponse, error) {
+func (c *abacServiceClient) CreateEmployeeAttributeCompinsate(ctx context.Context, in *CreateEmployeeAttributeCompinsateRequest, opts ...grpc.CallOption) (*CreateEmployeeAttributeCompinsateResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteEmployeeAttributeResponse)
-	err := c.cc.Invoke(ctx, AbacService_DeleteEmployeeAttribute_FullMethodName, in, out, cOpts...)
+	out := new(CreateEmployeeAttributeCompinsateResponse)
+	err := c.cc.Invoke(ctx, AbacService_CreateEmployeeAttributeCompinsate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (c *abacServiceClient) DeleteEmployeeAttribute(ctx context.Context, in *Del
 // for forward compatibility.
 type AbacServiceServer interface {
 	CreateEmployeeAttribute(context.Context, *CreateEmployeeAttributeRequest) (*CreateEmployeeAttributeResponse, error)
-	DeleteEmployeeAttribute(context.Context, *DeleteEmployeeAttributeRequest) (*DeleteEmployeeAttributeResponse, error)
+	CreateEmployeeAttributeCompinsate(context.Context, *CreateEmployeeAttributeCompinsateRequest) (*CreateEmployeeAttributeCompinsateResponse, error)
 	mustEmbedUnimplementedAbacServiceServer()
 }
 
@@ -78,8 +78,8 @@ type UnimplementedAbacServiceServer struct{}
 func (UnimplementedAbacServiceServer) CreateEmployeeAttribute(context.Context, *CreateEmployeeAttributeRequest) (*CreateEmployeeAttributeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateEmployeeAttribute not implemented")
 }
-func (UnimplementedAbacServiceServer) DeleteEmployeeAttribute(context.Context, *DeleteEmployeeAttributeRequest) (*DeleteEmployeeAttributeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteEmployeeAttribute not implemented")
+func (UnimplementedAbacServiceServer) CreateEmployeeAttributeCompinsate(context.Context, *CreateEmployeeAttributeCompinsateRequest) (*CreateEmployeeAttributeCompinsateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateEmployeeAttributeCompinsate not implemented")
 }
 func (UnimplementedAbacServiceServer) mustEmbedUnimplementedAbacServiceServer() {}
 func (UnimplementedAbacServiceServer) testEmbeddedByValue()                     {}
@@ -120,20 +120,20 @@ func _AbacService_CreateEmployeeAttribute_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AbacService_DeleteEmployeeAttribute_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteEmployeeAttributeRequest)
+func _AbacService_CreateEmployeeAttributeCompinsate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateEmployeeAttributeCompinsateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AbacServiceServer).DeleteEmployeeAttribute(ctx, in)
+		return srv.(AbacServiceServer).CreateEmployeeAttributeCompinsate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AbacService_DeleteEmployeeAttribute_FullMethodName,
+		FullMethod: AbacService_CreateEmployeeAttributeCompinsate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AbacServiceServer).DeleteEmployeeAttribute(ctx, req.(*DeleteEmployeeAttributeRequest))
+		return srv.(AbacServiceServer).CreateEmployeeAttributeCompinsate(ctx, req.(*CreateEmployeeAttributeCompinsateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -150,10 +150,10 @@ var AbacService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AbacService_CreateEmployeeAttribute_Handler,
 		},
 		{
-			MethodName: "DeleteEmployeeAttribute",
-			Handler:    _AbacService_DeleteEmployeeAttribute_Handler,
+			MethodName: "CreateEmployeeAttributeCompinsate",
+			Handler:    _AbacService_CreateEmployeeAttributeCompinsate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "abac/v1/abac.proto",
+	Metadata: "abac/v1/index.proto",
 }
