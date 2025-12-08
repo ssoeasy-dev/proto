@@ -7,4 +7,3 @@ message EmployeeCompany {
   string employee_id = 2;
   string company_id = 3;
 }
-

@@ -24,7 +24,7 @@ var File_auth_v1_index_proto protoreflect.FileDescriptor
 
 const file_auth_v1_index_proto_rawDesc = "" +
 	"\n" +
-	"\x13auth/v1/index.proto\x12\aauth.v1\x1a\x1fauth/v1/create-credential.proto2\xe3\x01\n" +
+	"\x13auth/v1/index.proto\x12\aauth.v1\x1a\x1fauth/v1/create_credential.proto2\xe3\x01\n" +
 	"\vAuthService\x12Z\n" +
 	"\x11CreateCredentials\x12!.auth.v1.CreateCredentialsRequest\x1a\".auth.v1.CreateCredentialsResponse\x12x\n" +
 	"\x1bCreateCredentialsCompinsate\x12+.auth.v1.CreateCredentialsCompinsateRequest\x1a,.auth.v1.CreateCredentialsCompinsateResponseB\x8a\x01\n" +

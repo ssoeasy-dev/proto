@@ -24,4 +24,3 @@ message CreateEmployeeAttributeCompinsateResponse {
   bool success = 1;
   string message = 2;
 }
-

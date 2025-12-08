@@ -4,8 +4,8 @@ package companies.v1;
 
 import "companies/v1/models/company.proto";
 import "companies/v1/models/employee.proto";
-import "companies/v1/models/subscription.proto";
 import "companies/v1/models/employee_company.proto";
+import "companies/v1/models/subscription.proto";
 
 message RegisterUserRequest {
   string email = 1;
@@ -31,4 +31,3 @@ message RegisterUserCompinsateResponse {
   bool success = 1;
   string message = 2;
 }
-

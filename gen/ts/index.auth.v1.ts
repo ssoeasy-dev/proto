@@ -6,5 +6,5 @@
 /* eslint-disable */
 
 export * as models from "./index.auth.v1.models";
-export * from "./auth/v1/create-credential";
+export * from "./auth/v1/create_credential";
 export * from "./auth/v1/index";

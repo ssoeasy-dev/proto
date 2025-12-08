@@ -7,5 +7,5 @@
 
 export * from "./companies/v1/models/company";
 export * from "./companies/v1/models/employee";
-export * from "./companies/v1/models/subscription";
 export * from "./companies/v1/models/employee_company";
+export * from "./companies/v1/models/subscription";

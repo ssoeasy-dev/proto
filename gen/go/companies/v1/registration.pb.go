@@ -274,7 +274,7 @@ var File_companies_v1_registration_proto protoreflect.FileDescriptor
 
 const file_companies_v1_registration_proto_rawDesc = "" +
 	"\n" +
-	"\x1fcompanies/v1/registration.proto\x12\fcompanies.v1\x1a!companies/v1/models/company.proto\x1a\"companies/v1/models/employee.proto\x1a&companies/v1/models/subscription.proto\x1a*companies/v1/models/employee_company.proto\"g\n" +
+	"\x1fcompanies/v1/registration.proto\x12\fcompanies.v1\x1a!companies/v1/models/company.proto\x1a\"companies/v1/models/employee.proto\x1a*companies/v1/models/employee_company.proto\x1a&companies/v1/models/subscription.proto\"g\n" +
 	"\x13RegisterUserRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1d\n" +
 	"\n" +

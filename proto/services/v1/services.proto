@@ -17,4 +17,3 @@ message ServiceResponse {
   string owner_company_id = 4;
   int64 created_at = 5;
 }
-

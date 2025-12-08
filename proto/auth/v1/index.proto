@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package auth.v1;
 
-import "auth/v1/create-credential.proto";
+import "auth/v1/create_credential.proto";
 
 service AuthService {
   rpc CreateCredentials(CreateCredentialsRequest) returns (CreateCredentialsResponse);
