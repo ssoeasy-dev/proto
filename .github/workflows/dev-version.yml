@@ -28,6 +28,9 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+
       - name: Create/Update Dev Tag
         run: |
           # Преобразуем имя ветки в валидный тег (заменяем / на -)

@@ -8,9 +8,9 @@ import "companies/v1/models/employee_company.proto";
 import "companies/v1/models/subscription.proto";
 
 service OwnerService {
-    rpc RegisterOwner(RegisterOwnerRequest) returns (RegisterOwnerResponse);
-    rpc RegisterOwnerCompinsate(RegisterOwnerCompinsateRequest) returns (RegisterOwnerCompinsateResponse);
-  }
+  rpc RegisterOwner(RegisterOwnerRequest) returns (RegisterOwnerResponse);
+  rpc RegisterOwnerCompinsate(RegisterOwnerCompinsateRequest) returns (RegisterOwnerCompinsateResponse);
+}
 
 message RegisterOwnerRequest {
   string email = 1;

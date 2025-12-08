@@ -10,30 +10,31 @@
       "default": "./gen/ts/index.ts"
     },
     "./auth": {
-      "types": "./gen/ts/auth/v1/index.ts",
-      "default": "./gen/ts/auth/v1/index.ts"
+      "types": "./gen/ts/index.auth.ts",
+      "default": "./gen/ts/index.auth.ts"
     },
     "./companies": {
-      "types": "./gen/ts/companies/v1/index.ts",
-      "default": "./gen/ts/companies/v1/index.ts"
+      "types": "./gen/ts/index.companies.ts",
+      "default": "./gen/ts/index.companies.ts"
     },
     "./services": {
-      "types": "./gen/ts/services/v1/index.ts",
-      "default": "./gen/ts/services/v1/index.ts"
+      "types": "./gen/ts/index.services.ts",
+      "default": "./gen/ts/index.services.ts"
     },
     "./abac": {
-      "types": "./gen/ts/abac/v1/index.ts",
-      "default": "./gen/ts/abac/v1/index.ts"
+      "types": "./gen/ts/index.abac.ts",
+      "default": "./gen/ts/index.abac.ts"
     },
     "./common": {
-      "types": "./gen/ts/common/v1/index.ts",
-      "default": "./gen/ts/common/v1/index.ts"
+      "types": "./gen/ts/index.common.ts",
+      "default": "./gen/ts/index.common.ts"
     }
   },
   "files": [
     "gen/ts/**/*",
     "proto/**/*.proto",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "generate": "buf generate --template buf.gen.ts.yaml",
