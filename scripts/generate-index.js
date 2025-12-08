@@ -25,6 +25,28 @@ ${exports}
   console.log('✅ Created gen/ts/index.ts');
 }
 
+function getDirectlyExportedFiles(mod) {
+  // Проверяем index.*.v1.ts файлы, которые генерируются автоматически
+  // и могут экспортировать файлы напрямую
+  const indexV1File = path.join(GEN_TS_DIR, `index.${mod}.v1.ts`);
+  
+  if (!fs.existsSync(indexV1File)) {
+    return new Set();
+  }
+
+  const content = fs.readFileSync(indexV1File, 'utf8');
+  const directlyExported = new Set();
+  
+  // Ищем прямые экспорты вида: export * from "./mod/v1/filename"
+  const directExportRegex = new RegExp(`export \\* from ["']\\./${mod}/v1/([^"']+)"`, 'g');
+  let match;
+  while ((match = directExportRegex.exec(content)) !== null) {
+    directlyExported.add(match[1]);
+  }
+  
+  return directlyExported;
+}
+
 function createModuleIndexes() {
   for (const mod of modules) {
     const modDir = path.join(GEN_TS_DIR, mod);
@@ -35,11 +57,20 @@ function createModuleIndexes() {
       continue;
     }
 
-    // Найти все .ts файлы в v1
-    const tsFiles = fs.readdirSync(v1Dir).filter((f) => f.endsWith('.ts') && f !== 'index.ts');
+    // Получить файлы, которые уже экспортируются напрямую в index.*.v1.ts
+    const directlyExported = getDirectlyExportedFiles(mod);
+
+    // Найти все .ts файлы в v1, исключая те, что уже экспортируются напрямую
+    const tsFiles = fs.readdirSync(v1Dir).filter((f) => {
+      if (!f.endsWith('.ts') || f === 'index.ts') {
+        return false;
+      }
+      const fileName = f.replace('.ts', '');
+      return !directlyExported.has(fileName);
+    });
 
     if (tsFiles.length === 0) {
-      console.log(`⚠️  Skipping ${mod}: no .ts files found`);
+      console.log(`⚠️  Skipping ${mod}: no .ts files to export (all exported directly)`);
       continue;
     }
 
@@ -47,7 +78,7 @@ function createModuleIndexes() {
     const v1Exports = tsFiles.map((f) => `export * from './${f.replace('.ts', '')}';`).join('\n');
 
     fs.writeFileSync(path.join(v1Dir, 'index.ts'), `// Auto-generated\n${v1Exports}\n`);
-    console.log(`✅ Created gen/ts/${mod}/v1/index.ts`);
+    console.log(`✅ Created gen/ts/${mod}/v1/index.ts (excluded ${directlyExported.size} directly exported files)`);
   }
 }
 

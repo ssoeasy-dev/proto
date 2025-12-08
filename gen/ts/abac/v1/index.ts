@@ -2,6 +2,5 @@
 export * from './abac';
 export * from './access';
 export * from './attributes';
-export * from './create_employee_attribute';
 export * from './employee_attributes';
 export * from './policies';
