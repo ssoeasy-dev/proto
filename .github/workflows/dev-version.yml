@@ -39,15 +39,19 @@ jobs:
           BRANCH_PART="${BRANCH_NAME//\//-}"
           BRANCH_PART="${BRANCH_PART//_/-}"
           BRANCH_PART=$(echo "$BRANCH_PART" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g')
-
-          VERSION="${BASE_VERSION}-dev-${BRANCH_PART}"
-          NPM_DIST_TAG="dev-${BRANCH_PART}"
+          
+          COMMIT_SHA="${{ github.event.pull_request.head.sha }}"
+          COMMIT_SHORT="${COMMIT_SHA:0:7}"
 
           if [ "${{ github.event.action }}" = "synchronize" ]; then
+            VERSION="${BASE_VERSION}-dev-${BRANCH_PART}.${COMMIT_SHORT}"
             ACTION_TEXT="updated"
           else
+            VERSION="${BASE_VERSION}-dev-${BRANCH_PART}"
             ACTION_TEXT="created"
           fi
+          
+          NPM_DIST_TAG="dev-${BRANCH_PART}"
           
           echo "📦 Version: $VERSION"
           echo "🏷️  NPM dist-tag: $NPM_DIST_TAG"
@@ -56,10 +60,11 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "npm_dist_tag=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
           echo "action_text=$ACTION_TEXT" >> $GITHUB_OUTPUT
+          echo "git_tag=${BASE_VERSION}-dev-${BRANCH_PART}" >> $GITHUB_OUTPUT
 
       - name: Create/Update Dev Tag
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          GIT_TAG="${{ steps.version.outputs.git_tag }}"
           ACTION_TEXT="${{ steps.version.outputs.action_text }}"
           
           echo "🔗 Branch: ${{ github.head_ref }}"
@@ -69,20 +74,20 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           if [ "$ACTION_TEXT" = "updated" ]; then
-            echo "🔄 Updating dev version: $VERSION"
-            git tag -d "$VERSION" 2>/dev/null || true
-            git push origin ":refs/tags/$VERSION" 2>/dev/null || true
+            echo "🔄 Updating dev version: $GIT_TAG"
+            git tag -d "$GIT_TAG" 2>/dev/null || true
+            git push origin ":refs/tags/$GIT_TAG" 2>/dev/null || true
           else
-            echo "📦 Creating dev version: $VERSION"
+            echo "📦 Creating dev version: $GIT_TAG"
           fi
           
-          git tag "$VERSION"
-          git push origin "$VERSION"
+          git tag "$GIT_TAG"
+          git push origin "$GIT_TAG"
           
-          echo "✅ Dev version $VERSION $ACTION_TEXT!"
+          echo "✅ Dev version $GIT_TAG $ACTION_TEXT!"
           echo ""
           echo "📋 Use in your services:"
-          echo "   go get github.com/${{ github.repository }}@$VERSION"
+          echo "   go get github.com/${{ github.repository }}@$GIT_TAG"
 
       - name: Install pnpm
         run: npm install -g pnpm
@@ -104,45 +109,30 @@ jobs:
           fs.writeFileSync('package.json', JSON.stringify(package, null, 2) + '\n');
           "
 
-      - name: Remove old npm dev version
+      - name: Remove old npm dev version dist-tag
         if: steps.version.outputs.action_text == 'updated'
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm unpublish."
+            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm dist-tag removal."
             exit 0
           fi
           
           NPM_DIST_TAG="${{ steps.version.outputs.npm_dist_tag }}"
-          VERSION="${{ steps.version.outputs.version }}"
-          echo "🗑️  Removing old npm dev version before publishing new one: $VERSION"
+          echo "🗑️  Removing old dist-tag $NPM_DIST_TAG before publishing new version..."
           
-          # Пытаемся удалить версию в любом случае (даже если npm view её не видит из-за кэша)
-          echo "🗑️  Attempting to unpublish version $VERSION..."
-          UNPUBLISH_OUTPUT=$(npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>&1 || true)
-          
-          if echo "$UNPUBLISH_OUTPUT" | grep -q "successfully unpublished\|removed"; then
-            echo "✅ Version $VERSION successfully unpublished"
-          elif echo "$UNPUBLISH_OUTPUT" | grep -q "You cannot unpublish\|Cannot unpublish\|does not exist\|404"; then
-            echo "ℹ️  Version $VERSION does not exist or cannot be unpublished (may be older than 72 hours)"
-            echo "   Output: $UNPUBLISH_OUTPUT"
-          else
-            echo "⚠️  Unpublish attempt result: $UNPUBLISH_OUTPUT"
-          fi
-          
-          # Удаляем dist-tag если он существует
           VERSION_WITH_TAG=$(npm dist-tag ls @ssoeasy-dev/proto 2>/dev/null | grep "^${NPM_DIST_TAG}:" | cut -d: -f2 | xargs)
           if [ -n "$VERSION_WITH_TAG" ]; then
+            echo "📦 Found version $VERSION_WITH_TAG with dist-tag $NPM_DIST_TAG"
             echo "🗑️  Removing dist-tag $NPM_DIST_TAG..."
             npm dist-tag rm @ssoeasy-dev/proto "$NPM_DIST_TAG" 2>/dev/null || {
               echo "⚠️  Could not remove dist-tag $NPM_DIST_TAG (may not exist)"
             }
+            echo "✅ Dist-tag $NPM_DIST_TAG removed (old version $VERSION_WITH_TAG will remain in registry)"
+          else
+            echo "ℹ️  No version found with dist-tag $NPM_DIST_TAG"
           fi
           
-          # Ждем немного для распространения изменений в npm registry
-          echo "⏳ Waiting for npm registry to process changes..."
-          sleep 90
-          
-          echo "✅ Old npm dev version cleanup completed"
+          echo "✅ Old npm dev version dist-tag cleanup completed"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -162,6 +152,7 @@ jobs:
         with:
           script: |
             const version = '${{ steps.version.outputs.version }}';
+            const gitTag = '${{ steps.version.outputs.git_tag }}';
             const npmDistTag = '${{ steps.version.outputs.npm_dist_tag }}';
             const repoFullName = `${context.repo.owner}/${context.repo.repo}`;
             const action = context.payload.action;
@@ -170,10 +161,10 @@ jobs:
             let title, message;
             if (action === 'synchronize') {
               title = '🔄 Dev Version Updated';
-              message = `Dev version \`${version}\` has been updated to the latest commit (\`${commitSha}\`).`;
+              message = `Dev version \`${gitTag}\` has been updated to the latest commit (\`${commitSha}\`).`;
             } else {
               title = '📦 Dev Version Created';
-              message = `Dev version \`${version}\` has been created for this PR.`;
+              message = `Dev version \`${gitTag}\` has been created for this PR.`;
             }
             
             const body = [
@@ -183,12 +174,12 @@ jobs:
               '',
               '**Usage in Go services:**',
               '```bash',
-              `go get github.com/${repoFullName}@${version}`,
+              `go get github.com/${repoFullName}@${gitTag}`,
               '```',
               '',
               '**In go.mod:**',
               '```go',
-              `require github.com/${repoFullName} ${version}`,
+              `require github.com/${repoFullName} ${gitTag}`,
               '```',
               '',
               '**Usage in TypeScript/JavaScript:**',
@@ -196,7 +187,8 @@ jobs:
               `npm install @ssoeasy-dev/proto@${npmDistTag}`,
               '```',
               '',
-              `**Version:** \`${version}\``,
+              `**Git tag:** \`${gitTag}\``,
+              `**NPM version:** \`${version}\` (unique per commit)`,
               '',
               '> ⚠️ This is a temporary development version. It will be automatically updated on each push and deleted after merging this PR.'
             ].join('\n');
@@ -258,63 +250,88 @@ jobs:
           BRANCH_PART="${BRANCH_PART//_/-}"
           BRANCH_PART=$(echo "$BRANCH_PART" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g')
           
-          VERSION="${BASE_VERSION}-dev-${BRANCH_PART}"
+          GIT_TAG="${BASE_VERSION}-dev-${BRANCH_PART}"
           NPM_DIST_TAG="dev-${BRANCH_PART}"
           
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "git_tag=$GIT_TAG" >> $GITHUB_OUTPUT
           echo "npm_dist_tag=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
 
       - name: Delete Dev Tag
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          GIT_TAG="${{ steps.version.outputs.git_tag }}"
           
-          echo "🗑️  Deleting dev version: $VERSION"
+          echo "🗑️  Deleting dev version: $GIT_TAG"
           
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          git push origin ":refs/tags/$VERSION" 2>/dev/null || {
-            echo "⚠️  Tag $VERSION not found (already deleted or never created)"
+          git push origin ":refs/tags/$GIT_TAG" 2>/dev/null || {
+            echo "⚠️  Tag $GIT_TAG not found (already deleted or never created)"
           }
           
-          echo "✅ Dev version $VERSION deleted"
+          echo "✅ Dev version $GIT_TAG deleted"
 
-      - name: Unpublish npm dev version
+      - name: Unpublish npm dev versions
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
             echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm unpublish."
             exit 0
           fi
           
+          GIT_TAG="${{ steps.version.outputs.git_tag }}"
           NPM_DIST_TAG="${{ steps.version.outputs.npm_dist_tag }}"
-          echo "🗑️  Attempting to unpublish npm versions with dist-tag: $NPM_DIST_TAG"
           
-          VERSION_WITH_TAG=$(npm dist-tag ls @ssoeasy-dev/proto 2>/dev/null | grep "^${NPM_DIST_TAG}:" | cut -d: -f2 | xargs)
+          echo "🗑️  Cleaning up all npm versions for dev version: $GIT_TAG"
+          echo "🏷️  NPM dist-tag: $NPM_DIST_TAG"
           
-          if [ -n "$VERSION_WITH_TAG" ]; then
-            echo "📦 Found version $VERSION_WITH_TAG with dist-tag $NPM_DIST_TAG"
-            echo "🗑️  Attempting to unpublish version $VERSION_WITH_TAG..."
+          ALL_VERSIONS=$(npm view @ssoeasy-dev/proto versions --json 2>/dev/null || echo "[]")
+          
+          VERSIONS_TO_DELETE=$(echo "$ALL_VERSIONS" | node -e "
+            const versions = JSON.parse(require('fs').readFileSync(0, 'utf-8'));
+            const baseVersion = process.argv[1];
+            const matching = versions.filter(v => v.startsWith(baseVersion));
+            console.log(matching.join(' '));
+          " "$GIT_TAG")
+          
+          if [ -n "$VERSIONS_TO_DELETE" ]; then
+            echo "📦 Found versions to delete:"
+            for VERSION in $VERSIONS_TO_DELETE; do
+              echo "   - $VERSION"
+            done
             
-            if npm unpublish "@ssoeasy-dev/proto@$VERSION_WITH_TAG" 2>/dev/null; then
-              echo "✅ Version $VERSION_WITH_TAG successfully unpublished"
-            else
-              echo "⚠️  Could not unpublish version $VERSION_WITH_TAG"
-              echo "   This might be because:"
-              echo "   - Version is older than 72 hours (npm restriction)"
-              echo "   - Version doesn't exist"
-              echo "   - Permission issue"
-              echo "   Continuing with dist-tag removal..."
-            fi
+            echo ""
+            echo "🗑️  Attempting to unpublish versions..."
+            UNPUBLISHED_COUNT=0
+            FAILED_COUNT=0
+            
+            for VERSION in $VERSIONS_TO_DELETE; do
+              echo -n "   Unpublishing $VERSION... "
+              if npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>/dev/null; then
+                echo "✅"
+                UNPUBLISHED_COUNT=$((UNPUBLISHED_COUNT + 1))
+              else
+                echo "⚠️  (failed or doesn't exist)"
+                FAILED_COUNT=$((FAILED_COUNT + 1))
+              fi
+            done
+            
+            echo ""
+            echo "📊 Summary:"
+            echo "   ✅ Successfully unpublished: $UNPUBLISHED_COUNT"
+            echo "   ⚠️  Failed or not found: $FAILED_COUNT"
           else
-            echo "ℹ️  No version found with dist-tag $NPM_DIST_TAG"
-            echo "   Dist-tag might not exist or already removed"
+            echo "ℹ️  No versions found matching pattern: $GIT_TAG"
           fi
           
+          echo ""
           echo "🗑️  Removing dist-tag $NPM_DIST_TAG..."
           if npm dist-tag rm @ssoeasy-dev/proto "$NPM_DIST_TAG" 2>/dev/null; then
             echo "✅ NPM dist-tag $NPM_DIST_TAG removed"
           else
             echo "⚠️  Could not remove dist-tag $NPM_DIST_TAG (may not exist)"
           fi
+          
+          echo ""
+          echo "✅ Cleanup completed"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
