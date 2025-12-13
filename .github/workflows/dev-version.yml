@@ -140,7 +140,7 @@ jobs:
           
           # Ждем немного для распространения изменений в npm registry
           echo "⏳ Waiting for npm registry to process changes..."
-          sleep 10
+          sleep 90
           
           echo "✅ Old npm dev version cleanup completed"
         env:
