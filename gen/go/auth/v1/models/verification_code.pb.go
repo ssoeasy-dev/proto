@@ -27,8 +27,8 @@ type VerificationCode struct {
 	EmployeeId    string                 `protobuf:"bytes,2,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
 	ContactType   string                 `protobuf:"bytes,3,opt,name=contact_type,json=contactType,proto3" json:"contact_type,omitempty"`
 	Contact       string                 `protobuf:"bytes,4,opt,name=contact,proto3" json:"contact,omitempty"`
-	ExpiresAt     string                 `protobuf:"bytes,5,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
-	VerifiedAt    string                 `protobuf:"bytes,6,opt,name=verified_at,json=verifiedAt,proto3" json:"verified_at,omitempty"`
+	ExpiresAt     int64                  `protobuf:"varint,5,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	VerifiedAt    int64                  `protobuf:"varint,6,opt,name=verified_at,json=verifiedAt,proto3" json:"verified_at,omitempty"`
 	Attempts      int32                  `protobuf:"varint,7,opt,name=attempts,proto3" json:"attempts,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -92,18 +92,18 @@ func (x *VerificationCode) GetContact() string {
 	return ""
 }
 
-func (x *VerificationCode) GetExpiresAt() string {
+func (x *VerificationCode) GetExpiresAt() int64 {
 	if x != nil {
 		return x.ExpiresAt
 	}
-	return ""
+	return 0
 }
 
-func (x *VerificationCode) GetVerifiedAt() string {
+func (x *VerificationCode) GetVerifiedAt() int64 {
 	if x != nil {
 		return x.VerifiedAt
 	}
-	return ""
+	return 0
 }
 
 func (x *VerificationCode) GetAttempts() int32 {
@@ -125,8 +125,8 @@ const file_auth_v1_models_verification_code_proto_rawDesc = "" +
 	"\fcontact_type\x18\x03 \x01(\tR\vcontactType\x12\x18\n" +
 	"\acontact\x18\x04 \x01(\tR\acontact\x12\x1d\n" +
 	"\n" +
-	"expires_at\x18\x05 \x01(\tR\texpiresAt\x12\x1f\n" +
-	"\vverified_at\x18\x06 \x01(\tR\n" +
+	"expires_at\x18\x05 \x01(\x03R\texpiresAt\x12\x1f\n" +
+	"\vverified_at\x18\x06 \x01(\x03R\n" +
 	"verifiedAt\x12\x1a\n" +
 	"\battempts\x18\a \x01(\x05R\battemptsB\xb9\x01\n" +
 	"\x12com.auth.v1.modelsB\x15VerificationCodeProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1/models\xa2\x02\x03AVM\xaa\x02\x0eAuth.V1.Models\xca\x02\x0eAuth\\V1\\Models\xe2\x02\x1aAuth\\V1\\Models\\GPBMetadata\xea\x02\x10Auth::V1::Modelsb\x06proto3"

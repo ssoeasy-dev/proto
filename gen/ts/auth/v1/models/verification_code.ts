@@ -13,8 +13,8 @@ export interface VerificationCode {
   employeeId: string;
   contactType: string;
   contact: string;
-  expiresAt: string;
-  verifiedAt: string;
+  expiresAt: number;
+  verifiedAt: number;
   attempts: number;
 }
 
@@ -25,8 +25,8 @@ function createBaseVerificationCode(): VerificationCode {
     employeeId: "",
     contactType: "",
     contact: "",
-    expiresAt: "",
-    verifiedAt: "",
+    expiresAt: 0,
+    verifiedAt: 0,
     attempts: 0,
   };
 }
@@ -47,11 +47,11 @@ export const VerificationCode: MessageFns<VerificationCode, "auth.v1.models.Veri
     if (message.contact !== "") {
       writer.uint32(34).string(message.contact);
     }
-    if (message.expiresAt !== "") {
-      writer.uint32(42).string(message.expiresAt);
+    if (message.expiresAt !== 0) {
+      writer.uint32(40).int64(message.expiresAt);
     }
-    if (message.verifiedAt !== "") {
-      writer.uint32(50).string(message.verifiedAt);
+    if (message.verifiedAt !== 0) {
+      writer.uint32(48).int64(message.verifiedAt);
     }
     if (message.attempts !== 0) {
       writer.uint32(56).int32(message.attempts);
@@ -99,19 +99,19 @@ export const VerificationCode: MessageFns<VerificationCode, "auth.v1.models.Veri
           continue;
         }
         case 5: {
-          if (tag !== 42) {
+          if (tag !== 40) {
             break;
           }
 
-          message.expiresAt = reader.string();
+          message.expiresAt = longToNumber(reader.int64());
           continue;
         }
         case 6: {
-          if (tag !== 50) {
+          if (tag !== 48) {
             break;
           }
 
-          message.verifiedAt = reader.string();
+          message.verifiedAt = longToNumber(reader.int64());
           continue;
         }
         case 7: {
@@ -138,8 +138,8 @@ export const VerificationCode: MessageFns<VerificationCode, "auth.v1.models.Veri
       employeeId: isSet(object.employeeId) ? globalThis.String(object.employeeId) : "",
       contactType: isSet(object.contactType) ? globalThis.String(object.contactType) : "",
       contact: isSet(object.contact) ? globalThis.String(object.contact) : "",
-      expiresAt: isSet(object.expiresAt) ? globalThis.String(object.expiresAt) : "",
-      verifiedAt: isSet(object.verifiedAt) ? globalThis.String(object.verifiedAt) : "",
+      expiresAt: isSet(object.expiresAt) ? globalThis.Number(object.expiresAt) : 0,
+      verifiedAt: isSet(object.verifiedAt) ? globalThis.Number(object.verifiedAt) : 0,
       attempts: isSet(object.attempts) ? globalThis.Number(object.attempts) : 0,
     };
   },
@@ -158,11 +158,11 @@ export const VerificationCode: MessageFns<VerificationCode, "auth.v1.models.Veri
     if (message.contact !== "") {
       obj.contact = message.contact;
     }
-    if (message.expiresAt !== "") {
-      obj.expiresAt = message.expiresAt;
+    if (message.expiresAt !== 0) {
+      obj.expiresAt = Math.round(message.expiresAt);
     }
-    if (message.verifiedAt !== "") {
-      obj.verifiedAt = message.verifiedAt;
+    if (message.verifiedAt !== 0) {
+      obj.verifiedAt = Math.round(message.verifiedAt);
     }
     if (message.attempts !== 0) {
       obj.attempts = Math.round(message.attempts);
@@ -179,8 +179,8 @@ export const VerificationCode: MessageFns<VerificationCode, "auth.v1.models.Veri
     message.employeeId = object.employeeId ?? "";
     message.contactType = object.contactType ?? "";
     message.contact = object.contact ?? "";
-    message.expiresAt = object.expiresAt ?? "";
-    message.verifiedAt = object.verifiedAt ?? "";
+    message.expiresAt = object.expiresAt ?? 0;
+    message.verifiedAt = object.verifiedAt ?? 0;
     message.attempts = object.attempts ?? 0;
     return message;
   },
@@ -198,6 +198,17 @@ type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P> | "$type">]: never };
+
+function longToNumber(int64: { toString(): string }): number {
+  const num = globalThis.Number(int64.toString());
+  if (num > globalThis.Number.MAX_SAFE_INTEGER) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  if (num < globalThis.Number.MIN_SAFE_INTEGER) {
+    throw new globalThis.Error("Value is smaller than Number.MIN_SAFE_INTEGER");
+  }
+  return num;
+}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
