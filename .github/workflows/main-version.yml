@@ -51,7 +51,7 @@ jobs:
           
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           if git rev-parse "$VERSION" >/dev/null 2>&1; then
             echo "🔄 Updating main version tag: $VERSION"
             git tag -d "$VERSION" 2>/dev/null || true
