@@ -123,6 +123,23 @@ jobs:
             
             if npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>/dev/null; then
               echo "✅ Version $VERSION successfully unpublished"
+              
+              echo "⏳ Waiting for npm registry to process deletion..."
+              sleep 5
+              
+              for i in {1..6}; do
+                VERSION_STILL_EXISTS=$(npm view "@ssoeasy-dev/proto@$VERSION" version 2>/dev/null || echo "")
+                if [ -z "$VERSION_STILL_EXISTS" ]; then
+                  echo "✅ Version $VERSION confirmed deleted from npm registry"
+                  break
+                fi
+                if [ $i -eq 6 ]; then
+                  echo "⚠️  Warning: Version $VERSION still exists after deletion, but continuing..."
+                else
+                  echo "⏳ Waiting for deletion to propagate... (attempt $i/6)"
+                  sleep 5
+                fi
+              done
             else
               echo "❌ ERROR: Could not unpublish version $VERSION"
               echo "   This version already exists and cannot be removed (may be older than 72 hours)"
