@@ -113,13 +113,41 @@ jobs:
           fi
           
           NPM_DIST_TAG="${{ steps.version.outputs.npm_dist_tag }}"
-          echo "🗑️  Removing old npm dev version with dist-tag: $NPM_DIST_TAG"
+          VERSION="${{ steps.version.outputs.version }}"
+          echo "🗑️  Removing old npm dev version before publishing new one: $VERSION"
           
-          npm dist-tag rm @ssoeasy-dev/proto "$NPM_DIST_TAG" 2>/dev/null || {
-            echo "⚠️  No existing dist-tag $NPM_DIST_TAG found (first publish for this branch)"
-          }
+          VERSION_WITH_TAG=$(npm dist-tag ls @ssoeasy-dev/proto 2>/dev/null | grep "^${NPM_DIST_TAG}:" | cut -d: -f2 | xargs)
           
-          echo "✅ Old npm dev version removed"
+          if [ -n "$VERSION_WITH_TAG" ]; then
+            echo "📦 Found version $VERSION_WITH_TAG with dist-tag $NPM_DIST_TAG"
+            
+            if [ "$VERSION_WITH_TAG" = "$VERSION" ]; then
+              echo "🗑️  Version $VERSION already exists, attempting to unpublish..."
+              
+              # Пытаемся удалить версию (работает только в течение 72 часов)
+              if npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>/dev/null; then
+                echo "✅ Version $VERSION successfully unpublished"
+              else
+                echo "❌ ERROR: Could not unpublish version $VERSION"
+                echo "   This version already exists and cannot be removed (may be older than 72 hours)"
+                echo "   npm does not allow publishing the same version twice"
+                echo "   Please wait or use a different version"
+                exit 1
+              fi
+            else
+              echo "ℹ️  Different version found ($VERSION_WITH_TAG), will be replaced by new version"
+            fi
+            
+            echo "🗑️  Removing dist-tag $NPM_DIST_TAG..."
+            npm dist-tag rm @ssoeasy-dev/proto "$NPM_DIST_TAG" 2>/dev/null || {
+              echo "⚠️  Could not remove dist-tag $NPM_DIST_TAG (may not exist)"
+            }
+          else
+            echo "ℹ️  No version found with dist-tag $NPM_DIST_TAG"
+            echo "   This is the first publish for this branch"
+          fi
+          
+          echo "✅ Old npm dev version cleanup completed"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
