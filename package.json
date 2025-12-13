@@ -1,6 +1,6 @@
 {
   "name": "@ssoeasy-dev/proto",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "gRPC proto contracts and generated TypeScript clients for SSOEasy",
   "main": "gen/ts/index.ts",
   "types": "gen/ts/index.ts",

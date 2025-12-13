@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package auth.v1.models;
+
+message VerificationCode {
+  string id = 1;
+  string employee_id = 2;
+  string contact_type = 3;
+  string contact = 4;
+  string expires_at = 5;
+  string verified_at = 6;
+  int32 attempts = 7;
+}

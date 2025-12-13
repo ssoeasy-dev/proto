@@ -2,18 +2,34 @@ syntax = "proto3";
 
 package auth.v1;
 
+import "auth/v1/models/verification_code.proto";
+
 service VerificationService {
   rpc GenerateVerificationCode(GenerateVerificationCodeRequest) returns (GenerateVerificationCodeResponse);
+  rpc GenerateVerificationCodeCompensate(GenerateVerificationCodeCompensateRequest) returns (GenerateVerificationCodeCompensateResponse);
+}
+
+enum ContactType {
+  CONTACT_TYPE_UNSPECIFIED = 0;
+  CONTACT_TYPE_EMAIL = 1;
+  CONTACT_TYPE_PHONE = 2;
 }
 
 message GenerateVerificationCodeRequest {
   string employee_id = 1;
-  string email = 2;
+  ContactType contact_type = 2;
+  string contact = 3;
 }
 
 message GenerateVerificationCodeResponse {
-  string code = 1;
-  string employee_id = 2;
-  string email = 3;
-  int64 expires_at = 4;
+  auth.v1.models.VerificationCode verification_code = 1;
+}
+
+message GenerateVerificationCodeCompensateRequest {
+  string verification_code_id = 1;
+}
+
+message GenerateVerificationCodeCompensateResponse {
+  bool success = 1;
+  string message = 2;
 }

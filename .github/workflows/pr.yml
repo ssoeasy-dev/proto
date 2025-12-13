@@ -77,7 +77,7 @@ jobs:
             exit 1
           )
 
-  test-import:
+  test-import-go:
     name: Test Go Import
     runs-on: ubuntu-latest
     steps:
@@ -161,7 +161,6 @@ jobs:
 
       - name: Test Exports
         run: |
-          # Проверяем основные экспорты из package.json
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
@@ -189,12 +188,10 @@ jobs:
 
       - name: Test Import Syntax
         run: |
-          # Проверяем что основные файлы существуют и имеют правильную структуру
           node -e "
             const fs = require('fs');
             const pkg = require('./package.json');
             
-            // Получаем список файлов из package.json exports
             const mainFiles = Object.values(pkg.exports).map(exp => {
               return exp.types || exp.default;
             }).filter(Boolean);
@@ -208,7 +205,6 @@ jobs:
               }
               
               const content = fs.readFileSync(file, 'utf8');
-              // Проверяем базовый синтаксис экспорта
               if (!content.includes('export')) {
                 errors.push(\`File \${file} does not contain exports\`);
               }

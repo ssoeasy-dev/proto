@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	VerificationService_GenerateVerificationCode_FullMethodName = "/auth.v1.VerificationService/GenerateVerificationCode"
+	VerificationService_GenerateVerificationCode_FullMethodName           = "/auth.v1.VerificationService/GenerateVerificationCode"
+	VerificationService_GenerateVerificationCodeCompensate_FullMethodName = "/auth.v1.VerificationService/GenerateVerificationCodeCompensate"
 )
 
 // VerificationServiceClient is the client API for VerificationService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VerificationServiceClient interface {
 	GenerateVerificationCode(ctx context.Context, in *GenerateVerificationCodeRequest, opts ...grpc.CallOption) (*GenerateVerificationCodeResponse, error)
+	GenerateVerificationCodeCompensate(ctx context.Context, in *GenerateVerificationCodeCompensateRequest, opts ...grpc.CallOption) (*GenerateVerificationCodeCompensateResponse, error)
 }
 
 type verificationServiceClient struct {
@@ -47,11 +49,22 @@ func (c *verificationServiceClient) GenerateVerificationCode(ctx context.Context
 	return out, nil
 }
 
+func (c *verificationServiceClient) GenerateVerificationCodeCompensate(ctx context.Context, in *GenerateVerificationCodeCompensateRequest, opts ...grpc.CallOption) (*GenerateVerificationCodeCompensateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GenerateVerificationCodeCompensateResponse)
+	err := c.cc.Invoke(ctx, VerificationService_GenerateVerificationCodeCompensate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VerificationServiceServer is the server API for VerificationService service.
 // All implementations must embed UnimplementedVerificationServiceServer
 // for forward compatibility.
 type VerificationServiceServer interface {
 	GenerateVerificationCode(context.Context, *GenerateVerificationCodeRequest) (*GenerateVerificationCodeResponse, error)
+	GenerateVerificationCodeCompensate(context.Context, *GenerateVerificationCodeCompensateRequest) (*GenerateVerificationCodeCompensateResponse, error)
 	mustEmbedUnimplementedVerificationServiceServer()
 }
 
@@ -64,6 +77,9 @@ type UnimplementedVerificationServiceServer struct{}
 
 func (UnimplementedVerificationServiceServer) GenerateVerificationCode(context.Context, *GenerateVerificationCodeRequest) (*GenerateVerificationCodeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GenerateVerificationCode not implemented")
+}
+func (UnimplementedVerificationServiceServer) GenerateVerificationCodeCompensate(context.Context, *GenerateVerificationCodeCompensateRequest) (*GenerateVerificationCodeCompensateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GenerateVerificationCodeCompensate not implemented")
 }
 func (UnimplementedVerificationServiceServer) mustEmbedUnimplementedVerificationServiceServer() {}
 func (UnimplementedVerificationServiceServer) testEmbeddedByValue()                             {}
@@ -104,6 +120,24 @@ func _VerificationService_GenerateVerificationCode_Handler(srv interface{}, ctx 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VerificationService_GenerateVerificationCodeCompensate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateVerificationCodeCompensateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VerificationServiceServer).GenerateVerificationCodeCompensate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VerificationService_GenerateVerificationCodeCompensate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VerificationServiceServer).GenerateVerificationCodeCompensate(ctx, req.(*GenerateVerificationCodeCompensateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VerificationService_ServiceDesc is the grpc.ServiceDesc for VerificationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +148,10 @@ var VerificationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GenerateVerificationCode",
 			Handler:    _VerificationService_GenerateVerificationCode_Handler,
+		},
+		{
+			MethodName: "GenerateVerificationCodeCompensate",
+			Handler:    _VerificationService_GenerateVerificationCodeCompensate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

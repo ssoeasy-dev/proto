@@ -6,3 +6,4 @@
 /* eslint-disable */
 
 export * from "./auth/v1/models/credential";
+export * from "./auth/v1/models/verification_code";

@@ -7,23 +7,91 @@
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 import { type CallContext, type CallOptions } from "nice-grpc-common";
+import { VerificationCode } from "./models/verification_code";
+
+export enum ContactType {
+  CONTACT_TYPE_UNSPECIFIED = "CONTACT_TYPE_UNSPECIFIED",
+  CONTACT_TYPE_EMAIL = "CONTACT_TYPE_EMAIL",
+  CONTACT_TYPE_PHONE = "CONTACT_TYPE_PHONE",
+  UNRECOGNIZED = "UNRECOGNIZED",
+}
+
+export function contactTypeFromJSON(object: any): ContactType {
+  switch (object) {
+    case 0:
+    case "CONTACT_TYPE_UNSPECIFIED":
+      return ContactType.CONTACT_TYPE_UNSPECIFIED;
+    case 1:
+    case "CONTACT_TYPE_EMAIL":
+      return ContactType.CONTACT_TYPE_EMAIL;
+    case 2:
+    case "CONTACT_TYPE_PHONE":
+      return ContactType.CONTACT_TYPE_PHONE;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return ContactType.UNRECOGNIZED;
+  }
+}
+
+export function contactTypeToJSON(object: ContactType): string {
+  switch (object) {
+    case ContactType.CONTACT_TYPE_UNSPECIFIED:
+      return "CONTACT_TYPE_UNSPECIFIED";
+    case ContactType.CONTACT_TYPE_EMAIL:
+      return "CONTACT_TYPE_EMAIL";
+    case ContactType.CONTACT_TYPE_PHONE:
+      return "CONTACT_TYPE_PHONE";
+    case ContactType.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
+export function contactTypeToNumber(object: ContactType): number {
+  switch (object) {
+    case ContactType.CONTACT_TYPE_UNSPECIFIED:
+      return 0;
+    case ContactType.CONTACT_TYPE_EMAIL:
+      return 1;
+    case ContactType.CONTACT_TYPE_PHONE:
+      return 2;
+    case ContactType.UNRECOGNIZED:
+    default:
+      return -1;
+  }
+}
 
 export interface GenerateVerificationCodeRequest {
   $type: "auth.v1.GenerateVerificationCodeRequest";
   employeeId: string;
-  email: string;
+  contactType: ContactType;
+  contact: string;
 }
 
 export interface GenerateVerificationCodeResponse {
   $type: "auth.v1.GenerateVerificationCodeResponse";
-  code: string;
-  employeeId: string;
-  email: string;
-  expiresAt: number;
+  verificationCode?: VerificationCode | undefined;
+}
+
+export interface GenerateVerificationCodeCompensateRequest {
+  $type: "auth.v1.GenerateVerificationCodeCompensateRequest";
+  verificationCodeId: string;
+}
+
+export interface GenerateVerificationCodeCompensateResponse {
+  $type: "auth.v1.GenerateVerificationCodeCompensateResponse";
+  success: boolean;
+  message: string;
 }
 
 function createBaseGenerateVerificationCodeRequest(): GenerateVerificationCodeRequest {
-  return { $type: "auth.v1.GenerateVerificationCodeRequest", employeeId: "", email: "" };
+  return {
+    $type: "auth.v1.GenerateVerificationCodeRequest",
+    employeeId: "",
+    contactType: ContactType.CONTACT_TYPE_UNSPECIFIED,
+    contact: "",
+  };
 }
 
 export const GenerateVerificationCodeRequest: MessageFns<
@@ -36,8 +104,11 @@ export const GenerateVerificationCodeRequest: MessageFns<
     if (message.employeeId !== "") {
       writer.uint32(10).string(message.employeeId);
     }
-    if (message.email !== "") {
-      writer.uint32(18).string(message.email);
+    if (message.contactType !== ContactType.CONTACT_TYPE_UNSPECIFIED) {
+      writer.uint32(16).int32(contactTypeToNumber(message.contactType));
+    }
+    if (message.contact !== "") {
+      writer.uint32(26).string(message.contact);
     }
     return writer;
   },
@@ -58,11 +129,19 @@ export const GenerateVerificationCodeRequest: MessageFns<
           continue;
         }
         case 2: {
-          if (tag !== 18) {
+          if (tag !== 16) {
             break;
           }
 
-          message.email = reader.string();
+          message.contactType = contactTypeFromJSON(reader.int32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.contact = reader.string();
           continue;
         }
       }
@@ -78,7 +157,10 @@ export const GenerateVerificationCodeRequest: MessageFns<
     return {
       $type: GenerateVerificationCodeRequest.$type,
       employeeId: isSet(object.employeeId) ? globalThis.String(object.employeeId) : "",
-      email: isSet(object.email) ? globalThis.String(object.email) : "",
+      contactType: isSet(object.contactType)
+        ? contactTypeFromJSON(object.contactType)
+        : ContactType.CONTACT_TYPE_UNSPECIFIED,
+      contact: isSet(object.contact) ? globalThis.String(object.contact) : "",
     };
   },
 
@@ -87,8 +169,11 @@ export const GenerateVerificationCodeRequest: MessageFns<
     if (message.employeeId !== "") {
       obj.employeeId = message.employeeId;
     }
-    if (message.email !== "") {
-      obj.email = message.email;
+    if (message.contactType !== ContactType.CONTACT_TYPE_UNSPECIFIED) {
+      obj.contactType = contactTypeToJSON(message.contactType);
+    }
+    if (message.contact !== "") {
+      obj.contact = message.contact;
     }
     return obj;
   },
@@ -101,13 +186,14 @@ export const GenerateVerificationCodeRequest: MessageFns<
   ): GenerateVerificationCodeRequest {
     const message = createBaseGenerateVerificationCodeRequest();
     message.employeeId = object.employeeId ?? "";
-    message.email = object.email ?? "";
+    message.contactType = object.contactType ?? ContactType.CONTACT_TYPE_UNSPECIFIED;
+    message.contact = object.contact ?? "";
     return message;
   },
 };
 
 function createBaseGenerateVerificationCodeResponse(): GenerateVerificationCodeResponse {
-  return { $type: "auth.v1.GenerateVerificationCodeResponse", code: "", employeeId: "", email: "", expiresAt: 0 };
+  return { $type: "auth.v1.GenerateVerificationCodeResponse", verificationCode: undefined };
 }
 
 export const GenerateVerificationCodeResponse: MessageFns<
@@ -117,17 +203,8 @@ export const GenerateVerificationCodeResponse: MessageFns<
   $type: "auth.v1.GenerateVerificationCodeResponse" as const,
 
   encode(message: GenerateVerificationCodeResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.code !== "") {
-      writer.uint32(10).string(message.code);
-    }
-    if (message.employeeId !== "") {
-      writer.uint32(18).string(message.employeeId);
-    }
-    if (message.email !== "") {
-      writer.uint32(26).string(message.email);
-    }
-    if (message.expiresAt !== 0) {
-      writer.uint32(32).int64(message.expiresAt);
+    if (message.verificationCode !== undefined) {
+      VerificationCode.encode(message.verificationCode, writer.uint32(10).fork()).join();
     }
     return writer;
   },
@@ -144,31 +221,7 @@ export const GenerateVerificationCodeResponse: MessageFns<
             break;
           }
 
-          message.code = reader.string();
-          continue;
-        }
-        case 2: {
-          if (tag !== 18) {
-            break;
-          }
-
-          message.employeeId = reader.string();
-          continue;
-        }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.email = reader.string();
-          continue;
-        }
-        case 4: {
-          if (tag !== 32) {
-            break;
-          }
-
-          message.expiresAt = longToNumber(reader.int64());
+          message.verificationCode = VerificationCode.decode(reader, reader.uint32());
           continue;
         }
       }
@@ -183,26 +236,14 @@ export const GenerateVerificationCodeResponse: MessageFns<
   fromJSON(object: any): GenerateVerificationCodeResponse {
     return {
       $type: GenerateVerificationCodeResponse.$type,
-      code: isSet(object.code) ? globalThis.String(object.code) : "",
-      employeeId: isSet(object.employeeId) ? globalThis.String(object.employeeId) : "",
-      email: isSet(object.email) ? globalThis.String(object.email) : "",
-      expiresAt: isSet(object.expiresAt) ? globalThis.Number(object.expiresAt) : 0,
+      verificationCode: isSet(object.verificationCode) ? VerificationCode.fromJSON(object.verificationCode) : undefined,
     };
   },
 
   toJSON(message: GenerateVerificationCodeResponse): unknown {
     const obj: any = {};
-    if (message.code !== "") {
-      obj.code = message.code;
-    }
-    if (message.employeeId !== "") {
-      obj.employeeId = message.employeeId;
-    }
-    if (message.email !== "") {
-      obj.email = message.email;
-    }
-    if (message.expiresAt !== 0) {
-      obj.expiresAt = Math.round(message.expiresAt);
+    if (message.verificationCode !== undefined) {
+      obj.verificationCode = VerificationCode.toJSON(message.verificationCode);
     }
     return obj;
   },
@@ -216,10 +257,165 @@ export const GenerateVerificationCodeResponse: MessageFns<
     object: I,
   ): GenerateVerificationCodeResponse {
     const message = createBaseGenerateVerificationCodeResponse();
-    message.code = object.code ?? "";
-    message.employeeId = object.employeeId ?? "";
-    message.email = object.email ?? "";
-    message.expiresAt = object.expiresAt ?? 0;
+    message.verificationCode = (object.verificationCode !== undefined && object.verificationCode !== null)
+      ? VerificationCode.fromPartial(object.verificationCode)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseGenerateVerificationCodeCompensateRequest(): GenerateVerificationCodeCompensateRequest {
+  return { $type: "auth.v1.GenerateVerificationCodeCompensateRequest", verificationCodeId: "" };
+}
+
+export const GenerateVerificationCodeCompensateRequest: MessageFns<
+  GenerateVerificationCodeCompensateRequest,
+  "auth.v1.GenerateVerificationCodeCompensateRequest"
+> = {
+  $type: "auth.v1.GenerateVerificationCodeCompensateRequest" as const,
+
+  encode(message: GenerateVerificationCodeCompensateRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.verificationCodeId !== "") {
+      writer.uint32(10).string(message.verificationCodeId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GenerateVerificationCodeCompensateRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenerateVerificationCodeCompensateRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.verificationCodeId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GenerateVerificationCodeCompensateRequest {
+    return {
+      $type: GenerateVerificationCodeCompensateRequest.$type,
+      verificationCodeId: isSet(object.verificationCodeId) ? globalThis.String(object.verificationCodeId) : "",
+    };
+  },
+
+  toJSON(message: GenerateVerificationCodeCompensateRequest): unknown {
+    const obj: any = {};
+    if (message.verificationCodeId !== "") {
+      obj.verificationCodeId = message.verificationCodeId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GenerateVerificationCodeCompensateRequest>, I>>(
+    base?: I,
+  ): GenerateVerificationCodeCompensateRequest {
+    return GenerateVerificationCodeCompensateRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GenerateVerificationCodeCompensateRequest>, I>>(
+    object: I,
+  ): GenerateVerificationCodeCompensateRequest {
+    const message = createBaseGenerateVerificationCodeCompensateRequest();
+    message.verificationCodeId = object.verificationCodeId ?? "";
+    return message;
+  },
+};
+
+function createBaseGenerateVerificationCodeCompensateResponse(): GenerateVerificationCodeCompensateResponse {
+  return { $type: "auth.v1.GenerateVerificationCodeCompensateResponse", success: false, message: "" };
+}
+
+export const GenerateVerificationCodeCompensateResponse: MessageFns<
+  GenerateVerificationCodeCompensateResponse,
+  "auth.v1.GenerateVerificationCodeCompensateResponse"
+> = {
+  $type: "auth.v1.GenerateVerificationCodeCompensateResponse" as const,
+
+  encode(message: GenerateVerificationCodeCompensateResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.success !== false) {
+      writer.uint32(8).bool(message.success);
+    }
+    if (message.message !== "") {
+      writer.uint32(18).string(message.message);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GenerateVerificationCodeCompensateResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGenerateVerificationCodeCompensateResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.success = reader.bool();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.message = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GenerateVerificationCodeCompensateResponse {
+    return {
+      $type: GenerateVerificationCodeCompensateResponse.$type,
+      success: isSet(object.success) ? globalThis.Boolean(object.success) : false,
+      message: isSet(object.message) ? globalThis.String(object.message) : "",
+    };
+  },
+
+  toJSON(message: GenerateVerificationCodeCompensateResponse): unknown {
+    const obj: any = {};
+    if (message.success !== false) {
+      obj.success = message.success;
+    }
+    if (message.message !== "") {
+      obj.message = message.message;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GenerateVerificationCodeCompensateResponse>, I>>(
+    base?: I,
+  ): GenerateVerificationCodeCompensateResponse {
+    return GenerateVerificationCodeCompensateResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GenerateVerificationCodeCompensateResponse>, I>>(
+    object: I,
+  ): GenerateVerificationCodeCompensateResponse {
+    const message = createBaseGenerateVerificationCodeCompensateResponse();
+    message.success = object.success ?? false;
+    message.message = object.message ?? "";
     return message;
   },
 };
@@ -237,6 +433,14 @@ export const VerificationServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    generateVerificationCodeCompensate: {
+      name: "GenerateVerificationCodeCompensate",
+      requestType: GenerateVerificationCodeCompensateRequest,
+      requestStream: false,
+      responseType: GenerateVerificationCodeCompensateResponse,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
@@ -245,6 +449,10 @@ export interface VerificationServiceImplementation<CallContextExt = {}> {
     request: GenerateVerificationCodeRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<GenerateVerificationCodeResponse>>;
+  generateVerificationCodeCompensate(
+    request: GenerateVerificationCodeCompensateRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<GenerateVerificationCodeCompensateResponse>>;
 }
 
 export interface VerificationServiceClient<CallOptionsExt = {}> {
@@ -252,6 +460,10 @@ export interface VerificationServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<GenerateVerificationCodeRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<GenerateVerificationCodeResponse>;
+  generateVerificationCodeCompensate(
+    request: DeepPartial<GenerateVerificationCodeCompensateRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<GenerateVerificationCodeCompensateResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
@@ -266,17 +478,6 @@ type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P> | "$type">]: never };
-
-function longToNumber(int64: { toString(): string }): number {
-  const num = globalThis.Number(int64.toString());
-  if (num > globalThis.Number.MAX_SAFE_INTEGER) {
-    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
-  }
-  if (num < globalThis.Number.MIN_SAFE_INTEGER) {
-    throw new globalThis.Error("Value is smaller than Number.MIN_SAFE_INTEGER");
-  }
-  return num;
-}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;
