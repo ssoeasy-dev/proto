@@ -23,6 +23,7 @@ message GenerateVerificationCodeRequest {
 
 message GenerateVerificationCodeResponse {
   auth.v1.models.VerificationCode verification_code = 1;
+  string code = 2;
 }
 
 message GenerateVerificationCodeCompensateRequest {

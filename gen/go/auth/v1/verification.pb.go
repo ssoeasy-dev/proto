@@ -134,6 +134,7 @@ func (x *GenerateVerificationCodeRequest) GetContact() string {
 type GenerateVerificationCodeResponse struct {
 	state            protoimpl.MessageState   `protogen:"open.v1"`
 	VerificationCode *models.VerificationCode `protobuf:"bytes,1,opt,name=verification_code,json=verificationCode,proto3" json:"verification_code,omitempty"`
+	Code             string                   `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -173,6 +174,13 @@ func (x *GenerateVerificationCodeResponse) GetVerificationCode() *models.Verific
 		return x.VerificationCode
 	}
 	return nil
+}
+
+func (x *GenerateVerificationCodeResponse) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
 }
 
 type GenerateVerificationCodeCompensateRequest struct {
@@ -280,9 +288,10 @@ const file_auth_v1_verification_proto_rawDesc = "" +
 	"\vemployee_id\x18\x01 \x01(\tR\n" +
 	"employeeId\x127\n" +
 	"\fcontact_type\x18\x02 \x01(\x0e2\x14.auth.v1.ContactTypeR\vcontactType\x12\x18\n" +
-	"\acontact\x18\x03 \x01(\tR\acontact\"q\n" +
+	"\acontact\x18\x03 \x01(\tR\acontact\"\x85\x01\n" +
 	" GenerateVerificationCodeResponse\x12M\n" +
-	"\x11verification_code\x18\x01 \x01(\v2 .auth.v1.models.VerificationCodeR\x10verificationCode\"]\n" +
+	"\x11verification_code\x18\x01 \x01(\v2 .auth.v1.models.VerificationCodeR\x10verificationCode\x12\x12\n" +
+	"\x04code\x18\x02 \x01(\tR\x04code\"]\n" +
 	")GenerateVerificationCodeCompensateRequest\x120\n" +
 	"\x14verification_code_id\x18\x01 \x01(\tR\x12verificationCodeId\"`\n" +
 	"*GenerateVerificationCodeCompensateResponse\x12\x18\n" +

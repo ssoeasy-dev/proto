@@ -72,6 +72,7 @@ export interface GenerateVerificationCodeRequest {
 export interface GenerateVerificationCodeResponse {
   $type: "auth.v1.GenerateVerificationCodeResponse";
   verificationCode?: VerificationCode | undefined;
+  code: string;
 }
 
 export interface GenerateVerificationCodeCompensateRequest {
@@ -193,7 +194,7 @@ export const GenerateVerificationCodeRequest: MessageFns<
 };
 
 function createBaseGenerateVerificationCodeResponse(): GenerateVerificationCodeResponse {
-  return { $type: "auth.v1.GenerateVerificationCodeResponse", verificationCode: undefined };
+  return { $type: "auth.v1.GenerateVerificationCodeResponse", verificationCode: undefined, code: "" };
 }
 
 export const GenerateVerificationCodeResponse: MessageFns<
@@ -205,6 +206,9 @@ export const GenerateVerificationCodeResponse: MessageFns<
   encode(message: GenerateVerificationCodeResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.verificationCode !== undefined) {
       VerificationCode.encode(message.verificationCode, writer.uint32(10).fork()).join();
+    }
+    if (message.code !== "") {
+      writer.uint32(18).string(message.code);
     }
     return writer;
   },
@@ -224,6 +228,14 @@ export const GenerateVerificationCodeResponse: MessageFns<
           message.verificationCode = VerificationCode.decode(reader, reader.uint32());
           continue;
         }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.code = reader.string();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -237,6 +249,7 @@ export const GenerateVerificationCodeResponse: MessageFns<
     return {
       $type: GenerateVerificationCodeResponse.$type,
       verificationCode: isSet(object.verificationCode) ? VerificationCode.fromJSON(object.verificationCode) : undefined,
+      code: isSet(object.code) ? globalThis.String(object.code) : "",
     };
   },
 
@@ -244,6 +257,9 @@ export const GenerateVerificationCodeResponse: MessageFns<
     const obj: any = {};
     if (message.verificationCode !== undefined) {
       obj.verificationCode = VerificationCode.toJSON(message.verificationCode);
+    }
+    if (message.code !== "") {
+      obj.code = message.code;
     }
     return obj;
   },
@@ -260,6 +276,7 @@ export const GenerateVerificationCodeResponse: MessageFns<
     message.verificationCode = (object.verificationCode !== undefined && object.verificationCode !== null)
       ? VerificationCode.fromPartial(object.verificationCode)
       : undefined;
+    message.code = object.code ?? "";
     return message;
   },
 };
