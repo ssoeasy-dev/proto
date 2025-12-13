@@ -116,41 +116,20 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
           echo "🗑️  Removing old npm dev version before publishing new one: $VERSION"
           
-          VERSION_EXISTS=$(npm view "@ssoeasy-dev/proto@$VERSION" version 2>/dev/null || echo "")
+          # Пытаемся удалить версию в любом случае (даже если npm view её не видит из-за кэша)
+          echo "🗑️  Attempting to unpublish version $VERSION..."
+          UNPUBLISH_OUTPUT=$(npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>&1 || true)
           
-          if [ -n "$VERSION_EXISTS" ]; then
-            echo "📦 Version $VERSION already exists in npm, attempting to unpublish..."
-            
-            if npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>/dev/null; then
-              echo "✅ Version $VERSION successfully unpublished"
-              
-              echo "⏳ Waiting for npm registry to process deletion..."
-              sleep 5
-              
-              for i in {1..6}; do
-                VERSION_STILL_EXISTS=$(npm view "@ssoeasy-dev/proto@$VERSION" version 2>/dev/null || echo "")
-                if [ -z "$VERSION_STILL_EXISTS" ]; then
-                  echo "✅ Version $VERSION confirmed deleted from npm registry"
-                  break
-                fi
-                if [ $i -eq 6 ]; then
-                  echo "⚠️  Warning: Version $VERSION still exists after deletion, but continuing..."
-                else
-                  echo "⏳ Waiting for deletion to propagate... (attempt $i/6)"
-                  sleep 5
-                fi
-              done
-            else
-              echo "❌ ERROR: Could not unpublish version $VERSION"
-              echo "   This version already exists and cannot be removed (may be older than 72 hours)"
-              echo "   npm does not allow publishing the same version twice"
-              echo "   Please wait or use a different version"
-              exit 1
-            fi
+          if echo "$UNPUBLISH_OUTPUT" | grep -q "successfully unpublished\|removed"; then
+            echo "✅ Version $VERSION successfully unpublished"
+          elif echo "$UNPUBLISH_OUTPUT" | grep -q "You cannot unpublish\|Cannot unpublish\|does not exist\|404"; then
+            echo "ℹ️  Version $VERSION does not exist or cannot be unpublished (may be older than 72 hours)"
+            echo "   Output: $UNPUBLISH_OUTPUT"
           else
-            echo "ℹ️  Version $VERSION does not exist in npm (first publish or already removed)"
+            echo "⚠️  Unpublish attempt result: $UNPUBLISH_OUTPUT"
           fi
           
+          # Удаляем dist-tag если он существует
           VERSION_WITH_TAG=$(npm dist-tag ls @ssoeasy-dev/proto 2>/dev/null | grep "^${NPM_DIST_TAG}:" | cut -d: -f2 | xargs)
           if [ -n "$VERSION_WITH_TAG" ]; then
             echo "🗑️  Removing dist-tag $NPM_DIST_TAG..."
@@ -158,6 +137,10 @@ jobs:
               echo "⚠️  Could not remove dist-tag $NPM_DIST_TAG (may not exist)"
             }
           fi
+          
+          # Ждем немного для распространения изменений в npm registry
+          echo "⏳ Waiting for npm registry to process changes..."
+          sleep 10
           
           echo "✅ Old npm dev version cleanup completed"
         env:
