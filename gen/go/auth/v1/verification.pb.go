@@ -279,6 +279,134 @@ func (x *GenerateVerificationCodeCompensateResponse) GetMessage() string {
 	return ""
 }
 
+type VerificateCodeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	CompanyId     string                 `protobuf:"bytes,4,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	ServiceId     string                 `protobuf:"bytes,5,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VerificateCodeRequest) Reset() {
+	*x = VerificateCodeRequest{}
+	mi := &file_auth_v1_verification_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VerificateCodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VerificateCodeRequest) ProtoMessage() {}
+
+func (x *VerificateCodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_verification_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VerificateCodeRequest.ProtoReflect.Descriptor instead.
+func (*VerificateCodeRequest) Descriptor() ([]byte, []int) {
+	return file_auth_v1_verification_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *VerificateCodeRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *VerificateCodeRequest) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+func (x *VerificateCodeRequest) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *VerificateCodeRequest) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
+func (x *VerificateCodeRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+type VerificateCodeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Access        string                 `protobuf:"bytes,1,opt,name=access,proto3" json:"access,omitempty"`
+	Refresh       string                 `protobuf:"bytes,2,opt,name=refresh,proto3" json:"refresh,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VerificateCodeResponse) Reset() {
+	*x = VerificateCodeResponse{}
+	mi := &file_auth_v1_verification_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VerificateCodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VerificateCodeResponse) ProtoMessage() {}
+
+func (x *VerificateCodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_verification_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VerificateCodeResponse.ProtoReflect.Descriptor instead.
+func (*VerificateCodeResponse) Descriptor() ([]byte, []int) {
+	return file_auth_v1_verification_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *VerificateCodeResponse) GetAccess() string {
+	if x != nil {
+		return x.Access
+	}
+	return ""
+}
+
+func (x *VerificateCodeResponse) GetRefresh() string {
+	if x != nil {
+		return x.Refresh
+	}
+	return ""
+}
+
 var File_auth_v1_verification_proto protoreflect.FileDescriptor
 
 const file_auth_v1_verification_proto_rawDesc = "" +
@@ -296,14 +424,26 @@ const file_auth_v1_verification_proto_rawDesc = "" +
 	"\x14verification_code_id\x18\x01 \x01(\tR\x12verificationCodeId\"`\n" +
 	"*GenerateVerificationCodeCompensateResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage*[\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x8f\x01\n" +
+	"\x15VerificateCodeRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x04 \x01(\tR\tcompanyId\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x05 \x01(\tR\tserviceId\"J\n" +
+	"\x16VerificateCodeResponse\x12\x16\n" +
+	"\x06access\x18\x01 \x01(\tR\x06access\x12\x18\n" +
+	"\arefresh\x18\x02 \x01(\tR\arefresh*[\n" +
 	"\vContactType\x12\x1c\n" +
 	"\x18CONTACT_TYPE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12CONTACT_TYPE_EMAIL\x10\x01\x12\x16\n" +
-	"\x12CONTACT_TYPE_PHONE\x10\x022\x96\x02\n" +
+	"\x12CONTACT_TYPE_PHONE\x10\x022\xe9\x02\n" +
 	"\x13VerificationService\x12o\n" +
 	"\x18GenerateVerificationCode\x12(.auth.v1.GenerateVerificationCodeRequest\x1a).auth.v1.GenerateVerificationCodeResponse\x12\x8d\x01\n" +
-	"\"GenerateVerificationCodeCompensate\x122.auth.v1.GenerateVerificationCodeCompensateRequest\x1a3.auth.v1.GenerateVerificationCodeCompensateResponseB\x91\x01\n" +
+	"\"GenerateVerificationCodeCompensate\x122.auth.v1.GenerateVerificationCodeCompensateRequest\x1a3.auth.v1.GenerateVerificationCodeCompensateResponse\x12Q\n" +
+	"\x0eVerificateCode\x12\x1e.auth.v1.VerificateCodeRequest\x1a\x1f.auth.v1.VerificateCodeResponseB\x91\x01\n" +
 	"\vcom.auth.v1B\x11VerificationProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var (
@@ -319,24 +459,28 @@ func file_auth_v1_verification_proto_rawDescGZIP() []byte {
 }
 
 var file_auth_v1_verification_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_auth_v1_verification_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_auth_v1_verification_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_auth_v1_verification_proto_goTypes = []any{
 	(ContactType)(0),                                   // 0: auth.v1.ContactType
 	(*GenerateVerificationCodeRequest)(nil),            // 1: auth.v1.GenerateVerificationCodeRequest
 	(*GenerateVerificationCodeResponse)(nil),           // 2: auth.v1.GenerateVerificationCodeResponse
 	(*GenerateVerificationCodeCompensateRequest)(nil),  // 3: auth.v1.GenerateVerificationCodeCompensateRequest
 	(*GenerateVerificationCodeCompensateResponse)(nil), // 4: auth.v1.GenerateVerificationCodeCompensateResponse
-	(*models.VerificationCode)(nil),                    // 5: auth.v1.models.VerificationCode
+	(*VerificateCodeRequest)(nil),                      // 5: auth.v1.VerificateCodeRequest
+	(*VerificateCodeResponse)(nil),                     // 6: auth.v1.VerificateCodeResponse
+	(*models.VerificationCode)(nil),                    // 7: auth.v1.models.VerificationCode
 }
 var file_auth_v1_verification_proto_depIdxs = []int32{
 	0, // 0: auth.v1.GenerateVerificationCodeRequest.contact_type:type_name -> auth.v1.ContactType
-	5, // 1: auth.v1.GenerateVerificationCodeResponse.verification_code:type_name -> auth.v1.models.VerificationCode
+	7, // 1: auth.v1.GenerateVerificationCodeResponse.verification_code:type_name -> auth.v1.models.VerificationCode
 	1, // 2: auth.v1.VerificationService.GenerateVerificationCode:input_type -> auth.v1.GenerateVerificationCodeRequest
 	3, // 3: auth.v1.VerificationService.GenerateVerificationCodeCompensate:input_type -> auth.v1.GenerateVerificationCodeCompensateRequest
-	2, // 4: auth.v1.VerificationService.GenerateVerificationCode:output_type -> auth.v1.GenerateVerificationCodeResponse
-	4, // 5: auth.v1.VerificationService.GenerateVerificationCodeCompensate:output_type -> auth.v1.GenerateVerificationCodeCompensateResponse
-	4, // [4:6] is the sub-list for method output_type
-	2, // [2:4] is the sub-list for method input_type
+	5, // 4: auth.v1.VerificationService.VerificateCode:input_type -> auth.v1.VerificateCodeRequest
+	2, // 5: auth.v1.VerificationService.GenerateVerificationCode:output_type -> auth.v1.GenerateVerificationCodeResponse
+	4, // 6: auth.v1.VerificationService.GenerateVerificationCodeCompensate:output_type -> auth.v1.GenerateVerificationCodeCompensateResponse
+	6, // 7: auth.v1.VerificationService.VerificateCode:output_type -> auth.v1.VerificateCodeResponse
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
 	2, // [2:2] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name
@@ -353,7 +497,7 @@ func file_auth_v1_verification_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_v1_verification_proto_rawDesc), len(file_auth_v1_verification_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

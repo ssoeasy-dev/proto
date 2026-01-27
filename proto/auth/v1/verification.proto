@@ -7,6 +7,8 @@ import "auth/v1/models/verification_code.proto";
 service VerificationService {
   rpc GenerateVerificationCode(GenerateVerificationCodeRequest) returns (GenerateVerificationCodeResponse);
   rpc GenerateVerificationCodeCompensate(GenerateVerificationCodeCompensateRequest) returns (GenerateVerificationCodeCompensateResponse);
+
+  rpc VerificateCode(VerificateCodeRequest) returns (VerificateCodeResponse);
 }
 
 enum ContactType {
@@ -33,4 +35,17 @@ message GenerateVerificationCodeCompensateRequest {
 message GenerateVerificationCodeCompensateResponse {
   bool success = 1;
   string message = 2;
+}
+
+message VerificateCodeRequest {
+  string id = 1;
+  string value = 2;
+  string type = 3;
+  string company_id = 4;
+  string service_id = 5;
+}
+
+message VerificateCodeResponse {
+  string access = 1;
+  string refresh = 2;
 }
