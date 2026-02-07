@@ -2,30 +2,38 @@ syntax = "proto3";
 
 package auth.v1;
 
+import "auth/v1/verification.proto";
+
 service AuthService {
   rpc Registration(RegistrationRequest) returns (RegistrationResponse);
-}
-
-enum VerificationType {
-    email_code = 0;
-    email_link = 1;
+  rpc RegistrationCompensate(RegistrationCompensateRequest) returns (StatusResponse);
 }
 
 message RegistrationRequest {
-    string user_id = 1;      
+    string user_id = 1;
 	string service_id = 2;
 	string company_id = 3;
 	string attribute_name = 4;
 	string attribute_value = 5;
 	string contact = 6;
-	VerificationType verification_type = 7;
+	auth.v1.VerificationType verification_type = 7;
 	string password = 8;
 }
 
 message RegistrationResponse {
-    string credential_id = 1; 
+    string credential_id = 1;
     string attribute_id = 2;
     string verification_id = 3;
     string value = 4;
     int64 expires_at = 5;
+}
+
+message RegistrationCompensateRequest {
+	string credential_id = 1;
+	string verification_id = 2;
+	string user_attribute_id = 3;
+}
+
+message StatusResponse {
+    bool success = 1;
 }

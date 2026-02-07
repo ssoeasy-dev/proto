@@ -21,52 +21,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type VerificationType int32
-
-const (
-	VerificationType_email_code VerificationType = 0
-	VerificationType_email_link VerificationType = 1
-)
-
-// Enum value maps for VerificationType.
-var (
-	VerificationType_name = map[int32]string{
-		0: "email_code",
-		1: "email_link",
-	}
-	VerificationType_value = map[string]int32{
-		"email_code": 0,
-		"email_link": 1,
-	}
-)
-
-func (x VerificationType) Enum() *VerificationType {
-	p := new(VerificationType)
-	*p = x
-	return p
-}
-
-func (x VerificationType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (VerificationType) Descriptor() protoreflect.EnumDescriptor {
-	return file_auth_v1_auth_proto_enumTypes[0].Descriptor()
-}
-
-func (VerificationType) Type() protoreflect.EnumType {
-	return &file_auth_v1_auth_proto_enumTypes[0]
-}
-
-func (x VerificationType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use VerificationType.Descriptor instead.
-func (VerificationType) EnumDescriptor() ([]byte, []int) {
-	return file_auth_v1_auth_proto_rawDescGZIP(), []int{0}
-}
-
 type RegistrationRequest struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	UserId           string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -243,11 +197,115 @@ func (x *RegistrationResponse) GetExpiresAt() int64 {
 	return 0
 }
 
+type RegistrationCompensateRequest struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	CredentialId    string                 `protobuf:"bytes,1,opt,name=credential_id,json=credentialId,proto3" json:"credential_id,omitempty"`
+	VerificationId  string                 `protobuf:"bytes,2,opt,name=verification_id,json=verificationId,proto3" json:"verification_id,omitempty"`
+	UserAttributeId string                 `protobuf:"bytes,3,opt,name=user_attribute_id,json=userAttributeId,proto3" json:"user_attribute_id,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *RegistrationCompensateRequest) Reset() {
+	*x = RegistrationCompensateRequest{}
+	mi := &file_auth_v1_auth_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RegistrationCompensateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegistrationCompensateRequest) ProtoMessage() {}
+
+func (x *RegistrationCompensateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegistrationCompensateRequest.ProtoReflect.Descriptor instead.
+func (*RegistrationCompensateRequest) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *RegistrationCompensateRequest) GetCredentialId() string {
+	if x != nil {
+		return x.CredentialId
+	}
+	return ""
+}
+
+func (x *RegistrationCompensateRequest) GetVerificationId() string {
+	if x != nil {
+		return x.VerificationId
+	}
+	return ""
+}
+
+func (x *RegistrationCompensateRequest) GetUserAttributeId() string {
+	if x != nil {
+		return x.UserAttributeId
+	}
+	return ""
+}
+
+type StatusResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StatusResponse) Reset() {
+	*x = StatusResponse{}
+	mi := &file_auth_v1_auth_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StatusResponse) ProtoMessage() {}
+
+func (x *StatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StatusResponse.ProtoReflect.Descriptor instead.
+func (*StatusResponse) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *StatusResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 var File_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x12auth/v1/auth.proto\x12\aauth.v1\"\xba\x02\n" +
+	"\x12auth/v1/auth.proto\x12\aauth.v1\x1a\x1aauth/v1/verification.proto\"\xba\x02\n" +
 	"\x13RegistrationRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1d\n" +
 	"\n" +
@@ -265,14 +323,16 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\x0fverification_id\x18\x03 \x01(\tR\x0everificationId\x12\x14\n" +
 	"\x05value\x18\x04 \x01(\tR\x05value\x12\x1d\n" +
 	"\n" +
-	"expires_at\x18\x05 \x01(\x03R\texpiresAt*2\n" +
-	"\x10VerificationType\x12\x0e\n" +
-	"\n" +
-	"email_code\x10\x00\x12\x0e\n" +
-	"\n" +
-	"email_link\x10\x012Z\n" +
+	"expires_at\x18\x05 \x01(\x03R\texpiresAt\"\x99\x01\n" +
+	"\x1dRegistrationCompensateRequest\x12#\n" +
+	"\rcredential_id\x18\x01 \x01(\tR\fcredentialId\x12'\n" +
+	"\x0fverification_id\x18\x02 \x01(\tR\x0everificationId\x12*\n" +
+	"\x11user_attribute_id\x18\x03 \x01(\tR\x0fuserAttributeId\"*\n" +
+	"\x0eStatusResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\xb5\x01\n" +
 	"\vAuthService\x12K\n" +
-	"\fRegistration\x12\x1c.auth.v1.RegistrationRequest\x1a\x1d.auth.v1.RegistrationResponseB\x89\x01\n" +
+	"\fRegistration\x12\x1c.auth.v1.RegistrationRequest\x1a\x1d.auth.v1.RegistrationResponse\x12Y\n" +
+	"\x16RegistrationCompensate\x12&.auth.v1.RegistrationCompensateRequest\x1a\x17.auth.v1.StatusResponseB\x89\x01\n" +
 	"\vcom.auth.v1B\tAuthProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var (
@@ -287,19 +347,22 @@ func file_auth_v1_auth_proto_rawDescGZIP() []byte {
 	return file_auth_v1_auth_proto_rawDescData
 }
 
-var file_auth_v1_auth_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_auth_v1_auth_proto_goTypes = []any{
-	(VerificationType)(0),        // 0: auth.v1.VerificationType
-	(*RegistrationRequest)(nil),  // 1: auth.v1.RegistrationRequest
-	(*RegistrationResponse)(nil), // 2: auth.v1.RegistrationResponse
+	(*RegistrationRequest)(nil),           // 0: auth.v1.RegistrationRequest
+	(*RegistrationResponse)(nil),          // 1: auth.v1.RegistrationResponse
+	(*RegistrationCompensateRequest)(nil), // 2: auth.v1.RegistrationCompensateRequest
+	(*StatusResponse)(nil),                // 3: auth.v1.StatusResponse
+	(VerificationType)(0),                 // 4: auth.v1.VerificationType
 }
 var file_auth_v1_auth_proto_depIdxs = []int32{
-	0, // 0: auth.v1.RegistrationRequest.verification_type:type_name -> auth.v1.VerificationType
-	1, // 1: auth.v1.AuthService.Registration:input_type -> auth.v1.RegistrationRequest
-	2, // 2: auth.v1.AuthService.Registration:output_type -> auth.v1.RegistrationResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
+	4, // 0: auth.v1.RegistrationRequest.verification_type:type_name -> auth.v1.VerificationType
+	0, // 1: auth.v1.AuthService.Registration:input_type -> auth.v1.RegistrationRequest
+	2, // 2: auth.v1.AuthService.RegistrationCompensate:input_type -> auth.v1.RegistrationCompensateRequest
+	1, // 3: auth.v1.AuthService.Registration:output_type -> auth.v1.RegistrationResponse
+	3, // 4: auth.v1.AuthService.RegistrationCompensate:output_type -> auth.v1.StatusResponse
+	3, // [3:5] is the sub-list for method output_type
+	1, // [1:3] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -310,19 +373,19 @@ func file_auth_v1_auth_proto_init() {
 	if File_auth_v1_auth_proto != nil {
 		return
 	}
+	file_auth_v1_verification_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_v1_auth_proto_rawDesc), len(file_auth_v1_auth_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   2,
+			NumEnums:      0,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_auth_v1_auth_proto_goTypes,
 		DependencyIndexes: file_auth_v1_auth_proto_depIdxs,
-		EnumInfos:         file_auth_v1_auth_proto_enumTypes,
 		MessageInfos:      file_auth_v1_auth_proto_msgTypes,
 	}.Build()
 	File_auth_v1_auth_proto = out.File

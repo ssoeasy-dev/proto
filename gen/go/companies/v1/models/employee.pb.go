@@ -25,8 +25,8 @@ type Employee struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
-	FirstName     string                 `protobuf:"bytes,3,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName      string                 `protobuf:"bytes,4,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	Firstname     string                 `protobuf:"bytes,3,opt,name=firstname,proto3" json:"firstname,omitempty"`
+	Lastname      string                 `protobuf:"bytes,4,opt,name=lastname,proto3" json:"lastname,omitempty"`
 	IsActive      bool                   `protobuf:"varint,5,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -76,16 +76,16 @@ func (x *Employee) GetEmail() string {
 	return ""
 }
 
-func (x *Employee) GetFirstName() string {
+func (x *Employee) GetFirstname() string {
 	if x != nil {
-		return x.FirstName
+		return x.Firstname
 	}
 	return ""
 }
 
-func (x *Employee) GetLastName() string {
+func (x *Employee) GetLastname() string {
 	if x != nil {
-		return x.LastName
+		return x.Lastname
 	}
 	return ""
 }
@@ -101,13 +101,12 @@ var File_companies_v1_models_employee_proto protoreflect.FileDescriptor
 
 const file_companies_v1_models_employee_proto_rawDesc = "" +
 	"\n" +
-	"\"companies/v1/models/employee.proto\x12\x13companies.v1.models\"\x89\x01\n" +
+	"\"companies/v1/models/employee.proto\x12\x13companies.v1.models\"\x87\x01\n" +
 	"\bEmployee\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
-	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1d\n" +
-	"\n" +
-	"first_name\x18\x03 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x04 \x01(\tR\blastName\x12\x1b\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1c\n" +
+	"\tfirstname\x18\x03 \x01(\tR\tfirstname\x12\x1a\n" +
+	"\blastname\x18\x04 \x01(\tR\blastname\x12\x1b\n" +
 	"\tis_active\x18\x05 \x01(\bR\bisActiveB\xcf\x01\n" +
 	"\x17com.companies.v1.modelsB\rEmployeeProtoP\x01Z7github.com/ssoeasy-dev/proto/gen/go/companies/v1/models\xa2\x02\x03CVM\xaa\x02\x13Companies.V1.Models\xca\x02\x13Companies\\V1\\Models\xe2\x02\x1fCompanies\\V1\\Models\\GPBMetadata\xea\x02\x15Companies::V1::Modelsb\x06proto3"
 

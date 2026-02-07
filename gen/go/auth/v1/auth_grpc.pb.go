@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_Registration_FullMethodName = "/auth.v1.AuthService/Registration"
+	AuthService_Registration_FullMethodName           = "/auth.v1.AuthService/Registration"
+	AuthService_RegistrationCompensate_FullMethodName = "/auth.v1.AuthService/RegistrationCompensate"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
 	Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*RegistrationResponse, error)
+	RegistrationCompensate(ctx context.Context, in *RegistrationCompensateRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 }
 
 type authServiceClient struct {
@@ -47,11 +49,22 @@ func (c *authServiceClient) Registration(ctx context.Context, in *RegistrationRe
 	return out, nil
 }
 
+func (c *authServiceClient) RegistrationCompensate(ctx context.Context, in *RegistrationCompensateRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StatusResponse)
+	err := c.cc.Invoke(ctx, AuthService_RegistrationCompensate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
 type AuthServiceServer interface {
 	Registration(context.Context, *RegistrationRequest) (*RegistrationResponse, error)
+	RegistrationCompensate(context.Context, *RegistrationCompensateRequest) (*StatusResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -64,6 +77,9 @@ type UnimplementedAuthServiceServer struct{}
 
 func (UnimplementedAuthServiceServer) Registration(context.Context, *RegistrationRequest) (*RegistrationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Registration not implemented")
+}
+func (UnimplementedAuthServiceServer) RegistrationCompensate(context.Context, *RegistrationCompensateRequest) (*StatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RegistrationCompensate not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -104,6 +120,24 @@ func _AuthService_Registration_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_RegistrationCompensate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegistrationCompensateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).RegistrationCompensate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_RegistrationCompensate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).RegistrationCompensate(ctx, req.(*RegistrationCompensateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +148,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Registration",
 			Handler:    _AuthService_Registration_Handler,
+		},
+		{
+			MethodName: "RegistrationCompensate",
+			Handler:    _AuthService_RegistrationCompensate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

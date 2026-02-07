@@ -7,7 +7,6 @@
 package authv1
 
 import (
-	models "github.com/ssoeasy-dev/proto/gen/go/auth/v1/models"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -22,264 +21,53 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type ContactType int32
+type VerificationType int32
 
 const (
-	ContactType_CONTACT_TYPE_UNSPECIFIED ContactType = 0
-	ContactType_CONTACT_TYPE_EMAIL       ContactType = 1
-	ContactType_CONTACT_TYPE_PHONE       ContactType = 2
+	VerificationType_email_code VerificationType = 0
+	VerificationType_email_link VerificationType = 1
 )
 
-// Enum value maps for ContactType.
+// Enum value maps for VerificationType.
 var (
-	ContactType_name = map[int32]string{
-		0: "CONTACT_TYPE_UNSPECIFIED",
-		1: "CONTACT_TYPE_EMAIL",
-		2: "CONTACT_TYPE_PHONE",
+	VerificationType_name = map[int32]string{
+		0: "email_code",
+		1: "email_link",
 	}
-	ContactType_value = map[string]int32{
-		"CONTACT_TYPE_UNSPECIFIED": 0,
-		"CONTACT_TYPE_EMAIL":       1,
-		"CONTACT_TYPE_PHONE":       2,
+	VerificationType_value = map[string]int32{
+		"email_code": 0,
+		"email_link": 1,
 	}
 )
 
-func (x ContactType) Enum() *ContactType {
-	p := new(ContactType)
+func (x VerificationType) Enum() *VerificationType {
+	p := new(VerificationType)
 	*p = x
 	return p
 }
 
-func (x ContactType) String() string {
+func (x VerificationType) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (ContactType) Descriptor() protoreflect.EnumDescriptor {
+func (VerificationType) Descriptor() protoreflect.EnumDescriptor {
 	return file_auth_v1_verification_proto_enumTypes[0].Descriptor()
 }
 
-func (ContactType) Type() protoreflect.EnumType {
+func (VerificationType) Type() protoreflect.EnumType {
 	return &file_auth_v1_verification_proto_enumTypes[0]
 }
 
-func (x ContactType) Number() protoreflect.EnumNumber {
+func (x VerificationType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use ContactType.Descriptor instead.
-func (ContactType) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use VerificationType.Descriptor instead.
+func (VerificationType) EnumDescriptor() ([]byte, []int) {
 	return file_auth_v1_verification_proto_rawDescGZIP(), []int{0}
 }
 
-type GenerateVerificationCodeRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	EmployeeId    string                 `protobuf:"bytes,1,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
-	ContactType   ContactType            `protobuf:"varint,2,opt,name=contact_type,json=contactType,proto3,enum=auth.v1.ContactType" json:"contact_type,omitempty"`
-	Contact       string                 `protobuf:"bytes,3,opt,name=contact,proto3" json:"contact,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GenerateVerificationCodeRequest) Reset() {
-	*x = GenerateVerificationCodeRequest{}
-	mi := &file_auth_v1_verification_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GenerateVerificationCodeRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GenerateVerificationCodeRequest) ProtoMessage() {}
-
-func (x *GenerateVerificationCodeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_verification_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GenerateVerificationCodeRequest.ProtoReflect.Descriptor instead.
-func (*GenerateVerificationCodeRequest) Descriptor() ([]byte, []int) {
-	return file_auth_v1_verification_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *GenerateVerificationCodeRequest) GetEmployeeId() string {
-	if x != nil {
-		return x.EmployeeId
-	}
-	return ""
-}
-
-func (x *GenerateVerificationCodeRequest) GetContactType() ContactType {
-	if x != nil {
-		return x.ContactType
-	}
-	return ContactType_CONTACT_TYPE_UNSPECIFIED
-}
-
-func (x *GenerateVerificationCodeRequest) GetContact() string {
-	if x != nil {
-		return x.Contact
-	}
-	return ""
-}
-
-type GenerateVerificationCodeResponse struct {
-	state            protoimpl.MessageState   `protogen:"open.v1"`
-	VerificationCode *models.VerificationCode `protobuf:"bytes,1,opt,name=verification_code,json=verificationCode,proto3" json:"verification_code,omitempty"`
-	Code             string                   `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
-}
-
-func (x *GenerateVerificationCodeResponse) Reset() {
-	*x = GenerateVerificationCodeResponse{}
-	mi := &file_auth_v1_verification_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GenerateVerificationCodeResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GenerateVerificationCodeResponse) ProtoMessage() {}
-
-func (x *GenerateVerificationCodeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_verification_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GenerateVerificationCodeResponse.ProtoReflect.Descriptor instead.
-func (*GenerateVerificationCodeResponse) Descriptor() ([]byte, []int) {
-	return file_auth_v1_verification_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *GenerateVerificationCodeResponse) GetVerificationCode() *models.VerificationCode {
-	if x != nil {
-		return x.VerificationCode
-	}
-	return nil
-}
-
-func (x *GenerateVerificationCodeResponse) GetCode() string {
-	if x != nil {
-		return x.Code
-	}
-	return ""
-}
-
-type GenerateVerificationCodeCompensateRequest struct {
-	state              protoimpl.MessageState `protogen:"open.v1"`
-	VerificationCodeId string                 `protobuf:"bytes,1,opt,name=verification_code_id,json=verificationCodeId,proto3" json:"verification_code_id,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
-}
-
-func (x *GenerateVerificationCodeCompensateRequest) Reset() {
-	*x = GenerateVerificationCodeCompensateRequest{}
-	mi := &file_auth_v1_verification_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GenerateVerificationCodeCompensateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GenerateVerificationCodeCompensateRequest) ProtoMessage() {}
-
-func (x *GenerateVerificationCodeCompensateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_verification_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GenerateVerificationCodeCompensateRequest.ProtoReflect.Descriptor instead.
-func (*GenerateVerificationCodeCompensateRequest) Descriptor() ([]byte, []int) {
-	return file_auth_v1_verification_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *GenerateVerificationCodeCompensateRequest) GetVerificationCodeId() string {
-	if x != nil {
-		return x.VerificationCodeId
-	}
-	return ""
-}
-
-type GenerateVerificationCodeCompensateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GenerateVerificationCodeCompensateResponse) Reset() {
-	*x = GenerateVerificationCodeCompensateResponse{}
-	mi := &file_auth_v1_verification_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GenerateVerificationCodeCompensateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GenerateVerificationCodeCompensateResponse) ProtoMessage() {}
-
-func (x *GenerateVerificationCodeCompensateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_verification_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GenerateVerificationCodeCompensateResponse.ProtoReflect.Descriptor instead.
-func (*GenerateVerificationCodeCompensateResponse) Descriptor() ([]byte, []int) {
-	return file_auth_v1_verification_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *GenerateVerificationCodeCompensateResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
-}
-
-func (x *GenerateVerificationCodeCompensateResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
-}
-
-type VerificateCodeRequest struct {
+type VerificateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
@@ -290,21 +78,21 @@ type VerificateCodeRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *VerificateCodeRequest) Reset() {
-	*x = VerificateCodeRequest{}
-	mi := &file_auth_v1_verification_proto_msgTypes[4]
+func (x *VerificateRequest) Reset() {
+	*x = VerificateRequest{}
+	mi := &file_auth_v1_verification_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *VerificateCodeRequest) String() string {
+func (x *VerificateRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*VerificateCodeRequest) ProtoMessage() {}
+func (*VerificateRequest) ProtoMessage() {}
 
-func (x *VerificateCodeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_verification_proto_msgTypes[4]
+func (x *VerificateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_verification_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -315,47 +103,47 @@ func (x *VerificateCodeRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use VerificateCodeRequest.ProtoReflect.Descriptor instead.
-func (*VerificateCodeRequest) Descriptor() ([]byte, []int) {
-	return file_auth_v1_verification_proto_rawDescGZIP(), []int{4}
+// Deprecated: Use VerificateRequest.ProtoReflect.Descriptor instead.
+func (*VerificateRequest) Descriptor() ([]byte, []int) {
+	return file_auth_v1_verification_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *VerificateCodeRequest) GetId() string {
+func (x *VerificateRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *VerificateCodeRequest) GetValue() string {
+func (x *VerificateRequest) GetValue() string {
 	if x != nil {
 		return x.Value
 	}
 	return ""
 }
 
-func (x *VerificateCodeRequest) GetType() string {
+func (x *VerificateRequest) GetType() string {
 	if x != nil {
 		return x.Type
 	}
 	return ""
 }
 
-func (x *VerificateCodeRequest) GetCompanyId() string {
+func (x *VerificateRequest) GetCompanyId() string {
 	if x != nil {
 		return x.CompanyId
 	}
 	return ""
 }
 
-func (x *VerificateCodeRequest) GetServiceId() string {
+func (x *VerificateRequest) GetServiceId() string {
 	if x != nil {
 		return x.ServiceId
 	}
 	return ""
 }
 
-type VerificateCodeResponse struct {
+type VerificateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Access        string                 `protobuf:"bytes,1,opt,name=access,proto3" json:"access,omitempty"`
 	Refresh       string                 `protobuf:"bytes,2,opt,name=refresh,proto3" json:"refresh,omitempty"`
@@ -363,21 +151,21 @@ type VerificateCodeResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *VerificateCodeResponse) Reset() {
-	*x = VerificateCodeResponse{}
-	mi := &file_auth_v1_verification_proto_msgTypes[5]
+func (x *VerificateResponse) Reset() {
+	*x = VerificateResponse{}
+	mi := &file_auth_v1_verification_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *VerificateCodeResponse) String() string {
+func (x *VerificateResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*VerificateCodeResponse) ProtoMessage() {}
+func (*VerificateResponse) ProtoMessage() {}
 
-func (x *VerificateCodeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_verification_proto_msgTypes[5]
+func (x *VerificateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_verification_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -388,19 +176,19 @@ func (x *VerificateCodeResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use VerificateCodeResponse.ProtoReflect.Descriptor instead.
-func (*VerificateCodeResponse) Descriptor() ([]byte, []int) {
-	return file_auth_v1_verification_proto_rawDescGZIP(), []int{5}
+// Deprecated: Use VerificateResponse.ProtoReflect.Descriptor instead.
+func (*VerificateResponse) Descriptor() ([]byte, []int) {
+	return file_auth_v1_verification_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *VerificateCodeResponse) GetAccess() string {
+func (x *VerificateResponse) GetAccess() string {
 	if x != nil {
 		return x.Access
 	}
 	return ""
 }
 
-func (x *VerificateCodeResponse) GetRefresh() string {
+func (x *VerificateResponse) GetRefresh() string {
 	if x != nil {
 		return x.Refresh
 	}
@@ -411,39 +199,26 @@ var File_auth_v1_verification_proto protoreflect.FileDescriptor
 
 const file_auth_v1_verification_proto_rawDesc = "" +
 	"\n" +
-	"\x1aauth/v1/verification.proto\x12\aauth.v1\x1a&auth/v1/models/verification_code.proto\"\x95\x01\n" +
-	"\x1fGenerateVerificationCodeRequest\x12\x1f\n" +
-	"\vemployee_id\x18\x01 \x01(\tR\n" +
-	"employeeId\x127\n" +
-	"\fcontact_type\x18\x02 \x01(\x0e2\x14.auth.v1.ContactTypeR\vcontactType\x12\x18\n" +
-	"\acontact\x18\x03 \x01(\tR\acontact\"\x85\x01\n" +
-	" GenerateVerificationCodeResponse\x12M\n" +
-	"\x11verification_code\x18\x01 \x01(\v2 .auth.v1.models.VerificationCodeR\x10verificationCode\x12\x12\n" +
-	"\x04code\x18\x02 \x01(\tR\x04code\"]\n" +
-	")GenerateVerificationCodeCompensateRequest\x120\n" +
-	"\x14verification_code_id\x18\x01 \x01(\tR\x12verificationCodeId\"`\n" +
-	"*GenerateVerificationCodeCompensateResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\x8f\x01\n" +
-	"\x15VerificateCodeRequest\x12\x0e\n" +
+	"\x1aauth/v1/verification.proto\x12\aauth.v1\"\x8b\x01\n" +
+	"\x11VerificateRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x12\x12\n" +
 	"\x04type\x18\x03 \x01(\tR\x04type\x12\x1d\n" +
 	"\n" +
 	"company_id\x18\x04 \x01(\tR\tcompanyId\x12\x1d\n" +
 	"\n" +
-	"service_id\x18\x05 \x01(\tR\tserviceId\"J\n" +
-	"\x16VerificateCodeResponse\x12\x16\n" +
+	"service_id\x18\x05 \x01(\tR\tserviceId\"F\n" +
+	"\x12VerificateResponse\x12\x16\n" +
 	"\x06access\x18\x01 \x01(\tR\x06access\x12\x18\n" +
-	"\arefresh\x18\x02 \x01(\tR\arefresh*[\n" +
-	"\vContactType\x12\x1c\n" +
-	"\x18CONTACT_TYPE_UNSPECIFIED\x10\x00\x12\x16\n" +
-	"\x12CONTACT_TYPE_EMAIL\x10\x01\x12\x16\n" +
-	"\x12CONTACT_TYPE_PHONE\x10\x022\xe9\x02\n" +
-	"\x13VerificationService\x12o\n" +
-	"\x18GenerateVerificationCode\x12(.auth.v1.GenerateVerificationCodeRequest\x1a).auth.v1.GenerateVerificationCodeResponse\x12\x8d\x01\n" +
-	"\"GenerateVerificationCodeCompensate\x122.auth.v1.GenerateVerificationCodeCompensateRequest\x1a3.auth.v1.GenerateVerificationCodeCompensateResponse\x12Q\n" +
-	"\x0eVerificateCode\x12\x1e.auth.v1.VerificateCodeRequest\x1a\x1f.auth.v1.VerificateCodeResponseB\x91\x01\n" +
+	"\arefresh\x18\x02 \x01(\tR\arefresh*2\n" +
+	"\x10VerificationType\x12\x0e\n" +
+	"\n" +
+	"email_code\x10\x00\x12\x0e\n" +
+	"\n" +
+	"email_link\x10\x012\\\n" +
+	"\x13VerificationService\x12E\n" +
+	"\n" +
+	"Verificate\x12\x1a.auth.v1.VerificateRequest\x1a\x1b.auth.v1.VerificateResponseB\x91\x01\n" +
 	"\vcom.auth.v1B\x11VerificationProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var (
@@ -459,31 +234,20 @@ func file_auth_v1_verification_proto_rawDescGZIP() []byte {
 }
 
 var file_auth_v1_verification_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_auth_v1_verification_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_auth_v1_verification_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_auth_v1_verification_proto_goTypes = []any{
-	(ContactType)(0),                                   // 0: auth.v1.ContactType
-	(*GenerateVerificationCodeRequest)(nil),            // 1: auth.v1.GenerateVerificationCodeRequest
-	(*GenerateVerificationCodeResponse)(nil),           // 2: auth.v1.GenerateVerificationCodeResponse
-	(*GenerateVerificationCodeCompensateRequest)(nil),  // 3: auth.v1.GenerateVerificationCodeCompensateRequest
-	(*GenerateVerificationCodeCompensateResponse)(nil), // 4: auth.v1.GenerateVerificationCodeCompensateResponse
-	(*VerificateCodeRequest)(nil),                      // 5: auth.v1.VerificateCodeRequest
-	(*VerificateCodeResponse)(nil),                     // 6: auth.v1.VerificateCodeResponse
-	(*models.VerificationCode)(nil),                    // 7: auth.v1.models.VerificationCode
+	(VerificationType)(0),      // 0: auth.v1.VerificationType
+	(*VerificateRequest)(nil),  // 1: auth.v1.VerificateRequest
+	(*VerificateResponse)(nil), // 2: auth.v1.VerificateResponse
 }
 var file_auth_v1_verification_proto_depIdxs = []int32{
-	0, // 0: auth.v1.GenerateVerificationCodeRequest.contact_type:type_name -> auth.v1.ContactType
-	7, // 1: auth.v1.GenerateVerificationCodeResponse.verification_code:type_name -> auth.v1.models.VerificationCode
-	1, // 2: auth.v1.VerificationService.GenerateVerificationCode:input_type -> auth.v1.GenerateVerificationCodeRequest
-	3, // 3: auth.v1.VerificationService.GenerateVerificationCodeCompensate:input_type -> auth.v1.GenerateVerificationCodeCompensateRequest
-	5, // 4: auth.v1.VerificationService.VerificateCode:input_type -> auth.v1.VerificateCodeRequest
-	2, // 5: auth.v1.VerificationService.GenerateVerificationCode:output_type -> auth.v1.GenerateVerificationCodeResponse
-	4, // 6: auth.v1.VerificationService.GenerateVerificationCodeCompensate:output_type -> auth.v1.GenerateVerificationCodeCompensateResponse
-	6, // 7: auth.v1.VerificationService.VerificateCode:output_type -> auth.v1.VerificateCodeResponse
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	1, // 0: auth.v1.VerificationService.Verificate:input_type -> auth.v1.VerificateRequest
+	2, // 1: auth.v1.VerificationService.Verificate:output_type -> auth.v1.VerificateResponse
+	1, // [1:2] is the sub-list for method output_type
+	0, // [0:1] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_auth_v1_verification_proto_init() }
@@ -497,7 +261,7 @@ func file_auth_v1_verification_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_v1_verification_proto_rawDesc), len(file_auth_v1_verification_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   6,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
