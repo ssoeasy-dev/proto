@@ -1,15 +1,9 @@
-name: Production Release
+name: Release
 
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'  # Только стабильные версии: v1.0.0
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Production version (e.g., v1.0.0)'
-        required: true
-        type: string
+      - 'v*'
 
 jobs:
   release:
@@ -23,41 +17,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify Release is from Main Branch
-        run: |
-          # Проверяем формат версии (не должно быть -beta, -rc и т.д.)
-          VERSION="${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref }}"
-          VERSION="${VERSION#refs/tags/}"
-          
-          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "❌ Error: Production releases must follow format v1.0.0"
-            echo "Got: $VERSION"
-            echo "For pre-releases use the Pre-Release workflow from develop branch"
-            exit 1
-          fi
-          
-          # Для ручного запуска проверяем, что мы на main
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-            if [ "$CURRENT_BRANCH" != "main" ]; then
-              echo "❌ Error: Production releases can only be created from the main branch!"
-              echo "Current branch: $CURRENT_BRANCH"
-              exit 1
-            fi
-            echo "✅ Running on main branch"
-          else
-            # Для тегов проверяем историю
-            TAG_COMMIT=$(git rev-list -n 1 $GITHUB_REF)
-            
-            if ! git merge-base --is-ancestor $TAG_COMMIT origin/main; then
-              echo "❌ Error: Production tags can only be created from the main branch!"
-              echo "This tag points to commit $TAG_COMMIT which is not in main branch history."
-              exit 1
-            fi
-            
-            echo "✅ Tag is from main branch"
-          fi
-
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -65,25 +24,12 @@ jobs:
 
       - name: Get Tag
         id: tag
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "tag=${{ inputs.version }}" >> $GITHUB_OUTPUT
-          else
-            echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Create Tag (for manual release)
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag ${{ inputs.version }}
-          git push origin ${{ inputs.version }}
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          name: Production Release ${{ steps.tag.outputs.tag }}
+          name: Release ${{ steps.tag.outputs.tag }}
           body_path: CHANGELOG.txt
           draft: false
           prerelease: false
@@ -93,7 +39,7 @@ jobs:
 
       - name: Announce Release
         run: |
-          echo "✅ Production Release ${{ steps.tag.outputs.tag }} created!"
+          echo "✅ Release ${{ steps.tag.outputs.tag }} created!"
           echo "📦 Go developers can now use:"
           echo "   go get github.com/${{ github.repository }}@${{ steps.tag.outputs.tag }}"
 

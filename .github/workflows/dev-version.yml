@@ -2,16 +2,19 @@ name: Dev Version Management
 
 on:
   pull_request:
-    types: [opened, reopened, closed]
+    types: [opened, reopened, synchronize, closed]
     branches: [develop, main]
 
 jobs:
   create-dev-version:
-    name: Create Dev Version
-    if: github.event.action == 'opened' || github.event.action == 'reopened'
+    name: Create/Update Dev Version
+    if: github.event.action == 'opened' || github.event.action == 'reopened' || github.event.action == 'synchronize'
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
     steps:
       - name: Checkout PR Branch
         uses: actions/checkout@v4
@@ -19,174 +22,316 @@ jobs:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
 
-      - name: Create Dev Tag
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Prepare Dev Version
+        id: version
         run: |
-          # Преобразуем имя ветки в валидный тег (заменяем / на -)
+          BASE_VERSION=$(node -e "console.log(require('./package.json').version)")
           BRANCH_NAME="${{ github.head_ref }}"
-          TAG_NAME="dev-${BRANCH_NAME//\//-}"
+          BRANCH_PART="${BRANCH_NAME//\//-}"
+          BRANCH_PART="${BRANCH_PART//_/-}"
+          BRANCH_PART=$(echo "$BRANCH_PART" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g')
           
-          echo "📦 Creating dev version: $TAG_NAME"
-          echo "🔗 Branch: $BRANCH_NAME"
+          COMMIT_SHA="${{ github.event.pull_request.head.sha }}"
+          COMMIT_SHORT="${COMMIT_SHA:0:7}"
+
+          if [ "${{ github.event.action }}" = "synchronize" ]; then
+            VERSION="${BASE_VERSION}-dev-${BRANCH_PART}.${COMMIT_SHORT}"
+            ACTION_TEXT="updated"
+          else
+            VERSION="${BASE_VERSION}-dev-${BRANCH_PART}"
+            ACTION_TEXT="created"
+          fi
+          
+          NPM_DIST_TAG="dev-${BRANCH_PART}"
+          
+          echo "📦 Version: $VERSION"
+          echo "🏷️  NPM dist-tag: $NPM_DIST_TAG"
+          echo "🔄 Action: $ACTION_TEXT"
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "npm_dist_tag=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
+          echo "action_text=$ACTION_TEXT" >> $GITHUB_OUTPUT
+          echo "git_tag=${BASE_VERSION}-dev-${BRANCH_PART}" >> $GITHUB_OUTPUT
+
+      - name: Create/Update Dev Tag
+        run: |
+          GIT_TAG="${{ steps.version.outputs.git_tag }}"
+          ACTION_TEXT="${{ steps.version.outputs.action_text }}"
+          
+          echo "🔗 Branch: ${{ github.head_ref }}"
+          echo "📝 Commit: ${{ github.event.pull_request.head.sha }}"
           
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [ "$ACTION_TEXT" = "updated" ]; then
+            echo "🔄 Updating dev version: $GIT_TAG"
+            git tag -d "$GIT_TAG" 2>/dev/null || true
+            git push origin ":refs/tags/$GIT_TAG" 2>/dev/null || true
+          else
+            echo "📦 Creating dev version: $GIT_TAG"
+          fi
           
-          # Удаляем тег если он уже существует
-          git tag -d "$TAG_NAME" 2>/dev/null || true
-          git push origin ":refs/tags/$TAG_NAME" 2>/dev/null || true
+          git tag "$GIT_TAG"
+          git push origin "$GIT_TAG"
           
-          # Создаем новый тег
-          git tag "$TAG_NAME"
-          git push origin "$TAG_NAME"
-          
-          echo "✅ Dev version $TAG_NAME created!"
+          echo "✅ Dev version $GIT_TAG $ACTION_TEXT!"
           echo ""
           echo "📋 Use in your services:"
-          echo "   go get github.com/${{ github.repository }}@$TAG_NAME"
+          echo "   go get github.com/${{ github.repository }}@$GIT_TAG"
 
-      - name: Comment on PR
-        uses: actions/github-script@v7
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate TypeScript code
+        run: pnpm generate
+
+      - name: Update package.json version
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          node -e "
+          const fs = require('fs');
+          const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          package.version = '$VERSION';
+          fs.writeFileSync('package.json', JSON.stringify(package, null, 2) + '\n');
+          "
+
+      - name: Remove old npm dev version dist-tag
+        if: steps.version.outputs.action_text == 'updated'
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm dist-tag removal."
+            exit 0
+          fi
+          
+          NPM_DIST_TAG="${{ steps.version.outputs.npm_dist_tag }}"
+          echo "🗑️  Removing old dist-tag $NPM_DIST_TAG before publishing new version..."
+          
+          VERSION_WITH_TAG=$(npm dist-tag ls @ssoeasy-dev/proto 2>/dev/null | grep "^${NPM_DIST_TAG}:" | cut -d: -f2 | xargs)
+          if [ -n "$VERSION_WITH_TAG" ]; then
+            echo "📦 Found version $VERSION_WITH_TAG with dist-tag $NPM_DIST_TAG"
+            echo "🗑️  Removing dist-tag $NPM_DIST_TAG..."
+            npm dist-tag rm @ssoeasy-dev/proto "$NPM_DIST_TAG" 2>/dev/null || {
+              echo "⚠️  Could not remove dist-tag $NPM_DIST_TAG (may not exist)"
+            }
+            echo "✅ Dist-tag $NPM_DIST_TAG removed (old version $VERSION_WITH_TAG will remain in registry)"
+          else
+            echo "ℹ️  No version found with dist-tag $NPM_DIST_TAG"
+          fi
+          
+          echo "✅ Old npm dev version dist-tag cleanup completed"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish npm dev version
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm publish."
+            echo "To enable npm publishing, add NPM_TOKEN secret to GitHub repository settings."
+            exit 0
+          fi
+          pnpm publish --no-git-checks --tag ${{ steps.version.outputs.npm_dist_tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Comment on PR (create/update)
+        uses: actions/github-script@v6
         with:
           script: |
-            const branchName = context.payload.pull_request.head.ref;
-            const tagName = `dev-${branchName.replace(/\//g, '-')}`;
+            const version = '${{ steps.version.outputs.version }}';
+            const gitTag = '${{ steps.version.outputs.git_tag }}';
+            const npmDistTag = '${{ steps.version.outputs.npm_dist_tag }}';
             const repoFullName = `${context.repo.owner}/${context.repo.repo}`;
+            const action = context.payload.action;
+            const commitSha = context.payload.pull_request.head.sha.substring(0, 7);
+            
+            let title, message;
+            if (action === 'synchronize') {
+              title = '🔄 Dev Version Updated';
+              message = `Dev version \`${gitTag}\` has been updated to the latest commit (\`${commitSha}\`).`;
+            } else {
+              title = '📦 Dev Version Created';
+              message = `Dev version \`${gitTag}\` has been created for this PR.`;
+            }
             
             const body = [
-              '## 📦 Dev Version Created',
+              `## ${title}`,
               '',
-              `Dev version \`${tagName}\` has been created for this PR.`,
+              message,
               '',
-              '**Usage in your services:**',
+              '**Usage in Go services:**',
               '```bash',
-              `go get github.com/${repoFullName}@${tagName}`,
+              `go get github.com/${repoFullName}@${gitTag}`,
               '```',
               '',
               '**In go.mod:**',
               '```go',
-              `require github.com/${repoFullName} ${tagName}`,
+              `require github.com/${repoFullName} ${gitTag}`,
               '```',
               '',
-              '> ⚠️ This is a temporary development version. It will be deleted after merging this PR.'
+              '**Usage in TypeScript/JavaScript:**',
+              '```bash',
+              `npm install @ssoeasy-dev/proto@${npmDistTag}`,
+              '```',
+              '',
+              `**Git tag:** \`${gitTag}\``,
+              `**NPM version:** \`${version}\` (unique per commit)`,
+              '',
+              '> ⚠️ This is a temporary development version. It will be automatically updated on each push and deleted after merging this PR.'
             ].join('\n');
             
-            await github.rest.issues.createComment({
+            const comments = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: body
             });
+            
+            const botComment = comments.data.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('Dev Version')
+            );
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
 
   cleanup-and-release:
-    name: Cleanup Dev Version and Create Beta
+    name: Cleanup Dev Version
     if: github.event.action == 'closed'
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Prepare Dev Version for Cleanup
+        id: version
+        run: |
+          BASE_VERSION=$(node -e "console.log(require('./package.json').version)")
+          BRANCH_NAME="${{ github.head_ref }}"
+          BRANCH_PART="${BRANCH_NAME//\//-}"
+          BRANCH_PART="${BRANCH_PART//_/-}"
+          BRANCH_PART=$(echo "$BRANCH_PART" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g')
+          
+          GIT_TAG="${BASE_VERSION}-dev-${BRANCH_PART}"
+          NPM_DIST_TAG="dev-${BRANCH_PART}"
+          
+          echo "git_tag=$GIT_TAG" >> $GITHUB_OUTPUT
+          echo "npm_dist_tag=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
+
       - name: Delete Dev Tag
         run: |
-          BRANCH_NAME="${{ github.head_ref }}"
-          TAG_NAME="dev-${BRANCH_NAME//\//-}"
+          GIT_TAG="${{ steps.version.outputs.git_tag }}"
           
-          echo "🗑️  Deleting dev version: $TAG_NAME"
+          echo "🗑️  Deleting dev version: $GIT_TAG"
           
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Удаляем тег
-          git push origin ":refs/tags/$TAG_NAME" 2>/dev/null || {
-            echo "⚠️  Tag $TAG_NAME not found (already deleted or never created)"
+          git push origin ":refs/tags/$GIT_TAG" 2>/dev/null || {
+            echo "⚠️  Tag $GIT_TAG not found (already deleted or never created)"
           }
           
-          echo "✅ Dev version $TAG_NAME deleted"
+          echo "✅ Dev version $GIT_TAG deleted"
 
-      - name: Create Beta Version (if merged to develop)
-        if: github.event.pull_request.merged == true && github.base_ref == 'develop'
+      - name: Unpublish npm dev versions
         run: |
-          echo "🎯 PR was merged to develop, creating beta version..."
-          
-          # Получаем последнюю beta версию
-          LAST_BETA=$(git tag -l 'v*-beta.*' | sort -V | tail -n 1)
-          
-          if [ -z "$LAST_BETA" ]; then
-            # Нет beta версий, начинаем с v0.1.0-beta.1
-            NEW_VERSION="v0.1.0-beta.1"
-          else
-            # Извлекаем номер beta версии и инкрементируем
-            BASE_VERSION=$(echo "$LAST_BETA" | sed -E 's/v([0-9]+\.[0-9]+\.[0-9]+)-beta\.[0-9]+/\1/')
-            BETA_NUM=$(echo "$LAST_BETA" | sed -E 's/v[0-9]+\.[0-9]+\.[0-9]+-beta\.([0-9]+)/\1/')
-            BETA_NUM=$((BETA_NUM + 1))
-            NEW_VERSION="v${BASE_VERSION}-beta.${BETA_NUM}"
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm unpublish."
+            exit 0
           fi
           
-          echo "📦 Creating beta version: $NEW_VERSION"
+          GIT_TAG="${{ steps.version.outputs.git_tag }}"
+          NPM_DIST_TAG="${{ steps.version.outputs.npm_dist_tag }}"
           
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          echo "🗑️  Cleaning up all npm versions for dev version: $GIT_TAG"
+          echo "🏷️  NPM dist-tag: $NPM_DIST_TAG"
           
-          git tag "$NEW_VERSION"
-          git push origin "$NEW_VERSION"
+          ALL_VERSIONS=$(npm view @ssoeasy-dev/proto versions --json 2>/dev/null || echo "[]")
           
-          echo "✅ Beta version $NEW_VERSION created!"
-          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-        id: beta
-
-      - name: Comment on PR (merged)
-        if: github.event.pull_request.merged == true && github.base_ref == 'develop'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const branchName = context.payload.pull_request.head.ref;
-            const devTag = `dev-${branchName.replace(/\//g, '-')}`;
-            const betaVersion = '${{ steps.beta.outputs.version }}';
-            const repoFullName = `${context.repo.owner}/${context.repo.repo}`;
+          VERSIONS_TO_DELETE=$(echo "$ALL_VERSIONS" | node -e "
+            const versions = JSON.parse(require('fs').readFileSync(0, 'utf-8'));
+            const baseVersion = process.argv[1];
+            const matching = versions.filter(v => v.startsWith(baseVersion));
+            console.log(matching.join(' '));
+          " "$GIT_TAG")
+          
+          if [ -n "$VERSIONS_TO_DELETE" ]; then
+            echo "📦 Found versions to delete:"
+            for VERSION in $VERSIONS_TO_DELETE; do
+              echo "   - $VERSION"
+            done
             
-            const body = [
-              '## ✅ PR Merged - Versions Updated',
-              '',
-              `- 🗑️ Dev version \`${devTag}\` has been deleted`,
-              `- 📦 New beta version \`${betaVersion}\` has been created`,
-              '',
-              '**Update your services:**',
-              '```bash',
-              `go get github.com/${repoFullName}@${betaVersion}`,
-              '```',
-              '',
-              '> This beta version is now available on the develop environment.'
-            ].join('\n');
+            echo ""
+            echo "🗑️  Attempting to unpublish versions..."
+            UNPUBLISHED_COUNT=0
+            FAILED_COUNT=0
             
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: body
-            });
-
-      - name: Comment on PR (closed without merge)
-        if: github.event.pull_request.merged == false
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const branchName = context.payload.pull_request.head.ref;
-            const devTag = `dev-${branchName.replace(/\//g, '-')}`;
+            for VERSION in $VERSIONS_TO_DELETE; do
+              echo -n "   Unpublishing $VERSION... "
+              if npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>/dev/null; then
+                echo "✅"
+                UNPUBLISHED_COUNT=$((UNPUBLISHED_COUNT + 1))
+              else
+                echo "⚠️  (failed or doesn't exist)"
+                FAILED_COUNT=$((FAILED_COUNT + 1))
+              fi
+            done
             
-            const body = [
-              '## 🗑️ Dev Version Cleaned Up',
-              '',
-              `Dev version \`${devTag}\` has been deleted since this PR was closed without merging.`
-            ].join('\n');
-            
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: body
-            });
-
-
+            echo ""
+            echo "📊 Summary:"
+            echo "   ✅ Successfully unpublished: $UNPUBLISHED_COUNT"
+            echo "   ⚠️  Failed or not found: $FAILED_COUNT"
+          else
+            echo "ℹ️  No versions found matching pattern: $GIT_TAG"
+          fi
+          
+          echo ""
+          echo "🗑️  Removing dist-tag $NPM_DIST_TAG..."
+          if npm dist-tag rm @ssoeasy-dev/proto "$NPM_DIST_TAG" 2>/dev/null; then
+            echo "✅ NPM dist-tag $NPM_DIST_TAG removed"
+          else
+            echo "⚠️  Could not remove dist-tag $NPM_DIST_TAG (may not exist)"
+          fi
+          
+          echo ""
+          echo "✅ Cleanup completed"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

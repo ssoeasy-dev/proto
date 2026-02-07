@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package abac.v1.models;
+
+message EmployeeAttribute {
+  string id = 1;
+  string employee_id = 2;
+  string company_id = 3;
+  string attribute_id = 4;
+  string value = 5;
+}

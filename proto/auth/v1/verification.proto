@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package auth.v1;
+
+service VerificationService {
+  rpc Verificate(VerificateRequest) returns (VerificateResponse);
+}
+
+enum VerificationType {
+  email_code = 0;
+  email_link = 1;
+}
+
+message VerificateRequest {
+  string id = 1;
+  string value = 2;
+  string type = 3;
+  string company_id = 4;
+  string service_id = 5;
+}
+
+message VerificateResponse {
+  string access = 1;
+  string refresh = 2;
+}

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package services.v1;
+
+service ServicesService {
+  rpc GetServiceById(GetServiceByIdRequest) returns (ServiceResponse);
+}
+
+message GetServiceByIdRequest {
+  string id = 1;
+}
+
+message ServiceResponse {
+  string id = 1;
+  string name = 2;
+  optional string description = 3;
+  string owner_company_id = 4;
+  int64 created_at = 5;
+}

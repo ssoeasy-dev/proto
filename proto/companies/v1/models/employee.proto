@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package companies.v1.models;
+
+message Employee {
+  string id = 1;
+  string email = 2;
+  string firstname = 3;
+  string lastname = 4;
+  bool is_active = 5;
+}
