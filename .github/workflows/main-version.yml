@@ -21,8 +21,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
 
       - name: Setup Buf
         uses: bufbuild/buf-setup-action@v1
@@ -31,38 +31,34 @@ jobs:
         id: version
         run: |
           BASE_VERSION=$(node -e "console.log(require('./package.json').version)")
-          
+
           VERSION="$BASE_VERSION"
           NPM_DIST_TAG="latest"
-          
+
           echo "📦 Version: $VERSION"
           echo "🏷️  NPM dist-tag: $NPM_DIST_TAG"
-          
+
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "npm_dist_tag=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
-          echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
 
       - name: Create Main Tag
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          
+
           echo "🔗 Branch: main"
           echo "📝 Commit: ${{ github.sha }}"
-          
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          if git rev-parse "$VERSION" >/dev/null 2>&1; then
-            echo "🔄 Updating main version tag: $VERSION"
-            git tag -d "$VERSION" 2>/dev/null || true
-            git push origin ":refs/tags/$VERSION" 2>/dev/null || true
-          else
-            echo "📦 Creating main version tag: $VERSION"
-          fi
-          
+          # Удаляем старый тег, если существует
+          git tag -d "$VERSION" 2>/dev/null || true
+          git push origin ":refs/tags/$VERSION" 2>/dev/null || true
+
+          # Создаем новый тег
           git tag "$VERSION"
           git push origin "$VERSION"
-          
+
           echo "✅ Main version $VERSION tagged!"
           echo ""
           echo "📋 Use in your services:"
@@ -85,78 +81,5 @@ jobs:
             exit 0
           fi
           pnpm publish --no-git-checks --tag ${{ steps.version.outputs.npm_dist_tag }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Cleanup Beta Versions
-        run: |
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping beta cleanup."
-            exit 0
-          fi
-          
-          BASE_VERSION="${{ steps.version.outputs.base_version }}"
-          
-          echo "🧹 Cleaning up beta versions for base version $BASE_VERSION..."
-          
-          echo "📦 Searching for beta versions in npm..."
-          BETA_VERSIONS=$(npm view @ssoeasy-dev/proto versions --json 2>/dev/null | \
-            node -e "
-              const versions = JSON.parse(require('fs').readFileSync(0, 'utf-8'));
-              const baseVersion = process.argv[1];
-              const betaVersions = versions.filter(v => v.startsWith(baseVersion + '-beta.'));
-              console.log(betaVersions.join(' '));
-            " "$BASE_VERSION" || echo "")
-          
-          if [ -n "$BETA_VERSIONS" ]; then
-            echo "📦 Found beta versions to cleanup:"
-            for beta_version in $BETA_VERSIONS; do
-              echo "  - $beta_version"
-            done
-            
-            for beta_version in $BETA_VERSIONS; do
-              echo "🗑️  Attempting to unpublish $beta_version..."
-              if npm unpublish "@ssoeasy-dev/proto@$beta_version" 2>/dev/null; then
-                echo "  ✅ Version $beta_version successfully unpublished"
-              else
-                echo "  ⚠️  Could not unpublish $beta_version (may be older than 72 hours)"
-              fi
-            done
-            
-            echo "🗑️  Removing beta dist-tag..."
-            if npm dist-tag rm @ssoeasy-dev/proto beta 2>/dev/null; then
-              echo "  ✅ Beta dist-tag removed"
-            else
-              echo "  ℹ️  Beta dist-tag not found or already removed"
-            fi
-          else
-            echo "ℹ️  No beta versions found in npm for base version $BASE_VERSION"
-          fi
-          
-          echo "🗑️  Removing beta git tags for version $BASE_VERSION..."
-          BETA_TAGS=$(git tag -l "${BASE_VERSION}-beta.*" || echo "")
-          
-          if [ -n "$BETA_TAGS" ]; then
-            echo "📦 Found beta git tags to cleanup:"
-            for tag in $BETA_TAGS; do
-              echo "  - $tag"
-            done
-            
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            
-            for tag in $BETA_TAGS; do
-              echo "🗑️  Deleting git tag: $tag"
-              git push origin ":refs/tags/$tag" 2>/dev/null || {
-                echo "  ⚠️  Could not delete tag $tag"
-              }
-            done
-            
-            echo "✅ Beta git tags cleanup completed"
-          else
-            echo "ℹ️  No beta git tags found for base version $BASE_VERSION"
-          fi
-          
-          echo "✅ Beta versions cleanup completed for version $BASE_VERSION"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
