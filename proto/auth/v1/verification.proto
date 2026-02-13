@@ -2,8 +2,11 @@ syntax = "proto3";
 
 package auth.v1;
 
+import "auth/v1/common.proto";
+
 service VerificationService {
-  rpc Verificate(VerificateRequest) returns (VerificateResponse);
+  rpc Verificate(VerificateRequest) returns (auth.v1.StatusResponse);
+  rpc Refresh(RefreshRequest) returns (Verification);
 }
 
 enum VerificationType {
@@ -11,15 +14,19 @@ enum VerificationType {
   email_link = 1;
 }
 
+message Verification {
+	string id = 1;
+	string value = 2;
+	int64 expires_at = 3;
+}
+
 message VerificateRequest {
   string id = 1;
   string value = 2;
-  string type = 3;
-  string company_id = 4;
-  string service_id = 5;
+  string code = 3;
 }
 
-message VerificateResponse {
-  string access = 1;
-  string refresh = 2;
+message RefreshRequest {
+  string user_id = 1;
+  VerificationType type = 2;
 }

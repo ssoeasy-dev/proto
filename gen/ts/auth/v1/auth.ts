@@ -7,87 +7,193 @@
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 import type { CallContext, CallOptions } from "nice-grpc-common";
+import { StatusResponse, Tokens } from "./common";
+import { UserPolicyRequest, UserPolicyResponse } from "./user_policy";
 import {
+  Verification,
   VerificationType,
   verificationTypeFromJSON,
   verificationTypeToJSON,
   verificationTypeToNumber,
 } from "./verification";
 
-export interface RegistrationRequest {
-  $type: "auth.v1.RegistrationRequest";
-  userId: string;
-  serviceId: string;
-  companyId: string;
-  attributeName: string;
-  attributeValue: string;
-  contact: string;
-  verificationType: VerificationType;
-  password: string;
-}
-
-export interface RegistrationResponse {
-  $type: "auth.v1.RegistrationResponse";
-  credentialId: string;
-  attributeId: string;
-  verificationId: string;
+export interface AuthCode {
+  $type: "auth.v1.AuthCode";
+  id: string;
   value: string;
   expiresAt: number;
 }
 
+export interface RegistrationRequest {
+  $type: "auth.v1.RegistrationRequest";
+  login: string;
+  password: string;
+  verificationType?: VerificationType | undefined;
+  policies: UserPolicyRequest[];
+}
+
+export interface RegistrationResponse {
+  $type: "auth.v1.RegistrationResponse";
+  userId: string;
+  credentialId: string;
+  policies: UserPolicyResponse[];
+  verification?: Verification | undefined;
+}
+
 export interface RegistrationCompensateRequest {
   $type: "auth.v1.RegistrationCompensateRequest";
+  userId: string;
   credentialId: string;
-  verificationId: string;
-  userAttributeId: string;
+  verificationId?: string | undefined;
+  policyIds: string[];
 }
 
-export interface StatusResponse {
-  $type: "auth.v1.StatusResponse";
-  success: boolean;
+export interface LoginRequest {
+  $type: "auth.v1.LoginRequest";
+  login: string;
+  password: string;
+  codeChallenge: string;
+  serviceId: string;
+  verificationType?: VerificationType | undefined;
 }
+
+export interface LoginResponse {
+  $type: "auth.v1.LoginResponse";
+  code?: AuthCode | undefined;
+  verification?: Verification | undefined;
+}
+
+export interface CodeVerifier {
+  $type: "auth.v1.CodeVerifier";
+  code: string;
+  verifier: string;
+}
+
+export interface AuthtorizeRequest {
+  $type: "auth.v1.AuthtorizeRequest";
+  serviceId: string;
+  tokens?: Tokens | undefined;
+  code?: CodeVerifier | undefined;
+}
+
+function createBaseAuthCode(): AuthCode {
+  return { $type: "auth.v1.AuthCode", id: "", value: "", expiresAt: 0 };
+}
+
+export const AuthCode: MessageFns<AuthCode, "auth.v1.AuthCode"> = {
+  $type: "auth.v1.AuthCode" as const,
+
+  encode(message: AuthCode, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    if (message.expiresAt !== 0) {
+      writer.uint32(24).int64(message.expiresAt);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): AuthCode {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseAuthCode();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.expiresAt = longToNumber(reader.int64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): AuthCode {
+    return {
+      $type: AuthCode.$type,
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
+      expiresAt: isSet(object.expiresAt)
+        ? globalThis.Number(object.expiresAt)
+        : isSet(object.expires_at)
+        ? globalThis.Number(object.expires_at)
+        : 0,
+    };
+  },
+
+  toJSON(message: AuthCode): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
+    if (message.expiresAt !== 0) {
+      obj.expiresAt = Math.round(message.expiresAt);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<AuthCode>, I>>(base?: I): AuthCode {
+    return AuthCode.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<AuthCode>, I>>(object: I): AuthCode {
+    const message = createBaseAuthCode();
+    message.id = object.id ?? "";
+    message.value = object.value ?? "";
+    message.expiresAt = object.expiresAt ?? 0;
+    return message;
+  },
+};
 
 function createBaseRegistrationRequest(): RegistrationRequest {
-  return {
-    $type: "auth.v1.RegistrationRequest",
-    userId: "",
-    serviceId: "",
-    companyId: "",
-    attributeName: "",
-    attributeValue: "",
-    contact: "",
-    verificationType: VerificationType.email_code,
-    password: "",
-  };
+  return { $type: "auth.v1.RegistrationRequest", login: "", password: "", verificationType: undefined, policies: [] };
 }
 
 export const RegistrationRequest: MessageFns<RegistrationRequest, "auth.v1.RegistrationRequest"> = {
   $type: "auth.v1.RegistrationRequest" as const,
 
   encode(message: RegistrationRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.userId !== "") {
-      writer.uint32(10).string(message.userId);
-    }
-    if (message.serviceId !== "") {
-      writer.uint32(18).string(message.serviceId);
-    }
-    if (message.companyId !== "") {
-      writer.uint32(26).string(message.companyId);
-    }
-    if (message.attributeName !== "") {
-      writer.uint32(34).string(message.attributeName);
-    }
-    if (message.attributeValue !== "") {
-      writer.uint32(42).string(message.attributeValue);
-    }
-    if (message.contact !== "") {
-      writer.uint32(50).string(message.contact);
-    }
-    if (message.verificationType !== VerificationType.email_code) {
-      writer.uint32(56).int32(verificationTypeToNumber(message.verificationType));
+    if (message.login !== "") {
+      writer.uint32(10).string(message.login);
     }
     if (message.password !== "") {
-      writer.uint32(66).string(message.password);
+      writer.uint32(18).string(message.password);
+    }
+    if (message.verificationType !== undefined) {
+      writer.uint32(24).int32(verificationTypeToNumber(message.verificationType));
+    }
+    for (const v of message.policies) {
+      UserPolicyRequest.encode(v!, writer.uint32(34).fork()).join();
     }
     return writer;
   },
@@ -104,7 +210,7 @@ export const RegistrationRequest: MessageFns<RegistrationRequest, "auth.v1.Regis
             break;
           }
 
-          message.userId = reader.string();
+          message.login = reader.string();
           continue;
         }
         case 2: {
@@ -112,15 +218,15 @@ export const RegistrationRequest: MessageFns<RegistrationRequest, "auth.v1.Regis
             break;
           }
 
-          message.serviceId = reader.string();
+          message.password = reader.string();
           continue;
         }
         case 3: {
-          if (tag !== 26) {
+          if (tag !== 24) {
             break;
           }
 
-          message.companyId = reader.string();
+          message.verificationType = verificationTypeFromJSON(reader.int32());
           continue;
         }
         case 4: {
@@ -128,39 +234,7 @@ export const RegistrationRequest: MessageFns<RegistrationRequest, "auth.v1.Regis
             break;
           }
 
-          message.attributeName = reader.string();
-          continue;
-        }
-        case 5: {
-          if (tag !== 42) {
-            break;
-          }
-
-          message.attributeValue = reader.string();
-          continue;
-        }
-        case 6: {
-          if (tag !== 50) {
-            break;
-          }
-
-          message.contact = reader.string();
-          continue;
-        }
-        case 7: {
-          if (tag !== 56) {
-            break;
-          }
-
-          message.verificationType = verificationTypeFromJSON(reader.int32());
-          continue;
-        }
-        case 8: {
-          if (tag !== 66) {
-            break;
-          }
-
-          message.password = reader.string();
+          message.policies.push(UserPolicyRequest.decode(reader, reader.uint32()));
           continue;
         }
       }
@@ -175,66 +249,32 @@ export const RegistrationRequest: MessageFns<RegistrationRequest, "auth.v1.Regis
   fromJSON(object: any): RegistrationRequest {
     return {
       $type: RegistrationRequest.$type,
-      userId: isSet(object.userId)
-        ? globalThis.String(object.userId)
-        : isSet(object.user_id)
-        ? globalThis.String(object.user_id)
-        : "",
-      serviceId: isSet(object.serviceId)
-        ? globalThis.String(object.serviceId)
-        : isSet(object.service_id)
-        ? globalThis.String(object.service_id)
-        : "",
-      companyId: isSet(object.companyId)
-        ? globalThis.String(object.companyId)
-        : isSet(object.company_id)
-        ? globalThis.String(object.company_id)
-        : "",
-      attributeName: isSet(object.attributeName)
-        ? globalThis.String(object.attributeName)
-        : isSet(object.attribute_name)
-        ? globalThis.String(object.attribute_name)
-        : "",
-      attributeValue: isSet(object.attributeValue)
-        ? globalThis.String(object.attributeValue)
-        : isSet(object.attribute_value)
-        ? globalThis.String(object.attribute_value)
-        : "",
-      contact: isSet(object.contact) ? globalThis.String(object.contact) : "",
+      login: isSet(object.login) ? globalThis.String(object.login) : "",
+      password: isSet(object.password) ? globalThis.String(object.password) : "",
       verificationType: isSet(object.verificationType)
         ? verificationTypeFromJSON(object.verificationType)
         : isSet(object.verification_type)
         ? verificationTypeFromJSON(object.verification_type)
-        : VerificationType.email_code,
-      password: isSet(object.password) ? globalThis.String(object.password) : "",
+        : undefined,
+      policies: globalThis.Array.isArray(object?.policies)
+        ? object.policies.map((e: any) => UserPolicyRequest.fromJSON(e))
+        : [],
     };
   },
 
   toJSON(message: RegistrationRequest): unknown {
     const obj: any = {};
-    if (message.userId !== "") {
-      obj.userId = message.userId;
-    }
-    if (message.serviceId !== "") {
-      obj.serviceId = message.serviceId;
-    }
-    if (message.companyId !== "") {
-      obj.companyId = message.companyId;
-    }
-    if (message.attributeName !== "") {
-      obj.attributeName = message.attributeName;
-    }
-    if (message.attributeValue !== "") {
-      obj.attributeValue = message.attributeValue;
-    }
-    if (message.contact !== "") {
-      obj.contact = message.contact;
-    }
-    if (message.verificationType !== VerificationType.email_code) {
-      obj.verificationType = verificationTypeToJSON(message.verificationType);
+    if (message.login !== "") {
+      obj.login = message.login;
     }
     if (message.password !== "") {
       obj.password = message.password;
+    }
+    if (message.verificationType !== undefined) {
+      obj.verificationType = verificationTypeToJSON(message.verificationType);
+    }
+    if (message.policies?.length) {
+      obj.policies = message.policies.map((e) => UserPolicyRequest.toJSON(e));
     }
     return obj;
   },
@@ -244,47 +284,33 @@ export const RegistrationRequest: MessageFns<RegistrationRequest, "auth.v1.Regis
   },
   fromPartial<I extends Exact<DeepPartial<RegistrationRequest>, I>>(object: I): RegistrationRequest {
     const message = createBaseRegistrationRequest();
-    message.userId = object.userId ?? "";
-    message.serviceId = object.serviceId ?? "";
-    message.companyId = object.companyId ?? "";
-    message.attributeName = object.attributeName ?? "";
-    message.attributeValue = object.attributeValue ?? "";
-    message.contact = object.contact ?? "";
-    message.verificationType = object.verificationType ?? VerificationType.email_code;
+    message.login = object.login ?? "";
     message.password = object.password ?? "";
+    message.verificationType = object.verificationType ?? undefined;
+    message.policies = object.policies?.map((e) => UserPolicyRequest.fromPartial(e)) || [];
     return message;
   },
 };
 
 function createBaseRegistrationResponse(): RegistrationResponse {
-  return {
-    $type: "auth.v1.RegistrationResponse",
-    credentialId: "",
-    attributeId: "",
-    verificationId: "",
-    value: "",
-    expiresAt: 0,
-  };
+  return { $type: "auth.v1.RegistrationResponse", userId: "", credentialId: "", policies: [], verification: undefined };
 }
 
 export const RegistrationResponse: MessageFns<RegistrationResponse, "auth.v1.RegistrationResponse"> = {
   $type: "auth.v1.RegistrationResponse" as const,
 
   encode(message: RegistrationResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.userId !== "") {
+      writer.uint32(10).string(message.userId);
+    }
     if (message.credentialId !== "") {
-      writer.uint32(10).string(message.credentialId);
+      writer.uint32(18).string(message.credentialId);
     }
-    if (message.attributeId !== "") {
-      writer.uint32(18).string(message.attributeId);
+    for (const v of message.policies) {
+      UserPolicyResponse.encode(v!, writer.uint32(26).fork()).join();
     }
-    if (message.verificationId !== "") {
-      writer.uint32(26).string(message.verificationId);
-    }
-    if (message.value !== "") {
-      writer.uint32(34).string(message.value);
-    }
-    if (message.expiresAt !== 0) {
-      writer.uint32(40).int64(message.expiresAt);
+    if (message.verification !== undefined) {
+      Verification.encode(message.verification, writer.uint32(34).fork()).join();
     }
     return writer;
   },
@@ -301,7 +327,7 @@ export const RegistrationResponse: MessageFns<RegistrationResponse, "auth.v1.Reg
             break;
           }
 
-          message.credentialId = reader.string();
+          message.userId = reader.string();
           continue;
         }
         case 2: {
@@ -309,7 +335,7 @@ export const RegistrationResponse: MessageFns<RegistrationResponse, "auth.v1.Reg
             break;
           }
 
-          message.attributeId = reader.string();
+          message.credentialId = reader.string();
           continue;
         }
         case 3: {
@@ -317,7 +343,7 @@ export const RegistrationResponse: MessageFns<RegistrationResponse, "auth.v1.Reg
             break;
           }
 
-          message.verificationId = reader.string();
+          message.policies.push(UserPolicyResponse.decode(reader, reader.uint32()));
           continue;
         }
         case 4: {
@@ -325,15 +351,7 @@ export const RegistrationResponse: MessageFns<RegistrationResponse, "auth.v1.Reg
             break;
           }
 
-          message.value = reader.string();
-          continue;
-        }
-        case 5: {
-          if (tag !== 40) {
-            break;
-          }
-
-          message.expiresAt = longToNumber(reader.int64());
+          message.verification = Verification.decode(reader, reader.uint32());
           continue;
         }
       }
@@ -348,46 +366,36 @@ export const RegistrationResponse: MessageFns<RegistrationResponse, "auth.v1.Reg
   fromJSON(object: any): RegistrationResponse {
     return {
       $type: RegistrationResponse.$type,
+      userId: isSet(object.userId)
+        ? globalThis.String(object.userId)
+        : isSet(object.user_id)
+        ? globalThis.String(object.user_id)
+        : "",
       credentialId: isSet(object.credentialId)
         ? globalThis.String(object.credentialId)
         : isSet(object.credential_id)
         ? globalThis.String(object.credential_id)
         : "",
-      attributeId: isSet(object.attributeId)
-        ? globalThis.String(object.attributeId)
-        : isSet(object.attribute_id)
-        ? globalThis.String(object.attribute_id)
-        : "",
-      verificationId: isSet(object.verificationId)
-        ? globalThis.String(object.verificationId)
-        : isSet(object.verification_id)
-        ? globalThis.String(object.verification_id)
-        : "",
-      value: isSet(object.value) ? globalThis.String(object.value) : "",
-      expiresAt: isSet(object.expiresAt)
-        ? globalThis.Number(object.expiresAt)
-        : isSet(object.expires_at)
-        ? globalThis.Number(object.expires_at)
-        : 0,
+      policies: globalThis.Array.isArray(object?.policies)
+        ? object.policies.map((e: any) => UserPolicyResponse.fromJSON(e))
+        : [],
+      verification: isSet(object.verification) ? Verification.fromJSON(object.verification) : undefined,
     };
   },
 
   toJSON(message: RegistrationResponse): unknown {
     const obj: any = {};
+    if (message.userId !== "") {
+      obj.userId = message.userId;
+    }
     if (message.credentialId !== "") {
       obj.credentialId = message.credentialId;
     }
-    if (message.attributeId !== "") {
-      obj.attributeId = message.attributeId;
+    if (message.policies?.length) {
+      obj.policies = message.policies.map((e) => UserPolicyResponse.toJSON(e));
     }
-    if (message.verificationId !== "") {
-      obj.verificationId = message.verificationId;
-    }
-    if (message.value !== "") {
-      obj.value = message.value;
-    }
-    if (message.expiresAt !== 0) {
-      obj.expiresAt = Math.round(message.expiresAt);
+    if (message.verification !== undefined) {
+      obj.verification = Verification.toJSON(message.verification);
     }
     return obj;
   },
@@ -397,17 +405,24 @@ export const RegistrationResponse: MessageFns<RegistrationResponse, "auth.v1.Reg
   },
   fromPartial<I extends Exact<DeepPartial<RegistrationResponse>, I>>(object: I): RegistrationResponse {
     const message = createBaseRegistrationResponse();
+    message.userId = object.userId ?? "";
     message.credentialId = object.credentialId ?? "";
-    message.attributeId = object.attributeId ?? "";
-    message.verificationId = object.verificationId ?? "";
-    message.value = object.value ?? "";
-    message.expiresAt = object.expiresAt ?? 0;
+    message.policies = object.policies?.map((e) => UserPolicyResponse.fromPartial(e)) || [];
+    message.verification = (object.verification !== undefined && object.verification !== null)
+      ? Verification.fromPartial(object.verification)
+      : undefined;
     return message;
   },
 };
 
 function createBaseRegistrationCompensateRequest(): RegistrationCompensateRequest {
-  return { $type: "auth.v1.RegistrationCompensateRequest", credentialId: "", verificationId: "", userAttributeId: "" };
+  return {
+    $type: "auth.v1.RegistrationCompensateRequest",
+    userId: "",
+    credentialId: "",
+    verificationId: undefined,
+    policyIds: [],
+  };
 }
 
 export const RegistrationCompensateRequest: MessageFns<
@@ -417,14 +432,17 @@ export const RegistrationCompensateRequest: MessageFns<
   $type: "auth.v1.RegistrationCompensateRequest" as const,
 
   encode(message: RegistrationCompensateRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.userId !== "") {
+      writer.uint32(10).string(message.userId);
+    }
     if (message.credentialId !== "") {
-      writer.uint32(10).string(message.credentialId);
+      writer.uint32(18).string(message.credentialId);
     }
-    if (message.verificationId !== "") {
-      writer.uint32(18).string(message.verificationId);
+    if (message.verificationId !== undefined) {
+      writer.uint32(26).string(message.verificationId);
     }
-    if (message.userAttributeId !== "") {
-      writer.uint32(26).string(message.userAttributeId);
+    for (const v of message.policyIds) {
+      writer.uint32(34).string(v!);
     }
     return writer;
   },
@@ -441,7 +459,7 @@ export const RegistrationCompensateRequest: MessageFns<
             break;
           }
 
-          message.credentialId = reader.string();
+          message.userId = reader.string();
           continue;
         }
         case 2: {
@@ -449,7 +467,7 @@ export const RegistrationCompensateRequest: MessageFns<
             break;
           }
 
-          message.verificationId = reader.string();
+          message.credentialId = reader.string();
           continue;
         }
         case 3: {
@@ -457,7 +475,15 @@ export const RegistrationCompensateRequest: MessageFns<
             break;
           }
 
-          message.userAttributeId = reader.string();
+          message.verificationId = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.policyIds.push(reader.string());
           continue;
         }
       }
@@ -472,6 +498,11 @@ export const RegistrationCompensateRequest: MessageFns<
   fromJSON(object: any): RegistrationCompensateRequest {
     return {
       $type: RegistrationCompensateRequest.$type,
+      userId: isSet(object.userId)
+        ? globalThis.String(object.userId)
+        : isSet(object.user_id)
+        ? globalThis.String(object.user_id)
+        : "",
       credentialId: isSet(object.credentialId)
         ? globalThis.String(object.credentialId)
         : isSet(object.credential_id)
@@ -481,25 +512,28 @@ export const RegistrationCompensateRequest: MessageFns<
         ? globalThis.String(object.verificationId)
         : isSet(object.verification_id)
         ? globalThis.String(object.verification_id)
-        : "",
-      userAttributeId: isSet(object.userAttributeId)
-        ? globalThis.String(object.userAttributeId)
-        : isSet(object.user_attribute_id)
-        ? globalThis.String(object.user_attribute_id)
-        : "",
+        : undefined,
+      policyIds: globalThis.Array.isArray(object?.policyIds)
+        ? object.policyIds.map((e: any) => globalThis.String(e))
+        : globalThis.Array.isArray(object?.policy_ids)
+        ? object.policy_ids.map((e: any) => globalThis.String(e))
+        : [],
     };
   },
 
   toJSON(message: RegistrationCompensateRequest): unknown {
     const obj: any = {};
+    if (message.userId !== "") {
+      obj.userId = message.userId;
+    }
     if (message.credentialId !== "") {
       obj.credentialId = message.credentialId;
     }
-    if (message.verificationId !== "") {
+    if (message.verificationId !== undefined) {
       obj.verificationId = message.verificationId;
     }
-    if (message.userAttributeId !== "") {
-      obj.userAttributeId = message.userAttributeId;
+    if (message.policyIds?.length) {
+      obj.policyIds = message.policyIds;
     }
     return obj;
   },
@@ -511,40 +545,92 @@ export const RegistrationCompensateRequest: MessageFns<
     object: I,
   ): RegistrationCompensateRequest {
     const message = createBaseRegistrationCompensateRequest();
+    message.userId = object.userId ?? "";
     message.credentialId = object.credentialId ?? "";
-    message.verificationId = object.verificationId ?? "";
-    message.userAttributeId = object.userAttributeId ?? "";
+    message.verificationId = object.verificationId ?? undefined;
+    message.policyIds = object.policyIds?.map((e) => e) || [];
     return message;
   },
 };
 
-function createBaseStatusResponse(): StatusResponse {
-  return { $type: "auth.v1.StatusResponse", success: false };
+function createBaseLoginRequest(): LoginRequest {
+  return {
+    $type: "auth.v1.LoginRequest",
+    login: "",
+    password: "",
+    codeChallenge: "",
+    serviceId: "",
+    verificationType: undefined,
+  };
 }
 
-export const StatusResponse: MessageFns<StatusResponse, "auth.v1.StatusResponse"> = {
-  $type: "auth.v1.StatusResponse" as const,
+export const LoginRequest: MessageFns<LoginRequest, "auth.v1.LoginRequest"> = {
+  $type: "auth.v1.LoginRequest" as const,
 
-  encode(message: StatusResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.success !== false) {
-      writer.uint32(8).bool(message.success);
+  encode(message: LoginRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.login !== "") {
+      writer.uint32(10).string(message.login);
+    }
+    if (message.password !== "") {
+      writer.uint32(18).string(message.password);
+    }
+    if (message.codeChallenge !== "") {
+      writer.uint32(26).string(message.codeChallenge);
+    }
+    if (message.serviceId !== "") {
+      writer.uint32(34).string(message.serviceId);
+    }
+    if (message.verificationType !== undefined) {
+      writer.uint32(40).int32(verificationTypeToNumber(message.verificationType));
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): StatusResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): LoginRequest {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseStatusResponse();
+    const message = createBaseLoginRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 8) {
+          if (tag !== 10) {
             break;
           }
 
-          message.success = reader.bool();
+          message.login = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.password = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.codeChallenge = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.serviceId = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.verificationType = verificationTypeFromJSON(reader.int32());
           continue;
         }
       }
@@ -556,24 +642,322 @@ export const StatusResponse: MessageFns<StatusResponse, "auth.v1.StatusResponse"
     return message;
   },
 
-  fromJSON(object: any): StatusResponse {
-    return { $type: StatusResponse.$type, success: isSet(object.success) ? globalThis.Boolean(object.success) : false };
+  fromJSON(object: any): LoginRequest {
+    return {
+      $type: LoginRequest.$type,
+      login: isSet(object.login) ? globalThis.String(object.login) : "",
+      password: isSet(object.password) ? globalThis.String(object.password) : "",
+      codeChallenge: isSet(object.codeChallenge)
+        ? globalThis.String(object.codeChallenge)
+        : isSet(object.code_challenge)
+        ? globalThis.String(object.code_challenge)
+        : "",
+      serviceId: isSet(object.serviceId)
+        ? globalThis.String(object.serviceId)
+        : isSet(object.service_id)
+        ? globalThis.String(object.service_id)
+        : "",
+      verificationType: isSet(object.verificationType)
+        ? verificationTypeFromJSON(object.verificationType)
+        : isSet(object.verification_type)
+        ? verificationTypeFromJSON(object.verification_type)
+        : undefined,
+    };
   },
 
-  toJSON(message: StatusResponse): unknown {
+  toJSON(message: LoginRequest): unknown {
     const obj: any = {};
-    if (message.success !== false) {
-      obj.success = message.success;
+    if (message.login !== "") {
+      obj.login = message.login;
+    }
+    if (message.password !== "") {
+      obj.password = message.password;
+    }
+    if (message.codeChallenge !== "") {
+      obj.codeChallenge = message.codeChallenge;
+    }
+    if (message.serviceId !== "") {
+      obj.serviceId = message.serviceId;
+    }
+    if (message.verificationType !== undefined) {
+      obj.verificationType = verificationTypeToJSON(message.verificationType);
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<StatusResponse>, I>>(base?: I): StatusResponse {
-    return StatusResponse.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<LoginRequest>, I>>(base?: I): LoginRequest {
+    return LoginRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<StatusResponse>, I>>(object: I): StatusResponse {
-    const message = createBaseStatusResponse();
-    message.success = object.success ?? false;
+  fromPartial<I extends Exact<DeepPartial<LoginRequest>, I>>(object: I): LoginRequest {
+    const message = createBaseLoginRequest();
+    message.login = object.login ?? "";
+    message.password = object.password ?? "";
+    message.codeChallenge = object.codeChallenge ?? "";
+    message.serviceId = object.serviceId ?? "";
+    message.verificationType = object.verificationType ?? undefined;
+    return message;
+  },
+};
+
+function createBaseLoginResponse(): LoginResponse {
+  return { $type: "auth.v1.LoginResponse", code: undefined, verification: undefined };
+}
+
+export const LoginResponse: MessageFns<LoginResponse, "auth.v1.LoginResponse"> = {
+  $type: "auth.v1.LoginResponse" as const,
+
+  encode(message: LoginResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.code !== undefined) {
+      AuthCode.encode(message.code, writer.uint32(10).fork()).join();
+    }
+    if (message.verification !== undefined) {
+      Verification.encode(message.verification, writer.uint32(18).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): LoginResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseLoginResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.code = AuthCode.decode(reader, reader.uint32());
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.verification = Verification.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): LoginResponse {
+    return {
+      $type: LoginResponse.$type,
+      code: isSet(object.code) ? AuthCode.fromJSON(object.code) : undefined,
+      verification: isSet(object.verification) ? Verification.fromJSON(object.verification) : undefined,
+    };
+  },
+
+  toJSON(message: LoginResponse): unknown {
+    const obj: any = {};
+    if (message.code !== undefined) {
+      obj.code = AuthCode.toJSON(message.code);
+    }
+    if (message.verification !== undefined) {
+      obj.verification = Verification.toJSON(message.verification);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<LoginResponse>, I>>(base?: I): LoginResponse {
+    return LoginResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<LoginResponse>, I>>(object: I): LoginResponse {
+    const message = createBaseLoginResponse();
+    message.code = (object.code !== undefined && object.code !== null) ? AuthCode.fromPartial(object.code) : undefined;
+    message.verification = (object.verification !== undefined && object.verification !== null)
+      ? Verification.fromPartial(object.verification)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseCodeVerifier(): CodeVerifier {
+  return { $type: "auth.v1.CodeVerifier", code: "", verifier: "" };
+}
+
+export const CodeVerifier: MessageFns<CodeVerifier, "auth.v1.CodeVerifier"> = {
+  $type: "auth.v1.CodeVerifier" as const,
+
+  encode(message: CodeVerifier, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.code !== "") {
+      writer.uint32(10).string(message.code);
+    }
+    if (message.verifier !== "") {
+      writer.uint32(18).string(message.verifier);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): CodeVerifier {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCodeVerifier();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.code = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.verifier = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CodeVerifier {
+    return {
+      $type: CodeVerifier.$type,
+      code: isSet(object.code) ? globalThis.String(object.code) : "",
+      verifier: isSet(object.verifier) ? globalThis.String(object.verifier) : "",
+    };
+  },
+
+  toJSON(message: CodeVerifier): unknown {
+    const obj: any = {};
+    if (message.code !== "") {
+      obj.code = message.code;
+    }
+    if (message.verifier !== "") {
+      obj.verifier = message.verifier;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CodeVerifier>, I>>(base?: I): CodeVerifier {
+    return CodeVerifier.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CodeVerifier>, I>>(object: I): CodeVerifier {
+    const message = createBaseCodeVerifier();
+    message.code = object.code ?? "";
+    message.verifier = object.verifier ?? "";
+    return message;
+  },
+};
+
+function createBaseAuthtorizeRequest(): AuthtorizeRequest {
+  return { $type: "auth.v1.AuthtorizeRequest", serviceId: "", tokens: undefined, code: undefined };
+}
+
+export const AuthtorizeRequest: MessageFns<AuthtorizeRequest, "auth.v1.AuthtorizeRequest"> = {
+  $type: "auth.v1.AuthtorizeRequest" as const,
+
+  encode(message: AuthtorizeRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.serviceId !== "") {
+      writer.uint32(10).string(message.serviceId);
+    }
+    if (message.tokens !== undefined) {
+      Tokens.encode(message.tokens, writer.uint32(18).fork()).join();
+    }
+    if (message.code !== undefined) {
+      CodeVerifier.encode(message.code, writer.uint32(26).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): AuthtorizeRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseAuthtorizeRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.serviceId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.tokens = Tokens.decode(reader, reader.uint32());
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.code = CodeVerifier.decode(reader, reader.uint32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): AuthtorizeRequest {
+    return {
+      $type: AuthtorizeRequest.$type,
+      serviceId: isSet(object.serviceId)
+        ? globalThis.String(object.serviceId)
+        : isSet(object.service_id)
+        ? globalThis.String(object.service_id)
+        : "",
+      tokens: isSet(object.tokens) ? Tokens.fromJSON(object.tokens) : undefined,
+      code: isSet(object.code) ? CodeVerifier.fromJSON(object.code) : undefined,
+    };
+  },
+
+  toJSON(message: AuthtorizeRequest): unknown {
+    const obj: any = {};
+    if (message.serviceId !== "") {
+      obj.serviceId = message.serviceId;
+    }
+    if (message.tokens !== undefined) {
+      obj.tokens = Tokens.toJSON(message.tokens);
+    }
+    if (message.code !== undefined) {
+      obj.code = CodeVerifier.toJSON(message.code);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<AuthtorizeRequest>, I>>(base?: I): AuthtorizeRequest {
+    return AuthtorizeRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<AuthtorizeRequest>, I>>(object: I): AuthtorizeRequest {
+    const message = createBaseAuthtorizeRequest();
+    message.serviceId = object.serviceId ?? "";
+    message.tokens = (object.tokens !== undefined && object.tokens !== null)
+      ? Tokens.fromPartial(object.tokens)
+      : undefined;
+    message.code = (object.code !== undefined && object.code !== null)
+      ? CodeVerifier.fromPartial(object.code)
+      : undefined;
     return message;
   },
 };
@@ -599,6 +983,30 @@ export const AuthServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    login: {
+      name: "Login",
+      requestType: LoginRequest,
+      requestStream: false,
+      responseType: LoginResponse,
+      responseStream: false,
+      options: {},
+    },
+    authtorize: {
+      name: "Authtorize",
+      requestType: AuthtorizeRequest,
+      requestStream: false,
+      responseType: Tokens,
+      responseStream: false,
+      options: {},
+    },
+    logout: {
+      name: "Logout",
+      requestType: Tokens,
+      requestStream: false,
+      responseType: StatusResponse,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
@@ -611,6 +1019,9 @@ export interface AuthServiceImplementation<CallContextExt = {}> {
     request: RegistrationCompensateRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<StatusResponse>>;
+  login(request: LoginRequest, context: CallContext & CallContextExt): Promise<DeepPartial<LoginResponse>>;
+  authtorize(request: AuthtorizeRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Tokens>>;
+  logout(request: Tokens, context: CallContext & CallContextExt): Promise<DeepPartial<StatusResponse>>;
 }
 
 export interface AuthServiceClient<CallOptionsExt = {}> {
@@ -622,6 +1033,9 @@ export interface AuthServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<RegistrationCompensateRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<StatusResponse>;
+  login(request: DeepPartial<LoginRequest>, options?: CallOptions & CallOptionsExt): Promise<LoginResponse>;
+  authtorize(request: DeepPartial<AuthtorizeRequest>, options?: CallOptions & CallOptionsExt): Promise<Tokens>;
+  logout(request: DeepPartial<Tokens>, options?: CallOptions & CallOptionsExt): Promise<StatusResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;

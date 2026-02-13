@@ -5,5 +5,7 @@
 
 /* eslint-disable */
 
+export * from "./auth/v1/common";
 export * from "./auth/v1/verification";
+export * from "./auth/v1/user_policy";
 export * from "./auth/v1/auth";

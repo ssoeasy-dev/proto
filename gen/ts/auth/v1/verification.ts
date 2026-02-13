@@ -7,6 +7,7 @@
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 import type { CallContext, CallOptions } from "nice-grpc-common";
+import { StatusResponse } from "./common";
 
 export enum VerificationType {
   email_code = "email_code",
@@ -53,23 +54,127 @@ export function verificationTypeToNumber(object: VerificationType): number {
   }
 }
 
+export interface Verification {
+  $type: "auth.v1.Verification";
+  id: string;
+  value: string;
+  expiresAt: number;
+}
+
 export interface VerificateRequest {
   $type: "auth.v1.VerificateRequest";
   id: string;
   value: string;
-  type: string;
-  companyId: string;
-  serviceId: string;
+  code: string;
 }
 
-export interface VerificateResponse {
-  $type: "auth.v1.VerificateResponse";
-  access: string;
-  refresh: string;
+export interface RefreshRequest {
+  $type: "auth.v1.RefreshRequest";
+  userId: string;
+  type: VerificationType;
 }
+
+function createBaseVerification(): Verification {
+  return { $type: "auth.v1.Verification", id: "", value: "", expiresAt: 0 };
+}
+
+export const Verification: MessageFns<Verification, "auth.v1.Verification"> = {
+  $type: "auth.v1.Verification" as const,
+
+  encode(message: Verification, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.value !== "") {
+      writer.uint32(18).string(message.value);
+    }
+    if (message.expiresAt !== 0) {
+      writer.uint32(24).int64(message.expiresAt);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Verification {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseVerification();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.value = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 24) {
+            break;
+          }
+
+          message.expiresAt = longToNumber(reader.int64());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Verification {
+    return {
+      $type: Verification.$type,
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      value: isSet(object.value) ? globalThis.String(object.value) : "",
+      expiresAt: isSet(object.expiresAt)
+        ? globalThis.Number(object.expiresAt)
+        : isSet(object.expires_at)
+        ? globalThis.Number(object.expires_at)
+        : 0,
+    };
+  },
+
+  toJSON(message: Verification): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.value !== "") {
+      obj.value = message.value;
+    }
+    if (message.expiresAt !== 0) {
+      obj.expiresAt = Math.round(message.expiresAt);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Verification>, I>>(base?: I): Verification {
+    return Verification.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Verification>, I>>(object: I): Verification {
+    const message = createBaseVerification();
+    message.id = object.id ?? "";
+    message.value = object.value ?? "";
+    message.expiresAt = object.expiresAt ?? 0;
+    return message;
+  },
+};
 
 function createBaseVerificateRequest(): VerificateRequest {
-  return { $type: "auth.v1.VerificateRequest", id: "", value: "", type: "", companyId: "", serviceId: "" };
+  return { $type: "auth.v1.VerificateRequest", id: "", value: "", code: "" };
 }
 
 export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.VerificateRequest"> = {
@@ -82,14 +187,8 @@ export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.Verificat
     if (message.value !== "") {
       writer.uint32(18).string(message.value);
     }
-    if (message.type !== "") {
-      writer.uint32(26).string(message.type);
-    }
-    if (message.companyId !== "") {
-      writer.uint32(34).string(message.companyId);
-    }
-    if (message.serviceId !== "") {
-      writer.uint32(42).string(message.serviceId);
+    if (message.code !== "") {
+      writer.uint32(26).string(message.code);
     }
     return writer;
   },
@@ -122,23 +221,7 @@ export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.Verificat
             break;
           }
 
-          message.type = reader.string();
-          continue;
-        }
-        case 4: {
-          if (tag !== 34) {
-            break;
-          }
-
-          message.companyId = reader.string();
-          continue;
-        }
-        case 5: {
-          if (tag !== 42) {
-            break;
-          }
-
-          message.serviceId = reader.string();
+          message.code = reader.string();
           continue;
         }
       }
@@ -155,17 +238,7 @@ export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.Verificat
       $type: VerificateRequest.$type,
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       value: isSet(object.value) ? globalThis.String(object.value) : "",
-      type: isSet(object.type) ? globalThis.String(object.type) : "",
-      companyId: isSet(object.companyId)
-        ? globalThis.String(object.companyId)
-        : isSet(object.company_id)
-        ? globalThis.String(object.company_id)
-        : "",
-      serviceId: isSet(object.serviceId)
-        ? globalThis.String(object.serviceId)
-        : isSet(object.service_id)
-        ? globalThis.String(object.service_id)
-        : "",
+      code: isSet(object.code) ? globalThis.String(object.code) : "",
     };
   },
 
@@ -177,14 +250,8 @@ export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.Verificat
     if (message.value !== "") {
       obj.value = message.value;
     }
-    if (message.type !== "") {
-      obj.type = message.type;
-    }
-    if (message.companyId !== "") {
-      obj.companyId = message.companyId;
-    }
-    if (message.serviceId !== "") {
-      obj.serviceId = message.serviceId;
+    if (message.code !== "") {
+      obj.code = message.code;
     }
     return obj;
   },
@@ -196,34 +263,32 @@ export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.Verificat
     const message = createBaseVerificateRequest();
     message.id = object.id ?? "";
     message.value = object.value ?? "";
-    message.type = object.type ?? "";
-    message.companyId = object.companyId ?? "";
-    message.serviceId = object.serviceId ?? "";
+    message.code = object.code ?? "";
     return message;
   },
 };
 
-function createBaseVerificateResponse(): VerificateResponse {
-  return { $type: "auth.v1.VerificateResponse", access: "", refresh: "" };
+function createBaseRefreshRequest(): RefreshRequest {
+  return { $type: "auth.v1.RefreshRequest", userId: "", type: VerificationType.email_code };
 }
 
-export const VerificateResponse: MessageFns<VerificateResponse, "auth.v1.VerificateResponse"> = {
-  $type: "auth.v1.VerificateResponse" as const,
+export const RefreshRequest: MessageFns<RefreshRequest, "auth.v1.RefreshRequest"> = {
+  $type: "auth.v1.RefreshRequest" as const,
 
-  encode(message: VerificateResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.access !== "") {
-      writer.uint32(10).string(message.access);
+  encode(message: RefreshRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.userId !== "") {
+      writer.uint32(10).string(message.userId);
     }
-    if (message.refresh !== "") {
-      writer.uint32(18).string(message.refresh);
+    if (message.type !== VerificationType.email_code) {
+      writer.uint32(16).int32(verificationTypeToNumber(message.type));
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): VerificateResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): RefreshRequest {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseVerificateResponse();
+    const message = createBaseRefreshRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -232,15 +297,15 @@ export const VerificateResponse: MessageFns<VerificateResponse, "auth.v1.Verific
             break;
           }
 
-          message.access = reader.string();
+          message.userId = reader.string();
           continue;
         }
         case 2: {
-          if (tag !== 18) {
+          if (tag !== 16) {
             break;
           }
 
-          message.refresh = reader.string();
+          message.type = verificationTypeFromJSON(reader.int32());
           continue;
         }
       }
@@ -252,32 +317,36 @@ export const VerificateResponse: MessageFns<VerificateResponse, "auth.v1.Verific
     return message;
   },
 
-  fromJSON(object: any): VerificateResponse {
+  fromJSON(object: any): RefreshRequest {
     return {
-      $type: VerificateResponse.$type,
-      access: isSet(object.access) ? globalThis.String(object.access) : "",
-      refresh: isSet(object.refresh) ? globalThis.String(object.refresh) : "",
+      $type: RefreshRequest.$type,
+      userId: isSet(object.userId)
+        ? globalThis.String(object.userId)
+        : isSet(object.user_id)
+        ? globalThis.String(object.user_id)
+        : "",
+      type: isSet(object.type) ? verificationTypeFromJSON(object.type) : VerificationType.email_code,
     };
   },
 
-  toJSON(message: VerificateResponse): unknown {
+  toJSON(message: RefreshRequest): unknown {
     const obj: any = {};
-    if (message.access !== "") {
-      obj.access = message.access;
+    if (message.userId !== "") {
+      obj.userId = message.userId;
     }
-    if (message.refresh !== "") {
-      obj.refresh = message.refresh;
+    if (message.type !== VerificationType.email_code) {
+      obj.type = verificationTypeToJSON(message.type);
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<VerificateResponse>, I>>(base?: I): VerificateResponse {
-    return VerificateResponse.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<RefreshRequest>, I>>(base?: I): RefreshRequest {
+    return RefreshRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<VerificateResponse>, I>>(object: I): VerificateResponse {
-    const message = createBaseVerificateResponse();
-    message.access = object.access ?? "";
-    message.refresh = object.refresh ?? "";
+  fromPartial<I extends Exact<DeepPartial<RefreshRequest>, I>>(object: I): RefreshRequest {
+    const message = createBaseRefreshRequest();
+    message.userId = object.userId ?? "";
+    message.type = object.type ?? VerificationType.email_code;
     return message;
   },
 };
@@ -291,7 +360,15 @@ export const VerificationServiceDefinition = {
       name: "Verificate",
       requestType: VerificateRequest,
       requestStream: false,
-      responseType: VerificateResponse,
+      responseType: StatusResponse,
+      responseStream: false,
+      options: {},
+    },
+    refresh: {
+      name: "Refresh",
+      requestType: RefreshRequest,
+      requestStream: false,
+      responseType: Verification,
       responseStream: false,
       options: {},
     },
@@ -299,17 +376,13 @@ export const VerificationServiceDefinition = {
 } as const;
 
 export interface VerificationServiceImplementation<CallContextExt = {}> {
-  verificate(
-    request: VerificateRequest,
-    context: CallContext & CallContextExt,
-  ): Promise<DeepPartial<VerificateResponse>>;
+  verificate(request: VerificateRequest, context: CallContext & CallContextExt): Promise<DeepPartial<StatusResponse>>;
+  refresh(request: RefreshRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Verification>>;
 }
 
 export interface VerificationServiceClient<CallOptionsExt = {}> {
-  verificate(
-    request: DeepPartial<VerificateRequest>,
-    options?: CallOptions & CallOptionsExt,
-  ): Promise<VerificateResponse>;
+  verificate(request: DeepPartial<VerificateRequest>, options?: CallOptions & CallOptionsExt): Promise<StatusResponse>;
+  refresh(request: DeepPartial<RefreshRequest>, options?: CallOptions & CallOptionsExt): Promise<Verification>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
@@ -324,6 +397,17 @@ type DeepPartial<T> = T extends Builtin ? T
 type KeysOfUnion<T> = T extends T ? keyof T : never;
 type Exact<P, I extends P> = P extends Builtin ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P> | "$type">]: never };
+
+function longToNumber(int64: { toString(): string }): number {
+  const num = globalThis.Number(int64.toString());
+  if (num > globalThis.Number.MAX_SAFE_INTEGER) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  if (num < globalThis.Number.MIN_SAFE_INTEGER) {
+    throw new globalThis.Error("Value is smaller than Number.MIN_SAFE_INTEGER");
+  }
+  return num;
+}
 
 function isSet(value: any): boolean {
   return value !== null && value !== undefined;

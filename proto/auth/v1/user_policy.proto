@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package auth.v1;
+
+enum AttributeType {
+	boolean = 0;
+	string = 1;
+	number = 2;
+}
+
+message Attribute {
+	string name = 1;
+	string operator = 2;
+	string value = 3;
+}
+
+message UserPolicyRequest {
+	string name = 1;
+	string service_id = 2;
+	optional string company_id = 3;
+}
+
+message UserPolicyResponse {
+	string id = 1;
+	string name = 2;
+	string service_id = 3;
+	optional string company_id = 4;
+	repeated Attribute attributes = 5;
+}
