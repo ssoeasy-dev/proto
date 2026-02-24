@@ -10,6 +10,7 @@ import type { CallContext, CallOptions } from "nice-grpc-common";
 import { StatusResponse } from "./common";
 
 export enum VerificationType {
+  VERIFICATION_TYPE_UNSPECIFIED = "VERIFICATION_TYPE_UNSPECIFIED",
   VERIFICATION_TYPE_EMMAIL_CODE = "VERIFICATION_TYPE_EMMAIL_CODE",
   VERIFICATION_TYPE_EMAIL_LINK = "VERIFICATION_TYPE_EMAIL_LINK",
   UNRECOGNIZED = "UNRECOGNIZED",
@@ -18,9 +19,12 @@ export enum VerificationType {
 export function verificationTypeFromJSON(object: any): VerificationType {
   switch (object) {
     case 0:
+    case "VERIFICATION_TYPE_UNSPECIFIED":
+      return VerificationType.VERIFICATION_TYPE_UNSPECIFIED;
+    case 1:
     case "VERIFICATION_TYPE_EMMAIL_CODE":
       return VerificationType.VERIFICATION_TYPE_EMMAIL_CODE;
-    case 1:
+    case 2:
     case "VERIFICATION_TYPE_EMAIL_LINK":
       return VerificationType.VERIFICATION_TYPE_EMAIL_LINK;
     case -1:
@@ -32,6 +36,8 @@ export function verificationTypeFromJSON(object: any): VerificationType {
 
 export function verificationTypeToJSON(object: VerificationType): string {
   switch (object) {
+    case VerificationType.VERIFICATION_TYPE_UNSPECIFIED:
+      return "VERIFICATION_TYPE_UNSPECIFIED";
     case VerificationType.VERIFICATION_TYPE_EMMAIL_CODE:
       return "VERIFICATION_TYPE_EMMAIL_CODE";
     case VerificationType.VERIFICATION_TYPE_EMAIL_LINK:
@@ -44,10 +50,12 @@ export function verificationTypeToJSON(object: VerificationType): string {
 
 export function verificationTypeToNumber(object: VerificationType): number {
   switch (object) {
-    case VerificationType.VERIFICATION_TYPE_EMMAIL_CODE:
+    case VerificationType.VERIFICATION_TYPE_UNSPECIFIED:
       return 0;
-    case VerificationType.VERIFICATION_TYPE_EMAIL_LINK:
+    case VerificationType.VERIFICATION_TYPE_EMMAIL_CODE:
       return 1;
+    case VerificationType.VERIFICATION_TYPE_EMAIL_LINK:
+      return 2;
     case VerificationType.UNRECOGNIZED:
     default:
       return -1;
@@ -55,6 +63,7 @@ export function verificationTypeToNumber(object: VerificationType): number {
 }
 
 export enum VerificationStatus {
+  VERIFICATION_STATUS_UNSPECIFIED = "VERIFICATION_STATUS_UNSPECIFIED",
   VERIFICATION_STATUS_WAIT = "VERIFICATION_STATUS_WAIT",
   VERIFICATION_STATUS_EXPIRES = "VERIFICATION_STATUS_EXPIRES",
   VERIFICATION_STATUS_VERIFIED = "VERIFICATION_STATUS_VERIFIED",
@@ -64,12 +73,15 @@ export enum VerificationStatus {
 export function verificationStatusFromJSON(object: any): VerificationStatus {
   switch (object) {
     case 0:
+    case "VERIFICATION_STATUS_UNSPECIFIED":
+      return VerificationStatus.VERIFICATION_STATUS_UNSPECIFIED;
+    case 1:
     case "VERIFICATION_STATUS_WAIT":
       return VerificationStatus.VERIFICATION_STATUS_WAIT;
-    case 1:
+    case 2:
     case "VERIFICATION_STATUS_EXPIRES":
       return VerificationStatus.VERIFICATION_STATUS_EXPIRES;
-    case 2:
+    case 3:
     case "VERIFICATION_STATUS_VERIFIED":
       return VerificationStatus.VERIFICATION_STATUS_VERIFIED;
     case -1:
@@ -81,6 +93,8 @@ export function verificationStatusFromJSON(object: any): VerificationStatus {
 
 export function verificationStatusToJSON(object: VerificationStatus): string {
   switch (object) {
+    case VerificationStatus.VERIFICATION_STATUS_UNSPECIFIED:
+      return "VERIFICATION_STATUS_UNSPECIFIED";
     case VerificationStatus.VERIFICATION_STATUS_WAIT:
       return "VERIFICATION_STATUS_WAIT";
     case VerificationStatus.VERIFICATION_STATUS_EXPIRES:
@@ -95,12 +109,14 @@ export function verificationStatusToJSON(object: VerificationStatus): string {
 
 export function verificationStatusToNumber(object: VerificationStatus): number {
   switch (object) {
-    case VerificationStatus.VERIFICATION_STATUS_WAIT:
+    case VerificationStatus.VERIFICATION_STATUS_UNSPECIFIED:
       return 0;
-    case VerificationStatus.VERIFICATION_STATUS_EXPIRES:
+    case VerificationStatus.VERIFICATION_STATUS_WAIT:
       return 1;
-    case VerificationStatus.VERIFICATION_STATUS_VERIFIED:
+    case VerificationStatus.VERIFICATION_STATUS_EXPIRES:
       return 2;
+    case VerificationStatus.VERIFICATION_STATUS_VERIFIED:
+      return 3;
     case VerificationStatus.UNRECOGNIZED:
     default:
       return -1;
@@ -315,7 +331,7 @@ export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.Verificat
 };
 
 function createBaseRefreshRequest(): RefreshRequest {
-  return { $type: "auth.v1.RefreshRequest", userId: "", type: VerificationType.VERIFICATION_TYPE_EMMAIL_CODE };
+  return { $type: "auth.v1.RefreshRequest", userId: "", type: VerificationType.VERIFICATION_TYPE_UNSPECIFIED };
 }
 
 export const RefreshRequest: MessageFns<RefreshRequest, "auth.v1.RefreshRequest"> = {
@@ -325,7 +341,7 @@ export const RefreshRequest: MessageFns<RefreshRequest, "auth.v1.RefreshRequest"
     if (message.userId !== "") {
       writer.uint32(10).string(message.userId);
     }
-    if (message.type !== VerificationType.VERIFICATION_TYPE_EMMAIL_CODE) {
+    if (message.type !== VerificationType.VERIFICATION_TYPE_UNSPECIFIED) {
       writer.uint32(16).int32(verificationTypeToNumber(message.type));
     }
     return writer;
@@ -371,7 +387,7 @@ export const RefreshRequest: MessageFns<RefreshRequest, "auth.v1.RefreshRequest"
         : isSet(object.user_id)
         ? globalThis.String(object.user_id)
         : "",
-      type: isSet(object.type) ? verificationTypeFromJSON(object.type) : VerificationType.VERIFICATION_TYPE_EMMAIL_CODE,
+      type: isSet(object.type) ? verificationTypeFromJSON(object.type) : VerificationType.VERIFICATION_TYPE_UNSPECIFIED,
     };
   },
 
@@ -380,7 +396,7 @@ export const RefreshRequest: MessageFns<RefreshRequest, "auth.v1.RefreshRequest"
     if (message.userId !== "") {
       obj.userId = message.userId;
     }
-    if (message.type !== VerificationType.VERIFICATION_TYPE_EMMAIL_CODE) {
+    if (message.type !== VerificationType.VERIFICATION_TYPE_UNSPECIFIED) {
       obj.type = verificationTypeToJSON(message.type);
     }
     return obj;
@@ -392,7 +408,7 @@ export const RefreshRequest: MessageFns<RefreshRequest, "auth.v1.RefreshRequest"
   fromPartial<I extends Exact<DeepPartial<RefreshRequest>, I>>(object: I): RefreshRequest {
     const message = createBaseRefreshRequest();
     message.userId = object.userId ?? "";
-    message.type = object.type ?? VerificationType.VERIFICATION_TYPE_EMMAIL_CODE;
+    message.type = object.type ?? VerificationType.VERIFICATION_TYPE_UNSPECIFIED;
     return message;
   },
 };
@@ -458,14 +474,14 @@ export const CheckStatusRequest: MessageFns<CheckStatusRequest, "auth.v1.CheckSt
 };
 
 function createBaseCheckStatusResponse(): CheckStatusResponse {
-  return { $type: "auth.v1.CheckStatusResponse", status: VerificationStatus.VERIFICATION_STATUS_WAIT };
+  return { $type: "auth.v1.CheckStatusResponse", status: VerificationStatus.VERIFICATION_STATUS_UNSPECIFIED };
 }
 
 export const CheckStatusResponse: MessageFns<CheckStatusResponse, "auth.v1.CheckStatusResponse"> = {
   $type: "auth.v1.CheckStatusResponse" as const,
 
   encode(message: CheckStatusResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.status !== VerificationStatus.VERIFICATION_STATUS_WAIT) {
+    if (message.status !== VerificationStatus.VERIFICATION_STATUS_UNSPECIFIED) {
       writer.uint32(8).int32(verificationStatusToNumber(message.status));
     }
     return writer;
@@ -500,13 +516,13 @@ export const CheckStatusResponse: MessageFns<CheckStatusResponse, "auth.v1.Check
       $type: CheckStatusResponse.$type,
       status: isSet(object.status)
         ? verificationStatusFromJSON(object.status)
-        : VerificationStatus.VERIFICATION_STATUS_WAIT,
+        : VerificationStatus.VERIFICATION_STATUS_UNSPECIFIED,
     };
   },
 
   toJSON(message: CheckStatusResponse): unknown {
     const obj: any = {};
-    if (message.status !== VerificationStatus.VERIFICATION_STATUS_WAIT) {
+    if (message.status !== VerificationStatus.VERIFICATION_STATUS_UNSPECIFIED) {
       obj.status = verificationStatusToJSON(message.status);
     }
     return obj;
@@ -517,7 +533,7 @@ export const CheckStatusResponse: MessageFns<CheckStatusResponse, "auth.v1.Check
   },
   fromPartial<I extends Exact<DeepPartial<CheckStatusResponse>, I>>(object: I): CheckStatusResponse {
     const message = createBaseCheckStatusResponse();
-    message.status = object.status ?? VerificationStatus.VERIFICATION_STATUS_WAIT;
+    message.status = object.status ?? VerificationStatus.VERIFICATION_STATUS_UNSPECIFIED;
     return message;
   },
 };

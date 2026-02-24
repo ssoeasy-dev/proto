@@ -8,6 +8,7 @@
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export enum AttributeType {
+  ATTRIBUTE_TYPE_UNSPECIFIED = "ATTRIBUTE_TYPE_UNSPECIFIED",
   ATTRIBUTE_TYPE_BOOLEAN = "ATTRIBUTE_TYPE_BOOLEAN",
   ATTRIBUTE_TYPE_STRING = "ATTRIBUTE_TYPE_STRING",
   ATTRIBUTE_TYPE_NUMBER = "ATTRIBUTE_TYPE_NUMBER",
@@ -17,12 +18,15 @@ export enum AttributeType {
 export function attributeTypeFromJSON(object: any): AttributeType {
   switch (object) {
     case 0:
+    case "ATTRIBUTE_TYPE_UNSPECIFIED":
+      return AttributeType.ATTRIBUTE_TYPE_UNSPECIFIED;
+    case 1:
     case "ATTRIBUTE_TYPE_BOOLEAN":
       return AttributeType.ATTRIBUTE_TYPE_BOOLEAN;
-    case 1:
+    case 2:
     case "ATTRIBUTE_TYPE_STRING":
       return AttributeType.ATTRIBUTE_TYPE_STRING;
-    case 2:
+    case 3:
     case "ATTRIBUTE_TYPE_NUMBER":
       return AttributeType.ATTRIBUTE_TYPE_NUMBER;
     case -1:
@@ -34,6 +38,8 @@ export function attributeTypeFromJSON(object: any): AttributeType {
 
 export function attributeTypeToJSON(object: AttributeType): string {
   switch (object) {
+    case AttributeType.ATTRIBUTE_TYPE_UNSPECIFIED:
+      return "ATTRIBUTE_TYPE_UNSPECIFIED";
     case AttributeType.ATTRIBUTE_TYPE_BOOLEAN:
       return "ATTRIBUTE_TYPE_BOOLEAN";
     case AttributeType.ATTRIBUTE_TYPE_STRING:
@@ -48,12 +54,14 @@ export function attributeTypeToJSON(object: AttributeType): string {
 
 export function attributeTypeToNumber(object: AttributeType): number {
   switch (object) {
-    case AttributeType.ATTRIBUTE_TYPE_BOOLEAN:
+    case AttributeType.ATTRIBUTE_TYPE_UNSPECIFIED:
       return 0;
-    case AttributeType.ATTRIBUTE_TYPE_STRING:
+    case AttributeType.ATTRIBUTE_TYPE_BOOLEAN:
       return 1;
-    case AttributeType.ATTRIBUTE_TYPE_NUMBER:
+    case AttributeType.ATTRIBUTE_TYPE_STRING:
       return 2;
+    case AttributeType.ATTRIBUTE_TYPE_NUMBER:
+      return 3;
     case AttributeType.UNRECOGNIZED:
     default:
       return -1;

@@ -24,22 +24,25 @@ const (
 type AttributeType int32
 
 const (
-	AttributeType_ATTRIBUTE_TYPE_BOOLEAN AttributeType = 0
-	AttributeType_ATTRIBUTE_TYPE_STRING  AttributeType = 1
-	AttributeType_ATTRIBUTE_TYPE_NUMBER  AttributeType = 2
+	AttributeType_ATTRIBUTE_TYPE_UNSPECIFIED AttributeType = 0
+	AttributeType_ATTRIBUTE_TYPE_BOOLEAN     AttributeType = 1
+	AttributeType_ATTRIBUTE_TYPE_STRING      AttributeType = 2
+	AttributeType_ATTRIBUTE_TYPE_NUMBER      AttributeType = 3
 )
 
 // Enum value maps for AttributeType.
 var (
 	AttributeType_name = map[int32]string{
-		0: "ATTRIBUTE_TYPE_BOOLEAN",
-		1: "ATTRIBUTE_TYPE_STRING",
-		2: "ATTRIBUTE_TYPE_NUMBER",
+		0: "ATTRIBUTE_TYPE_UNSPECIFIED",
+		1: "ATTRIBUTE_TYPE_BOOLEAN",
+		2: "ATTRIBUTE_TYPE_STRING",
+		3: "ATTRIBUTE_TYPE_NUMBER",
 	}
 	AttributeType_value = map[string]int32{
-		"ATTRIBUTE_TYPE_BOOLEAN": 0,
-		"ATTRIBUTE_TYPE_STRING":  1,
-		"ATTRIBUTE_TYPE_NUMBER":  2,
+		"ATTRIBUTE_TYPE_UNSPECIFIED": 0,
+		"ATTRIBUTE_TYPE_BOOLEAN":     1,
+		"ATTRIBUTE_TYPE_STRING":      2,
+		"ATTRIBUTE_TYPE_NUMBER":      3,
 	}
 )
 
@@ -292,11 +295,12 @@ const file_auth_v1_user_policy_proto_rawDesc = "" +
 	"\n" +
 	"attributes\x18\x05 \x03(\v2\x12.auth.v1.AttributeR\n" +
 	"attributesB\r\n" +
-	"\v_company_id*a\n" +
-	"\rAttributeType\x12\x1a\n" +
-	"\x16ATTRIBUTE_TYPE_BOOLEAN\x10\x00\x12\x19\n" +
-	"\x15ATTRIBUTE_TYPE_STRING\x10\x01\x12\x19\n" +
-	"\x15ATTRIBUTE_TYPE_NUMBER\x10\x02B\x8f\x01\n" +
+	"\v_company_id*\x81\x01\n" +
+	"\rAttributeType\x12\x1e\n" +
+	"\x1aATTRIBUTE_TYPE_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16ATTRIBUTE_TYPE_BOOLEAN\x10\x01\x12\x19\n" +
+	"\x15ATTRIBUTE_TYPE_STRING\x10\x02\x12\x19\n" +
+	"\x15ATTRIBUTE_TYPE_NUMBER\x10\x03B\x8f\x01\n" +
 	"\vcom.auth.v1B\x0fUserPolicyProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var (

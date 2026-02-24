@@ -24,19 +24,22 @@ const (
 type VerificationType int32
 
 const (
-	VerificationType_VERIFICATION_TYPE_EMMAIL_CODE VerificationType = 0
-	VerificationType_VERIFICATION_TYPE_EMAIL_LINK  VerificationType = 1
+	VerificationType_VERIFICATION_TYPE_UNSPECIFIED VerificationType = 0
+	VerificationType_VERIFICATION_TYPE_EMMAIL_CODE VerificationType = 1
+	VerificationType_VERIFICATION_TYPE_EMAIL_LINK  VerificationType = 2
 )
 
 // Enum value maps for VerificationType.
 var (
 	VerificationType_name = map[int32]string{
-		0: "VERIFICATION_TYPE_EMMAIL_CODE",
-		1: "VERIFICATION_TYPE_EMAIL_LINK",
+		0: "VERIFICATION_TYPE_UNSPECIFIED",
+		1: "VERIFICATION_TYPE_EMMAIL_CODE",
+		2: "VERIFICATION_TYPE_EMAIL_LINK",
 	}
 	VerificationType_value = map[string]int32{
-		"VERIFICATION_TYPE_EMMAIL_CODE": 0,
-		"VERIFICATION_TYPE_EMAIL_LINK":  1,
+		"VERIFICATION_TYPE_UNSPECIFIED": 0,
+		"VERIFICATION_TYPE_EMMAIL_CODE": 1,
+		"VERIFICATION_TYPE_EMAIL_LINK":  2,
 	}
 )
 
@@ -70,22 +73,25 @@ func (VerificationType) EnumDescriptor() ([]byte, []int) {
 type VerificationStatus int32
 
 const (
-	VerificationStatus_VERIFICATION_STATUS_WAIT     VerificationStatus = 0
-	VerificationStatus_VERIFICATION_STATUS_EXPIRES  VerificationStatus = 1
-	VerificationStatus_VERIFICATION_STATUS_VERIFIED VerificationStatus = 2
+	VerificationStatus_VERIFICATION_STATUS_UNSPECIFIED VerificationStatus = 0
+	VerificationStatus_VERIFICATION_STATUS_WAIT        VerificationStatus = 1
+	VerificationStatus_VERIFICATION_STATUS_EXPIRES     VerificationStatus = 2
+	VerificationStatus_VERIFICATION_STATUS_VERIFIED    VerificationStatus = 3
 )
 
 // Enum value maps for VerificationStatus.
 var (
 	VerificationStatus_name = map[int32]string{
-		0: "VERIFICATION_STATUS_WAIT",
-		1: "VERIFICATION_STATUS_EXPIRES",
-		2: "VERIFICATION_STATUS_VERIFIED",
+		0: "VERIFICATION_STATUS_UNSPECIFIED",
+		1: "VERIFICATION_STATUS_WAIT",
+		2: "VERIFICATION_STATUS_EXPIRES",
+		3: "VERIFICATION_STATUS_VERIFIED",
 	}
 	VerificationStatus_value = map[string]int32{
-		"VERIFICATION_STATUS_WAIT":     0,
-		"VERIFICATION_STATUS_EXPIRES":  1,
-		"VERIFICATION_STATUS_VERIFIED": 2,
+		"VERIFICATION_STATUS_UNSPECIFIED": 0,
+		"VERIFICATION_STATUS_WAIT":        1,
+		"VERIFICATION_STATUS_EXPIRES":     2,
+		"VERIFICATION_STATUS_VERIFIED":    3,
 	}
 )
 
@@ -277,7 +283,7 @@ func (x *RefreshRequest) GetType() VerificationType {
 	if x != nil {
 		return x.Type
 	}
-	return VerificationType_VERIFICATION_TYPE_EMMAIL_CODE
+	return VerificationType_VERIFICATION_TYPE_UNSPECIFIED
 }
 
 type CheckStatusRequest struct {
@@ -365,7 +371,7 @@ func (x *CheckStatusResponse) GetStatus() VerificationStatus {
 	if x != nil {
 		return x.Status
 	}
-	return VerificationStatus_VERIFICATION_STATUS_WAIT
+	return VerificationStatus_VERIFICATION_STATUS_UNSPECIFIED
 }
 
 var File_auth_v1_verification_proto protoreflect.FileDescriptor
@@ -387,14 +393,16 @@ const file_auth_v1_verification_proto_rawDesc = "" +
 	"\x12CheckStatusRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"J\n" +
 	"\x13CheckStatusResponse\x123\n" +
-	"\x06status\x18\x01 \x01(\x0e2\x1b.auth.v1.VerificationStatusR\x06status*W\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x1b.auth.v1.VerificationStatusR\x06status*z\n" +
 	"\x10VerificationType\x12!\n" +
-	"\x1dVERIFICATION_TYPE_EMMAIL_CODE\x10\x00\x12 \n" +
-	"\x1cVERIFICATION_TYPE_EMAIL_LINK\x10\x01*u\n" +
-	"\x12VerificationStatus\x12\x1c\n" +
-	"\x18VERIFICATION_STATUS_WAIT\x10\x00\x12\x1f\n" +
-	"\x1bVERIFICATION_STATUS_EXPIRES\x10\x01\x12 \n" +
-	"\x1cVERIFICATION_STATUS_VERIFIED\x10\x022\xdd\x01\n" +
+	"\x1dVERIFICATION_TYPE_UNSPECIFIED\x10\x00\x12!\n" +
+	"\x1dVERIFICATION_TYPE_EMMAIL_CODE\x10\x01\x12 \n" +
+	"\x1cVERIFICATION_TYPE_EMAIL_LINK\x10\x02*\x9a\x01\n" +
+	"\x12VerificationStatus\x12#\n" +
+	"\x1fVERIFICATION_STATUS_UNSPECIFIED\x10\x00\x12\x1c\n" +
+	"\x18VERIFICATION_STATUS_WAIT\x10\x01\x12\x1f\n" +
+	"\x1bVERIFICATION_STATUS_EXPIRES\x10\x02\x12 \n" +
+	"\x1cVERIFICATION_STATUS_VERIFIED\x10\x032\xdd\x01\n" +
 	"\x13VerificationService\x12A\n" +
 	"\n" +
 	"Verificate\x12\x1a.auth.v1.VerificateRequest\x1a\x17.auth.v1.StatusResponse\x129\n" +
