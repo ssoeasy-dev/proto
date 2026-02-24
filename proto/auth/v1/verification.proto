@@ -11,8 +11,8 @@ service VerificationService {
 }
 
 enum VerificationType {
-  email_code = 0;
-  email_link = 1;
+  VERIFICATION_TYPE_EMMAIL_CODE = 0;
+  VERIFICATION_TYPE_EMAIL_LINK = 1;
 }
 
 message Verification {
@@ -32,9 +32,9 @@ message RefreshRequest {
 }
 
 enum VerificationStatus {
-  wait = 0;
-  expires = 1;
-  verified = 2;
+  VERIFICATION_STATUS_WAIT = 0;
+  VERIFICATION_STATUS_EXPIRES = 1;
+  VERIFICATION_STATUS_VERIFIED = 2;
 }
 
 message CheckStatusRequest {

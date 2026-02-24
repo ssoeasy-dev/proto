@@ -9,7 +9,7 @@ plugins:
       - outputServices=generic-definitions
       - env=node
       - useOptionals=messages
-      - exportCommonSymbols=false
+      - exportCommonSymbols=true
       - esModuleInterop=true
       - oneof=unions
       - stringEnums=true

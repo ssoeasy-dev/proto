@@ -8,23 +8,23 @@
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
 export enum AttributeType {
-  boolean = "boolean",
-  string = "string",
-  number = "number",
+  ATTRIBUTE_TYPE_BOOLEAN = "ATTRIBUTE_TYPE_BOOLEAN",
+  ATTRIBUTE_TYPE_STRING = "ATTRIBUTE_TYPE_STRING",
+  ATTRIBUTE_TYPE_NUMBER = "ATTRIBUTE_TYPE_NUMBER",
   UNRECOGNIZED = "UNRECOGNIZED",
 }
 
 export function attributeTypeFromJSON(object: any): AttributeType {
   switch (object) {
     case 0:
-    case "boolean":
-      return AttributeType.boolean;
+    case "ATTRIBUTE_TYPE_BOOLEAN":
+      return AttributeType.ATTRIBUTE_TYPE_BOOLEAN;
     case 1:
-    case "string":
-      return AttributeType.string;
+    case "ATTRIBUTE_TYPE_STRING":
+      return AttributeType.ATTRIBUTE_TYPE_STRING;
     case 2:
-    case "number":
-      return AttributeType.number;
+    case "ATTRIBUTE_TYPE_NUMBER":
+      return AttributeType.ATTRIBUTE_TYPE_NUMBER;
     case -1:
     case "UNRECOGNIZED":
     default:
@@ -34,12 +34,12 @@ export function attributeTypeFromJSON(object: any): AttributeType {
 
 export function attributeTypeToJSON(object: AttributeType): string {
   switch (object) {
-    case AttributeType.boolean:
-      return "boolean";
-    case AttributeType.string:
-      return "string";
-    case AttributeType.number:
-      return "number";
+    case AttributeType.ATTRIBUTE_TYPE_BOOLEAN:
+      return "ATTRIBUTE_TYPE_BOOLEAN";
+    case AttributeType.ATTRIBUTE_TYPE_STRING:
+      return "ATTRIBUTE_TYPE_STRING";
+    case AttributeType.ATTRIBUTE_TYPE_NUMBER:
+      return "ATTRIBUTE_TYPE_NUMBER";
     case AttributeType.UNRECOGNIZED:
     default:
       return "UNRECOGNIZED";
@@ -48,11 +48,11 @@ export function attributeTypeToJSON(object: AttributeType): string {
 
 export function attributeTypeToNumber(object: AttributeType): number {
   switch (object) {
-    case AttributeType.boolean:
+    case AttributeType.ATTRIBUTE_TYPE_BOOLEAN:
       return 0;
-    case AttributeType.string:
+    case AttributeType.ATTRIBUTE_TYPE_STRING:
       return 1;
-    case AttributeType.number:
+    case AttributeType.ATTRIBUTE_TYPE_NUMBER:
       return 2;
     case AttributeType.UNRECOGNIZED:
     default:

@@ -139,7 +139,7 @@ func (x *RegistrationRequest) GetVerificationType() VerificationType {
 	if x != nil && x.VerificationType != nil {
 		return *x.VerificationType
 	}
-	return VerificationType_email_code
+	return VerificationType_VERIFICATION_TYPE_EMMAIL_CODE
 }
 
 func (x *RegistrationRequest) GetPolicies() []*UserPolicyRequest {
@@ -358,7 +358,7 @@ func (x *LoginRequest) GetVerificationType() VerificationType {
 	if x != nil && x.VerificationType != nil {
 		return *x.VerificationType
 	}
-	return VerificationType_email_code
+	return VerificationType_VERIFICATION_TYPE_EMMAIL_CODE
 }
 
 type LoginResponse struct {

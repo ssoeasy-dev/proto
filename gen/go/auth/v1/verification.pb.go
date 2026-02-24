@@ -24,19 +24,19 @@ const (
 type VerificationType int32
 
 const (
-	VerificationType_email_code VerificationType = 0
-	VerificationType_email_link VerificationType = 1
+	VerificationType_VERIFICATION_TYPE_EMMAIL_CODE VerificationType = 0
+	VerificationType_VERIFICATION_TYPE_EMAIL_LINK  VerificationType = 1
 )
 
 // Enum value maps for VerificationType.
 var (
 	VerificationType_name = map[int32]string{
-		0: "email_code",
-		1: "email_link",
+		0: "VERIFICATION_TYPE_EMMAIL_CODE",
+		1: "VERIFICATION_TYPE_EMAIL_LINK",
 	}
 	VerificationType_value = map[string]int32{
-		"email_code": 0,
-		"email_link": 1,
+		"VERIFICATION_TYPE_EMMAIL_CODE": 0,
+		"VERIFICATION_TYPE_EMAIL_LINK":  1,
 	}
 )
 
@@ -70,22 +70,22 @@ func (VerificationType) EnumDescriptor() ([]byte, []int) {
 type VerificationStatus int32
 
 const (
-	VerificationStatus_wait     VerificationStatus = 0
-	VerificationStatus_expires  VerificationStatus = 1
-	VerificationStatus_verified VerificationStatus = 2
+	VerificationStatus_VERIFICATION_STATUS_WAIT     VerificationStatus = 0
+	VerificationStatus_VERIFICATION_STATUS_EXPIRES  VerificationStatus = 1
+	VerificationStatus_VERIFICATION_STATUS_VERIFIED VerificationStatus = 2
 )
 
 // Enum value maps for VerificationStatus.
 var (
 	VerificationStatus_name = map[int32]string{
-		0: "wait",
-		1: "expires",
-		2: "verified",
+		0: "VERIFICATION_STATUS_WAIT",
+		1: "VERIFICATION_STATUS_EXPIRES",
+		2: "VERIFICATION_STATUS_VERIFIED",
 	}
 	VerificationStatus_value = map[string]int32{
-		"wait":     0,
-		"expires":  1,
-		"verified": 2,
+		"VERIFICATION_STATUS_WAIT":     0,
+		"VERIFICATION_STATUS_EXPIRES":  1,
+		"VERIFICATION_STATUS_VERIFIED": 2,
 	}
 )
 
@@ -277,7 +277,7 @@ func (x *RefreshRequest) GetType() VerificationType {
 	if x != nil {
 		return x.Type
 	}
-	return VerificationType_email_code
+	return VerificationType_VERIFICATION_TYPE_EMMAIL_CODE
 }
 
 type CheckStatusRequest struct {
@@ -365,7 +365,7 @@ func (x *CheckStatusResponse) GetStatus() VerificationStatus {
 	if x != nil {
 		return x.Status
 	}
-	return VerificationStatus_wait
+	return VerificationStatus_VERIFICATION_STATUS_WAIT
 }
 
 var File_auth_v1_verification_proto protoreflect.FileDescriptor
@@ -387,16 +387,14 @@ const file_auth_v1_verification_proto_rawDesc = "" +
 	"\x12CheckStatusRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"J\n" +
 	"\x13CheckStatusResponse\x123\n" +
-	"\x06status\x18\x01 \x01(\x0e2\x1b.auth.v1.VerificationStatusR\x06status*2\n" +
-	"\x10VerificationType\x12\x0e\n" +
-	"\n" +
-	"email_code\x10\x00\x12\x0e\n" +
-	"\n" +
-	"email_link\x10\x01*9\n" +
-	"\x12VerificationStatus\x12\b\n" +
-	"\x04wait\x10\x00\x12\v\n" +
-	"\aexpires\x10\x01\x12\f\n" +
-	"\bverified\x10\x022\xdd\x01\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x1b.auth.v1.VerificationStatusR\x06status*W\n" +
+	"\x10VerificationType\x12!\n" +
+	"\x1dVERIFICATION_TYPE_EMMAIL_CODE\x10\x00\x12 \n" +
+	"\x1cVERIFICATION_TYPE_EMAIL_LINK\x10\x01*u\n" +
+	"\x12VerificationStatus\x12\x1c\n" +
+	"\x18VERIFICATION_STATUS_WAIT\x10\x00\x12\x1f\n" +
+	"\x1bVERIFICATION_STATUS_EXPIRES\x10\x01\x12 \n" +
+	"\x1cVERIFICATION_STATUS_VERIFIED\x10\x022\xdd\x01\n" +
 	"\x13VerificationService\x12A\n" +
 	"\n" +
 	"Verificate\x12\x1a.auth.v1.VerificateRequest\x1a\x17.auth.v1.StatusResponse\x129\n" +

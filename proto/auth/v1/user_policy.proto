@@ -3,9 +3,9 @@ syntax = "proto3";
 package auth.v1;
 
 enum AttributeType {
-	boolean = 0;
-	string = 1;
-	number = 2;
+	ATTRIBUTE_TYPE_BOOLEAN = 0;
+	ATTRIBUTE_TYPE_STRING = 1;
+	ATTRIBUTE_TYPE_NUMBER = 2;
 }
 
 message Attribute {
