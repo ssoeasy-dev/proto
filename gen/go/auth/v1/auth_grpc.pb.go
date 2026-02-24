@@ -22,7 +22,7 @@ const (
 	AuthService_Registration_FullMethodName           = "/auth.v1.AuthService/Registration"
 	AuthService_RegistrationCompensate_FullMethodName = "/auth.v1.AuthService/RegistrationCompensate"
 	AuthService_Login_FullMethodName                  = "/auth.v1.AuthService/Login"
-	AuthService_Authtorize_FullMethodName             = "/auth.v1.AuthService/Authtorize"
+	AuthService_Authorize_FullMethodName              = "/auth.v1.AuthService/Authorize"
 	AuthService_Logout_FullMethodName                 = "/auth.v1.AuthService/Logout"
 )
 
@@ -33,7 +33,7 @@ type AuthServiceClient interface {
 	Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*RegistrationResponse, error)
 	RegistrationCompensate(ctx context.Context, in *RegistrationCompensateRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	Authtorize(ctx context.Context, in *AuthtorizeRequest, opts ...grpc.CallOption) (*Tokens, error)
+	Authorize(ctx context.Context, in *AuthorizeRequest, opts ...grpc.CallOption) (*Tokens, error)
 	Logout(ctx context.Context, in *Tokens, opts ...grpc.CallOption) (*StatusResponse, error)
 }
 
@@ -75,10 +75,10 @@ func (c *authServiceClient) Login(ctx context.Context, in *LoginRequest, opts ..
 	return out, nil
 }
 
-func (c *authServiceClient) Authtorize(ctx context.Context, in *AuthtorizeRequest, opts ...grpc.CallOption) (*Tokens, error) {
+func (c *authServiceClient) Authorize(ctx context.Context, in *AuthorizeRequest, opts ...grpc.CallOption) (*Tokens, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Tokens)
-	err := c.cc.Invoke(ctx, AuthService_Authtorize_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, AuthService_Authorize_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ type AuthServiceServer interface {
 	Registration(context.Context, *RegistrationRequest) (*RegistrationResponse, error)
 	RegistrationCompensate(context.Context, *RegistrationCompensateRequest) (*StatusResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	Authtorize(context.Context, *AuthtorizeRequest) (*Tokens, error)
+	Authorize(context.Context, *AuthorizeRequest) (*Tokens, error)
 	Logout(context.Context, *Tokens) (*StatusResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
@@ -123,8 +123,8 @@ func (UnimplementedAuthServiceServer) RegistrationCompensate(context.Context, *R
 func (UnimplementedAuthServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAuthServiceServer) Authtorize(context.Context, *AuthtorizeRequest) (*Tokens, error) {
-	return nil, status.Error(codes.Unimplemented, "method Authtorize not implemented")
+func (UnimplementedAuthServiceServer) Authorize(context.Context, *AuthorizeRequest) (*Tokens, error) {
+	return nil, status.Error(codes.Unimplemented, "method Authorize not implemented")
 }
 func (UnimplementedAuthServiceServer) Logout(context.Context, *Tokens) (*StatusResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
@@ -204,20 +204,20 @@ func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_Authtorize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AuthtorizeRequest)
+func _AuthService_Authorize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthorizeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).Authtorize(ctx, in)
+		return srv.(AuthServiceServer).Authorize(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_Authtorize_FullMethodName,
+		FullMethod: AuthService_Authorize_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).Authtorize(ctx, req.(*AuthtorizeRequest))
+		return srv.(AuthServiceServer).Authorize(ctx, req.(*AuthorizeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -260,8 +260,8 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_Login_Handler,
 		},
 		{
-			MethodName: "Authtorize",
-			Handler:    _AuthService_Authtorize_Handler,
+			MethodName: "Authorize",
+			Handler:    _AuthService_Authorize_Handler,
 		},
 		{
 			MethodName: "Logout",

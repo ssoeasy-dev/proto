@@ -10,7 +10,7 @@ service AuthService {
   rpc Registration(RegistrationRequest) returns (RegistrationResponse);
   rpc RegistrationCompensate(RegistrationCompensateRequest) returns (auth.v1.StatusResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
-  rpc Authtorize(AuthtorizeRequest) returns (auth.v1.Tokens);
+  rpc Authorize(AuthorizeRequest) returns (auth.v1.Tokens);
   rpc Logout(Tokens) returns (auth.v1.StatusResponse);
 }
 
@@ -59,7 +59,7 @@ message CodeVerifier {
 	string verifier = 2;
 }
 
-message AuthtorizeRequest {
+message AuthorizeRequest {
 	string service_id = 1;
 	optional auth.v1.Tokens tokens = 2;
 	optional CodeVerifier code = 3;

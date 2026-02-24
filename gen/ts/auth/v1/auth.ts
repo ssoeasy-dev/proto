@@ -69,8 +69,8 @@ export interface CodeVerifier {
   verifier: string;
 }
 
-export interface AuthtorizeRequest {
-  $type: "auth.v1.AuthtorizeRequest";
+export interface AuthorizeRequest {
+  $type: "auth.v1.AuthorizeRequest";
   serviceId: string;
   tokens?: Tokens | undefined;
   code?: CodeVerifier | undefined;
@@ -859,14 +859,14 @@ export const CodeVerifier: MessageFns<CodeVerifier, "auth.v1.CodeVerifier"> = {
   },
 };
 
-function createBaseAuthtorizeRequest(): AuthtorizeRequest {
-  return { $type: "auth.v1.AuthtorizeRequest", serviceId: "", tokens: undefined, code: undefined };
+function createBaseAuthorizeRequest(): AuthorizeRequest {
+  return { $type: "auth.v1.AuthorizeRequest", serviceId: "", tokens: undefined, code: undefined };
 }
 
-export const AuthtorizeRequest: MessageFns<AuthtorizeRequest, "auth.v1.AuthtorizeRequest"> = {
-  $type: "auth.v1.AuthtorizeRequest" as const,
+export const AuthorizeRequest: MessageFns<AuthorizeRequest, "auth.v1.AuthorizeRequest"> = {
+  $type: "auth.v1.AuthorizeRequest" as const,
 
-  encode(message: AuthtorizeRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+  encode(message: AuthorizeRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.serviceId !== "") {
       writer.uint32(10).string(message.serviceId);
     }
@@ -879,10 +879,10 @@ export const AuthtorizeRequest: MessageFns<AuthtorizeRequest, "auth.v1.Authtoriz
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): AuthtorizeRequest {
+  decode(input: BinaryReader | Uint8Array, length?: number): AuthorizeRequest {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseAuthtorizeRequest();
+    const message = createBaseAuthorizeRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -919,9 +919,9 @@ export const AuthtorizeRequest: MessageFns<AuthtorizeRequest, "auth.v1.Authtoriz
     return message;
   },
 
-  fromJSON(object: any): AuthtorizeRequest {
+  fromJSON(object: any): AuthorizeRequest {
     return {
-      $type: AuthtorizeRequest.$type,
+      $type: AuthorizeRequest.$type,
       serviceId: isSet(object.serviceId)
         ? globalThis.String(object.serviceId)
         : isSet(object.service_id)
@@ -932,7 +932,7 @@ export const AuthtorizeRequest: MessageFns<AuthtorizeRequest, "auth.v1.Authtoriz
     };
   },
 
-  toJSON(message: AuthtorizeRequest): unknown {
+  toJSON(message: AuthorizeRequest): unknown {
     const obj: any = {};
     if (message.serviceId !== "") {
       obj.serviceId = message.serviceId;
@@ -946,11 +946,11 @@ export const AuthtorizeRequest: MessageFns<AuthtorizeRequest, "auth.v1.Authtoriz
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<AuthtorizeRequest>, I>>(base?: I): AuthtorizeRequest {
-    return AuthtorizeRequest.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<AuthorizeRequest>, I>>(base?: I): AuthorizeRequest {
+    return AuthorizeRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<AuthtorizeRequest>, I>>(object: I): AuthtorizeRequest {
-    const message = createBaseAuthtorizeRequest();
+  fromPartial<I extends Exact<DeepPartial<AuthorizeRequest>, I>>(object: I): AuthorizeRequest {
+    const message = createBaseAuthorizeRequest();
     message.serviceId = object.serviceId ?? "";
     message.tokens = (object.tokens !== undefined && object.tokens !== null)
       ? Tokens.fromPartial(object.tokens)
@@ -991,9 +991,9 @@ export const AuthServiceDefinition = {
       responseStream: false,
       options: {},
     },
-    authtorize: {
-      name: "Authtorize",
-      requestType: AuthtorizeRequest,
+    authorize: {
+      name: "Authorize",
+      requestType: AuthorizeRequest,
       requestStream: false,
       responseType: Tokens,
       responseStream: false,
@@ -1020,7 +1020,7 @@ export interface AuthServiceImplementation<CallContextExt = {}> {
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<StatusResponse>>;
   login(request: LoginRequest, context: CallContext & CallContextExt): Promise<DeepPartial<LoginResponse>>;
-  authtorize(request: AuthtorizeRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Tokens>>;
+  authorize(request: AuthorizeRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Tokens>>;
   logout(request: Tokens, context: CallContext & CallContextExt): Promise<DeepPartial<StatusResponse>>;
 }
 
@@ -1034,7 +1034,7 @@ export interface AuthServiceClient<CallOptionsExt = {}> {
     options?: CallOptions & CallOptionsExt,
   ): Promise<StatusResponse>;
   login(request: DeepPartial<LoginRequest>, options?: CallOptions & CallOptionsExt): Promise<LoginResponse>;
-  authtorize(request: DeepPartial<AuthtorizeRequest>, options?: CallOptions & CallOptionsExt): Promise<Tokens>;
+  authorize(request: DeepPartial<AuthorizeRequest>, options?: CallOptions & CallOptionsExt): Promise<Tokens>;
   logout(request: DeepPartial<Tokens>, options?: CallOptions & CallOptionsExt): Promise<StatusResponse>;
 }
 
