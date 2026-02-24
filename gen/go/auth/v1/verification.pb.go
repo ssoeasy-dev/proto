@@ -67,6 +67,55 @@ func (VerificationType) EnumDescriptor() ([]byte, []int) {
 	return file_auth_v1_verification_proto_rawDescGZIP(), []int{0}
 }
 
+type VerificationStatus int32
+
+const (
+	VerificationStatus_wait     VerificationStatus = 0
+	VerificationStatus_expires  VerificationStatus = 1
+	VerificationStatus_verified VerificationStatus = 2
+)
+
+// Enum value maps for VerificationStatus.
+var (
+	VerificationStatus_name = map[int32]string{
+		0: "wait",
+		1: "expires",
+		2: "verified",
+	}
+	VerificationStatus_value = map[string]int32{
+		"wait":     0,
+		"expires":  1,
+		"verified": 2,
+	}
+)
+
+func (x VerificationStatus) Enum() *VerificationStatus {
+	p := new(VerificationStatus)
+	*p = x
+	return p
+}
+
+func (x VerificationStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (VerificationStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_auth_v1_verification_proto_enumTypes[1].Descriptor()
+}
+
+func (VerificationStatus) Type() protoreflect.EnumType {
+	return &file_auth_v1_verification_proto_enumTypes[1]
+}
+
+func (x VerificationStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use VerificationStatus.Descriptor instead.
+func (VerificationStatus) EnumDescriptor() ([]byte, []int) {
+	return file_auth_v1_verification_proto_rawDescGZIP(), []int{1}
+}
+
 type Verification struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -131,7 +180,6 @@ type VerificateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
-	Code          string                 `protobuf:"bytes,3,opt,name=code,proto3" json:"code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -176,13 +224,6 @@ func (x *VerificateRequest) GetId() string {
 func (x *VerificateRequest) GetValue() string {
 	if x != nil {
 		return x.Value
-	}
-	return ""
-}
-
-func (x *VerificateRequest) GetCode() string {
-	if x != nil {
-		return x.Code
 	}
 	return ""
 }
@@ -239,6 +280,94 @@ func (x *RefreshRequest) GetType() VerificationType {
 	return VerificationType_email_code
 }
 
+type CheckStatusRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckStatusRequest) Reset() {
+	*x = CheckStatusRequest{}
+	mi := &file_auth_v1_verification_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckStatusRequest) ProtoMessage() {}
+
+func (x *CheckStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_verification_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckStatusRequest.ProtoReflect.Descriptor instead.
+func (*CheckStatusRequest) Descriptor() ([]byte, []int) {
+	return file_auth_v1_verification_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CheckStatusRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type CheckStatusResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        VerificationStatus     `protobuf:"varint,1,opt,name=status,proto3,enum=auth.v1.VerificationStatus" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckStatusResponse) Reset() {
+	*x = CheckStatusResponse{}
+	mi := &file_auth_v1_verification_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckStatusResponse) ProtoMessage() {}
+
+func (x *CheckStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_verification_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckStatusResponse.ProtoReflect.Descriptor instead.
+func (*CheckStatusResponse) Descriptor() ([]byte, []int) {
+	return file_auth_v1_verification_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CheckStatusResponse) GetStatus() VerificationStatus {
+	if x != nil {
+		return x.Status
+	}
+	return VerificationStatus_wait
+}
+
 var File_auth_v1_verification_proto protoreflect.FileDescriptor
 
 const file_auth_v1_verification_proto_rawDesc = "" +
@@ -248,23 +377,31 @@ const file_auth_v1_verification_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x12\x1d\n" +
 	"\n" +
-	"expires_at\x18\x03 \x01(\x03R\texpiresAt\"M\n" +
+	"expires_at\x18\x03 \x01(\x03R\texpiresAt\"9\n" +
 	"\x11VerificateRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value\x12\x12\n" +
-	"\x04code\x18\x03 \x01(\tR\x04code\"X\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\"X\n" +
 	"\x0eRefreshRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12-\n" +
-	"\x04type\x18\x02 \x01(\x0e2\x19.auth.v1.VerificationTypeR\x04type*2\n" +
+	"\x04type\x18\x02 \x01(\x0e2\x19.auth.v1.VerificationTypeR\x04type\"$\n" +
+	"\x12CheckStatusRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"J\n" +
+	"\x13CheckStatusResponse\x123\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x1b.auth.v1.VerificationStatusR\x06status*2\n" +
 	"\x10VerificationType\x12\x0e\n" +
 	"\n" +
 	"email_code\x10\x00\x12\x0e\n" +
 	"\n" +
-	"email_link\x10\x012\x93\x01\n" +
+	"email_link\x10\x01*9\n" +
+	"\x12VerificationStatus\x12\b\n" +
+	"\x04wait\x10\x00\x12\v\n" +
+	"\aexpires\x10\x01\x12\f\n" +
+	"\bverified\x10\x022\xdd\x01\n" +
 	"\x13VerificationService\x12A\n" +
 	"\n" +
 	"Verificate\x12\x1a.auth.v1.VerificateRequest\x1a\x17.auth.v1.StatusResponse\x129\n" +
-	"\aRefresh\x12\x17.auth.v1.RefreshRequest\x1a\x15.auth.v1.VerificationB\x91\x01\n" +
+	"\aRefresh\x12\x17.auth.v1.RefreshRequest\x1a\x15.auth.v1.Verification\x12H\n" +
+	"\vCheckStatus\x12\x1b.auth.v1.CheckStatusRequest\x1a\x1c.auth.v1.CheckStatusResponseB\x91\x01\n" +
 	"\vcom.auth.v1B\x11VerificationProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var (
@@ -279,26 +416,32 @@ func file_auth_v1_verification_proto_rawDescGZIP() []byte {
 	return file_auth_v1_verification_proto_rawDescData
 }
 
-var file_auth_v1_verification_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_auth_v1_verification_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_auth_v1_verification_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_auth_v1_verification_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_auth_v1_verification_proto_goTypes = []any{
-	(VerificationType)(0),     // 0: auth.v1.VerificationType
-	(*Verification)(nil),      // 1: auth.v1.Verification
-	(*VerificateRequest)(nil), // 2: auth.v1.VerificateRequest
-	(*RefreshRequest)(nil),    // 3: auth.v1.RefreshRequest
-	(*StatusResponse)(nil),    // 4: auth.v1.StatusResponse
+	(VerificationType)(0),       // 0: auth.v1.VerificationType
+	(VerificationStatus)(0),     // 1: auth.v1.VerificationStatus
+	(*Verification)(nil),        // 2: auth.v1.Verification
+	(*VerificateRequest)(nil),   // 3: auth.v1.VerificateRequest
+	(*RefreshRequest)(nil),      // 4: auth.v1.RefreshRequest
+	(*CheckStatusRequest)(nil),  // 5: auth.v1.CheckStatusRequest
+	(*CheckStatusResponse)(nil), // 6: auth.v1.CheckStatusResponse
+	(*StatusResponse)(nil),      // 7: auth.v1.StatusResponse
 }
 var file_auth_v1_verification_proto_depIdxs = []int32{
 	0, // 0: auth.v1.RefreshRequest.type:type_name -> auth.v1.VerificationType
-	2, // 1: auth.v1.VerificationService.Verificate:input_type -> auth.v1.VerificateRequest
-	3, // 2: auth.v1.VerificationService.Refresh:input_type -> auth.v1.RefreshRequest
-	4, // 3: auth.v1.VerificationService.Verificate:output_type -> auth.v1.StatusResponse
-	1, // 4: auth.v1.VerificationService.Refresh:output_type -> auth.v1.Verification
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	1, // 1: auth.v1.CheckStatusResponse.status:type_name -> auth.v1.VerificationStatus
+	3, // 2: auth.v1.VerificationService.Verificate:input_type -> auth.v1.VerificateRequest
+	4, // 3: auth.v1.VerificationService.Refresh:input_type -> auth.v1.RefreshRequest
+	5, // 4: auth.v1.VerificationService.CheckStatus:input_type -> auth.v1.CheckStatusRequest
+	7, // 5: auth.v1.VerificationService.Verificate:output_type -> auth.v1.StatusResponse
+	2, // 6: auth.v1.VerificationService.Refresh:output_type -> auth.v1.Verification
+	6, // 7: auth.v1.VerificationService.CheckStatus:output_type -> auth.v1.CheckStatusResponse
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_auth_v1_verification_proto_init() }
@@ -312,8 +455,8 @@ func file_auth_v1_verification_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_v1_verification_proto_rawDesc), len(file_auth_v1_verification_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   3,
+			NumEnums:      2,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

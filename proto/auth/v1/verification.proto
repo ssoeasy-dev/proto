@@ -7,6 +7,7 @@ import "auth/v1/common.proto";
 service VerificationService {
   rpc Verificate(VerificateRequest) returns (auth.v1.StatusResponse);
   rpc Refresh(RefreshRequest) returns (Verification);
+  rpc CheckStatus(CheckStatusRequest) returns (CheckStatusResponse);
 }
 
 enum VerificationType {
@@ -23,10 +24,23 @@ message Verification {
 message VerificateRequest {
   string id = 1;
   string value = 2;
-  string code = 3;
 }
 
 message RefreshRequest {
   string user_id = 1;
   VerificationType type = 2;
+}
+
+enum VerificationStatus {
+  wait = 0;
+  expires = 1;
+  verified = 2;
+}
+
+message CheckStatusRequest {
+  string id = 1;
+}
+
+message CheckStatusResponse {
+  VerificationStatus status = 1;
 }

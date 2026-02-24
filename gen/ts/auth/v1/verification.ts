@@ -54,6 +54,59 @@ export function verificationTypeToNumber(object: VerificationType): number {
   }
 }
 
+export enum VerificationStatus {
+  wait = "wait",
+  expires = "expires",
+  verified = "verified",
+  UNRECOGNIZED = "UNRECOGNIZED",
+}
+
+export function verificationStatusFromJSON(object: any): VerificationStatus {
+  switch (object) {
+    case 0:
+    case "wait":
+      return VerificationStatus.wait;
+    case 1:
+    case "expires":
+      return VerificationStatus.expires;
+    case 2:
+    case "verified":
+      return VerificationStatus.verified;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return VerificationStatus.UNRECOGNIZED;
+  }
+}
+
+export function verificationStatusToJSON(object: VerificationStatus): string {
+  switch (object) {
+    case VerificationStatus.wait:
+      return "wait";
+    case VerificationStatus.expires:
+      return "expires";
+    case VerificationStatus.verified:
+      return "verified";
+    case VerificationStatus.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
+export function verificationStatusToNumber(object: VerificationStatus): number {
+  switch (object) {
+    case VerificationStatus.wait:
+      return 0;
+    case VerificationStatus.expires:
+      return 1;
+    case VerificationStatus.verified:
+      return 2;
+    case VerificationStatus.UNRECOGNIZED:
+    default:
+      return -1;
+  }
+}
+
 export interface Verification {
   $type: "auth.v1.Verification";
   id: string;
@@ -65,13 +118,22 @@ export interface VerificateRequest {
   $type: "auth.v1.VerificateRequest";
   id: string;
   value: string;
-  code: string;
 }
 
 export interface RefreshRequest {
   $type: "auth.v1.RefreshRequest";
   userId: string;
   type: VerificationType;
+}
+
+export interface CheckStatusRequest {
+  $type: "auth.v1.CheckStatusRequest";
+  id: string;
+}
+
+export interface CheckStatusResponse {
+  $type: "auth.v1.CheckStatusResponse";
+  status: VerificationStatus;
 }
 
 function createBaseVerification(): Verification {
@@ -174,7 +236,7 @@ export const Verification: MessageFns<Verification, "auth.v1.Verification"> = {
 };
 
 function createBaseVerificateRequest(): VerificateRequest {
-  return { $type: "auth.v1.VerificateRequest", id: "", value: "", code: "" };
+  return { $type: "auth.v1.VerificateRequest", id: "", value: "" };
 }
 
 export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.VerificateRequest"> = {
@@ -186,9 +248,6 @@ export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.Verificat
     }
     if (message.value !== "") {
       writer.uint32(18).string(message.value);
-    }
-    if (message.code !== "") {
-      writer.uint32(26).string(message.code);
     }
     return writer;
   },
@@ -216,14 +275,6 @@ export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.Verificat
           message.value = reader.string();
           continue;
         }
-        case 3: {
-          if (tag !== 26) {
-            break;
-          }
-
-          message.code = reader.string();
-          continue;
-        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -238,7 +289,6 @@ export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.Verificat
       $type: VerificateRequest.$type,
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       value: isSet(object.value) ? globalThis.String(object.value) : "",
-      code: isSet(object.code) ? globalThis.String(object.code) : "",
     };
   },
 
@@ -250,9 +300,6 @@ export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.Verificat
     if (message.value !== "") {
       obj.value = message.value;
     }
-    if (message.code !== "") {
-      obj.code = message.code;
-    }
     return obj;
   },
 
@@ -263,7 +310,6 @@ export const VerificateRequest: MessageFns<VerificateRequest, "auth.v1.Verificat
     const message = createBaseVerificateRequest();
     message.id = object.id ?? "";
     message.value = object.value ?? "";
-    message.code = object.code ?? "";
     return message;
   },
 };
@@ -351,6 +397,129 @@ export const RefreshRequest: MessageFns<RefreshRequest, "auth.v1.RefreshRequest"
   },
 };
 
+function createBaseCheckStatusRequest(): CheckStatusRequest {
+  return { $type: "auth.v1.CheckStatusRequest", id: "" };
+}
+
+export const CheckStatusRequest: MessageFns<CheckStatusRequest, "auth.v1.CheckStatusRequest"> = {
+  $type: "auth.v1.CheckStatusRequest" as const,
+
+  encode(message: CheckStatusRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): CheckStatusRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCheckStatusRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CheckStatusRequest {
+    return { $type: CheckStatusRequest.$type, id: isSet(object.id) ? globalThis.String(object.id) : "" };
+  },
+
+  toJSON(message: CheckStatusRequest): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CheckStatusRequest>, I>>(base?: I): CheckStatusRequest {
+    return CheckStatusRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CheckStatusRequest>, I>>(object: I): CheckStatusRequest {
+    const message = createBaseCheckStatusRequest();
+    message.id = object.id ?? "";
+    return message;
+  },
+};
+
+function createBaseCheckStatusResponse(): CheckStatusResponse {
+  return { $type: "auth.v1.CheckStatusResponse", status: VerificationStatus.wait };
+}
+
+export const CheckStatusResponse: MessageFns<CheckStatusResponse, "auth.v1.CheckStatusResponse"> = {
+  $type: "auth.v1.CheckStatusResponse" as const,
+
+  encode(message: CheckStatusResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.status !== VerificationStatus.wait) {
+      writer.uint32(8).int32(verificationStatusToNumber(message.status));
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): CheckStatusResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseCheckStatusResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.status = verificationStatusFromJSON(reader.int32());
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): CheckStatusResponse {
+    return {
+      $type: CheckStatusResponse.$type,
+      status: isSet(object.status) ? verificationStatusFromJSON(object.status) : VerificationStatus.wait,
+    };
+  },
+
+  toJSON(message: CheckStatusResponse): unknown {
+    const obj: any = {};
+    if (message.status !== VerificationStatus.wait) {
+      obj.status = verificationStatusToJSON(message.status);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<CheckStatusResponse>, I>>(base?: I): CheckStatusResponse {
+    return CheckStatusResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<CheckStatusResponse>, I>>(object: I): CheckStatusResponse {
+    const message = createBaseCheckStatusResponse();
+    message.status = object.status ?? VerificationStatus.wait;
+    return message;
+  },
+};
+
 export type VerificationServiceDefinition = typeof VerificationServiceDefinition;
 export const VerificationServiceDefinition = {
   name: "VerificationService",
@@ -372,17 +541,33 @@ export const VerificationServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    checkStatus: {
+      name: "CheckStatus",
+      requestType: CheckStatusRequest,
+      requestStream: false,
+      responseType: CheckStatusResponse,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
 export interface VerificationServiceImplementation<CallContextExt = {}> {
   verificate(request: VerificateRequest, context: CallContext & CallContextExt): Promise<DeepPartial<StatusResponse>>;
   refresh(request: RefreshRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Verification>>;
+  checkStatus(
+    request: CheckStatusRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<CheckStatusResponse>>;
 }
 
 export interface VerificationServiceClient<CallOptionsExt = {}> {
   verificate(request: DeepPartial<VerificateRequest>, options?: CallOptions & CallOptionsExt): Promise<StatusResponse>;
   refresh(request: DeepPartial<RefreshRequest>, options?: CallOptions & CallOptionsExt): Promise<Verification>;
+  checkStatus(
+    request: DeepPartial<CheckStatusRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<CheckStatusResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;

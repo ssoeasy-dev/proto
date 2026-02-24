@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	VerificationService_Verificate_FullMethodName = "/auth.v1.VerificationService/Verificate"
-	VerificationService_Refresh_FullMethodName    = "/auth.v1.VerificationService/Refresh"
+	VerificationService_Verificate_FullMethodName  = "/auth.v1.VerificationService/Verificate"
+	VerificationService_Refresh_FullMethodName     = "/auth.v1.VerificationService/Refresh"
+	VerificationService_CheckStatus_FullMethodName = "/auth.v1.VerificationService/CheckStatus"
 )
 
 // VerificationServiceClient is the client API for VerificationService service.
@@ -29,6 +30,7 @@ const (
 type VerificationServiceClient interface {
 	Verificate(ctx context.Context, in *VerificateRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	Refresh(ctx context.Context, in *RefreshRequest, opts ...grpc.CallOption) (*Verification, error)
+	CheckStatus(ctx context.Context, in *CheckStatusRequest, opts ...grpc.CallOption) (*CheckStatusResponse, error)
 }
 
 type verificationServiceClient struct {
@@ -59,12 +61,23 @@ func (c *verificationServiceClient) Refresh(ctx context.Context, in *RefreshRequ
 	return out, nil
 }
 
+func (c *verificationServiceClient) CheckStatus(ctx context.Context, in *CheckStatusRequest, opts ...grpc.CallOption) (*CheckStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckStatusResponse)
+	err := c.cc.Invoke(ctx, VerificationService_CheckStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VerificationServiceServer is the server API for VerificationService service.
 // All implementations must embed UnimplementedVerificationServiceServer
 // for forward compatibility.
 type VerificationServiceServer interface {
 	Verificate(context.Context, *VerificateRequest) (*StatusResponse, error)
 	Refresh(context.Context, *RefreshRequest) (*Verification, error)
+	CheckStatus(context.Context, *CheckStatusRequest) (*CheckStatusResponse, error)
 	mustEmbedUnimplementedVerificationServiceServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedVerificationServiceServer) Verificate(context.Context, *Verif
 }
 func (UnimplementedVerificationServiceServer) Refresh(context.Context, *RefreshRequest) (*Verification, error) {
 	return nil, status.Error(codes.Unimplemented, "method Refresh not implemented")
+}
+func (UnimplementedVerificationServiceServer) CheckStatus(context.Context, *CheckStatusRequest) (*CheckStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckStatus not implemented")
 }
 func (UnimplementedVerificationServiceServer) mustEmbedUnimplementedVerificationServiceServer() {}
 func (UnimplementedVerificationServiceServer) testEmbeddedByValue()                             {}
@@ -138,6 +154,24 @@ func _VerificationService_Refresh_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VerificationService_CheckStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VerificationServiceServer).CheckStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VerificationService_CheckStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VerificationServiceServer).CheckStatus(ctx, req.(*CheckStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VerificationService_ServiceDesc is the grpc.ServiceDesc for VerificationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var VerificationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Refresh",
 			Handler:    _VerificationService_Refresh_Handler,
+		},
+		{
+			MethodName: "CheckStatus",
+			Handler:    _VerificationService_CheckStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
