@@ -7,6 +7,7 @@
 package authv1
 
 import (
+	v1 "github.com/ssoeasy-dev/proto/gen/go/common/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -529,7 +530,7 @@ var File_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x12auth/v1/auth.proto\x12\aauth.v1\x1a\x1aauth/v1/verification.proto\x1a\x19auth/v1/user_policy.proto\x1a\x14auth/v1/common.proto\"O\n" +
+	"\x12auth/v1/auth.proto\x12\aauth.v1\x1a\x1aauth/v1/verification.proto\x1a\x19auth/v1/user_policy.proto\x1a\x14auth/v1/common.proto\x1a\x15common/v1/types.proto\"O\n" +
 	"\bAuthCode\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x12\x1d\n" +
@@ -576,13 +577,13 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\x06tokens\x18\x02 \x01(\v2\x0f.auth.v1.TokensH\x00R\x06tokens\x88\x01\x01\x12.\n" +
 	"\x04code\x18\x03 \x01(\v2\x15.auth.v1.CodeVerifierH\x01R\x04code\x88\x01\x01B\t\n" +
 	"\a_tokensB\a\n" +
-	"\x05_code2\xda\x02\n" +
+	"\x05_code2\xde\x02\n" +
 	"\vAuthService\x12K\n" +
-	"\fRegistration\x12\x1c.auth.v1.RegistrationRequest\x1a\x1d.auth.v1.RegistrationResponse\x12Y\n" +
-	"\x16RegistrationCompensate\x12&.auth.v1.RegistrationCompensateRequest\x1a\x17.auth.v1.StatusResponse\x126\n" +
+	"\fRegistration\x12\x1c.auth.v1.RegistrationRequest\x1a\x1d.auth.v1.RegistrationResponse\x12[\n" +
+	"\x16RegistrationCompensate\x12&.auth.v1.RegistrationCompensateRequest\x1a\x19.common.v1.StatusResponse\x126\n" +
 	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponse\x127\n" +
-	"\tAuthorize\x12\x19.auth.v1.AuthorizeRequest\x1a\x0f.auth.v1.Tokens\x122\n" +
-	"\x06Logout\x12\x0f.auth.v1.Tokens\x1a\x17.auth.v1.StatusResponseB\x89\x01\n" +
+	"\tAuthorize\x12\x19.auth.v1.AuthorizeRequest\x1a\x0f.auth.v1.Tokens\x124\n" +
+	"\x06Logout\x12\x0f.auth.v1.Tokens\x1a\x19.common.v1.StatusResponseB\x89\x01\n" +
 	"\vcom.auth.v1B\tAuthProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var (
@@ -612,7 +613,7 @@ var file_auth_v1_auth_proto_goTypes = []any{
 	(*UserPolicyResponse)(nil),            // 10: auth.v1.UserPolicyResponse
 	(*Verification)(nil),                  // 11: auth.v1.Verification
 	(*Tokens)(nil),                        // 12: auth.v1.Tokens
-	(*StatusResponse)(nil),                // 13: auth.v1.StatusResponse
+	(*v1.StatusResponse)(nil),             // 13: common.v1.StatusResponse
 }
 var file_auth_v1_auth_proto_depIdxs = []int32{
 	8,  // 0: auth.v1.RegistrationRequest.verification_type:type_name -> auth.v1.VerificationType
@@ -630,10 +631,10 @@ var file_auth_v1_auth_proto_depIdxs = []int32{
 	7,  // 12: auth.v1.AuthService.Authorize:input_type -> auth.v1.AuthorizeRequest
 	12, // 13: auth.v1.AuthService.Logout:input_type -> auth.v1.Tokens
 	2,  // 14: auth.v1.AuthService.Registration:output_type -> auth.v1.RegistrationResponse
-	13, // 15: auth.v1.AuthService.RegistrationCompensate:output_type -> auth.v1.StatusResponse
+	13, // 15: auth.v1.AuthService.RegistrationCompensate:output_type -> common.v1.StatusResponse
 	5,  // 16: auth.v1.AuthService.Login:output_type -> auth.v1.LoginResponse
 	12, // 17: auth.v1.AuthService.Authorize:output_type -> auth.v1.Tokens
-	13, // 18: auth.v1.AuthService.Logout:output_type -> auth.v1.StatusResponse
+	13, // 18: auth.v1.AuthService.Logout:output_type -> common.v1.StatusResponse
 	14, // [14:19] is the sub-list for method output_type
 	9,  // [9:14] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name

@@ -8,6 +8,7 @@ package authv1
 
 import (
 	context "context"
+	v1 "github.com/ssoeasy-dev/proto/gen/go/common/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -31,10 +32,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
 	Registration(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*RegistrationResponse, error)
-	RegistrationCompensate(ctx context.Context, in *RegistrationCompensateRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	RegistrationCompensate(ctx context.Context, in *RegistrationCompensateRequest, opts ...grpc.CallOption) (*v1.StatusResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Authorize(ctx context.Context, in *AuthorizeRequest, opts ...grpc.CallOption) (*Tokens, error)
-	Logout(ctx context.Context, in *Tokens, opts ...grpc.CallOption) (*StatusResponse, error)
+	Logout(ctx context.Context, in *Tokens, opts ...grpc.CallOption) (*v1.StatusResponse, error)
 }
 
 type authServiceClient struct {
@@ -55,9 +56,9 @@ func (c *authServiceClient) Registration(ctx context.Context, in *RegistrationRe
 	return out, nil
 }
 
-func (c *authServiceClient) RegistrationCompensate(ctx context.Context, in *RegistrationCompensateRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+func (c *authServiceClient) RegistrationCompensate(ctx context.Context, in *RegistrationCompensateRequest, opts ...grpc.CallOption) (*v1.StatusResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(StatusResponse)
+	out := new(v1.StatusResponse)
 	err := c.cc.Invoke(ctx, AuthService_RegistrationCompensate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -85,9 +86,9 @@ func (c *authServiceClient) Authorize(ctx context.Context, in *AuthorizeRequest,
 	return out, nil
 }
 
-func (c *authServiceClient) Logout(ctx context.Context, in *Tokens, opts ...grpc.CallOption) (*StatusResponse, error) {
+func (c *authServiceClient) Logout(ctx context.Context, in *Tokens, opts ...grpc.CallOption) (*v1.StatusResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(StatusResponse)
+	out := new(v1.StatusResponse)
 	err := c.cc.Invoke(ctx, AuthService_Logout_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -100,10 +101,10 @@ func (c *authServiceClient) Logout(ctx context.Context, in *Tokens, opts ...grpc
 // for forward compatibility.
 type AuthServiceServer interface {
 	Registration(context.Context, *RegistrationRequest) (*RegistrationResponse, error)
-	RegistrationCompensate(context.Context, *RegistrationCompensateRequest) (*StatusResponse, error)
+	RegistrationCompensate(context.Context, *RegistrationCompensateRequest) (*v1.StatusResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Authorize(context.Context, *AuthorizeRequest) (*Tokens, error)
-	Logout(context.Context, *Tokens) (*StatusResponse, error)
+	Logout(context.Context, *Tokens) (*v1.StatusResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -117,7 +118,7 @@ type UnimplementedAuthServiceServer struct{}
 func (UnimplementedAuthServiceServer) Registration(context.Context, *RegistrationRequest) (*RegistrationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Registration not implemented")
 }
-func (UnimplementedAuthServiceServer) RegistrationCompensate(context.Context, *RegistrationCompensateRequest) (*StatusResponse, error) {
+func (UnimplementedAuthServiceServer) RegistrationCompensate(context.Context, *RegistrationCompensateRequest) (*v1.StatusResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RegistrationCompensate not implemented")
 }
 func (UnimplementedAuthServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
@@ -126,7 +127,7 @@ func (UnimplementedAuthServiceServer) Login(context.Context, *LoginRequest) (*Lo
 func (UnimplementedAuthServiceServer) Authorize(context.Context, *AuthorizeRequest) (*Tokens, error) {
 	return nil, status.Error(codes.Unimplemented, "method Authorize not implemented")
 }
-func (UnimplementedAuthServiceServer) Logout(context.Context, *Tokens) (*StatusResponse, error) {
+func (UnimplementedAuthServiceServer) Logout(context.Context, *Tokens) (*v1.StatusResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}

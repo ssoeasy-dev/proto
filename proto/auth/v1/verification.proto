@@ -3,16 +3,17 @@ syntax = "proto3";
 package auth.v1;
 
 import "auth/v1/common.proto";
+import "common/v1/types.proto";
 
 service VerificationService {
-  rpc Verificate(VerificateRequest) returns (auth.v1.StatusResponse);
+  rpc Verificate(VerificateRequest) returns (common.v1.StatusResponse);
   rpc Refresh(RefreshRequest) returns (Verification);
   rpc CheckStatus(CheckStatusRequest) returns (CheckStatusResponse);
 }
 
 enum VerificationType {
   VERIFICATION_TYPE_UNSPECIFIED = 0;
-  VERIFICATION_TYPE_EMMAIL_CODE = 1;
+  VERIFICATION_TYPE_EMAIL_CODE = 1;
   VERIFICATION_TYPE_EMAIL_LINK = 2;
 }
 

@@ -2,10 +2,6 @@ syntax = "proto3";
 
 package auth.v1;
 
-message StatusResponse {
-    bool success = 1;
-}
-
 message Tokens {
     string access = 1;
     string refresh = 2;

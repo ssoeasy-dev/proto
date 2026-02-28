@@ -5,13 +5,14 @@ package auth.v1;
 import "auth/v1/verification.proto";
 import "auth/v1/user_policy.proto";
 import "auth/v1/common.proto";
+import "common/v1/types.proto";
 
 service AuthService {
   rpc Registration(RegistrationRequest) returns (RegistrationResponse);
-  rpc RegistrationCompensate(RegistrationCompensateRequest) returns (auth.v1.StatusResponse);
+  rpc RegistrationCompensate(RegistrationCompensateRequest) returns (common.v1.StatusResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Authorize(AuthorizeRequest) returns (auth.v1.Tokens);
-  rpc Logout(Tokens) returns (auth.v1.StatusResponse);
+  rpc Logout(Tokens) returns (common.v1.StatusResponse);
 }
 
 message AuthCode {

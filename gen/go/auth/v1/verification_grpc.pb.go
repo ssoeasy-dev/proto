@@ -8,6 +8,7 @@ package authv1
 
 import (
 	context "context"
+	v1 "github.com/ssoeasy-dev/proto/gen/go/common/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -28,7 +29,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VerificationServiceClient interface {
-	Verificate(ctx context.Context, in *VerificateRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	Verificate(ctx context.Context, in *VerificateRequest, opts ...grpc.CallOption) (*v1.StatusResponse, error)
 	Refresh(ctx context.Context, in *RefreshRequest, opts ...grpc.CallOption) (*Verification, error)
 	CheckStatus(ctx context.Context, in *CheckStatusRequest, opts ...grpc.CallOption) (*CheckStatusResponse, error)
 }
@@ -41,9 +42,9 @@ func NewVerificationServiceClient(cc grpc.ClientConnInterface) VerificationServi
 	return &verificationServiceClient{cc}
 }
 
-func (c *verificationServiceClient) Verificate(ctx context.Context, in *VerificateRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+func (c *verificationServiceClient) Verificate(ctx context.Context, in *VerificateRequest, opts ...grpc.CallOption) (*v1.StatusResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(StatusResponse)
+	out := new(v1.StatusResponse)
 	err := c.cc.Invoke(ctx, VerificationService_Verificate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -75,7 +76,7 @@ func (c *verificationServiceClient) CheckStatus(ctx context.Context, in *CheckSt
 // All implementations must embed UnimplementedVerificationServiceServer
 // for forward compatibility.
 type VerificationServiceServer interface {
-	Verificate(context.Context, *VerificateRequest) (*StatusResponse, error)
+	Verificate(context.Context, *VerificateRequest) (*v1.StatusResponse, error)
 	Refresh(context.Context, *RefreshRequest) (*Verification, error)
 	CheckStatus(context.Context, *CheckStatusRequest) (*CheckStatusResponse, error)
 	mustEmbedUnimplementedVerificationServiceServer()
@@ -88,7 +89,7 @@ type VerificationServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedVerificationServiceServer struct{}
 
-func (UnimplementedVerificationServiceServer) Verificate(context.Context, *VerificateRequest) (*StatusResponse, error) {
+func (UnimplementedVerificationServiceServer) Verificate(context.Context, *VerificateRequest) (*v1.StatusResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Verificate not implemented")
 }
 func (UnimplementedVerificationServiceServer) Refresh(context.Context, *RefreshRequest) (*Verification, error) {

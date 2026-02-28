@@ -21,50 +21,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type StatusResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *StatusResponse) Reset() {
-	*x = StatusResponse{}
-	mi := &file_auth_v1_common_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *StatusResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StatusResponse) ProtoMessage() {}
-
-func (x *StatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_common_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StatusResponse.ProtoReflect.Descriptor instead.
-func (*StatusResponse) Descriptor() ([]byte, []int) {
-	return file_auth_v1_common_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *StatusResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
-}
-
 type Tokens struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Access        string                 `protobuf:"bytes,1,opt,name=access,proto3" json:"access,omitempty"`
@@ -75,7 +31,7 @@ type Tokens struct {
 
 func (x *Tokens) Reset() {
 	*x = Tokens{}
-	mi := &file_auth_v1_common_proto_msgTypes[1]
+	mi := &file_auth_v1_common_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -87,7 +43,7 @@ func (x *Tokens) String() string {
 func (*Tokens) ProtoMessage() {}
 
 func (x *Tokens) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_v1_common_proto_msgTypes[1]
+	mi := &file_auth_v1_common_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -100,7 +56,7 @@ func (x *Tokens) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Tokens.ProtoReflect.Descriptor instead.
 func (*Tokens) Descriptor() ([]byte, []int) {
-	return file_auth_v1_common_proto_rawDescGZIP(), []int{1}
+	return file_auth_v1_common_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Tokens) GetAccess() string {
@@ -121,9 +77,7 @@ var File_auth_v1_common_proto protoreflect.FileDescriptor
 
 const file_auth_v1_common_proto_rawDesc = "" +
 	"\n" +
-	"\x14auth/v1/common.proto\x12\aauth.v1\"*\n" +
-	"\x0eStatusResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\":\n" +
+	"\x14auth/v1/common.proto\x12\aauth.v1\":\n" +
 	"\x06Tokens\x12\x16\n" +
 	"\x06access\x18\x01 \x01(\tR\x06access\x12\x18\n" +
 	"\arefresh\x18\x02 \x01(\tR\arefreshB\x8b\x01\n" +
@@ -141,10 +95,9 @@ func file_auth_v1_common_proto_rawDescGZIP() []byte {
 	return file_auth_v1_common_proto_rawDescData
 }
 
-var file_auth_v1_common_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_auth_v1_common_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_auth_v1_common_proto_goTypes = []any{
-	(*StatusResponse)(nil), // 0: auth.v1.StatusResponse
-	(*Tokens)(nil),         // 1: auth.v1.Tokens
+	(*Tokens)(nil), // 0: auth.v1.Tokens
 }
 var file_auth_v1_common_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -165,7 +118,7 @@ func file_auth_v1_common_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_v1_common_proto_rawDesc), len(file_auth_v1_common_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

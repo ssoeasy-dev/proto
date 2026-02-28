@@ -7,6 +7,7 @@
 package authv1
 
 import (
+	v1 "github.com/ssoeasy-dev/proto/gen/go/common/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -25,7 +26,7 @@ type VerificationType int32
 
 const (
 	VerificationType_VERIFICATION_TYPE_UNSPECIFIED VerificationType = 0
-	VerificationType_VERIFICATION_TYPE_EMMAIL_CODE VerificationType = 1
+	VerificationType_VERIFICATION_TYPE_EMAIL_CODE  VerificationType = 1
 	VerificationType_VERIFICATION_TYPE_EMAIL_LINK  VerificationType = 2
 )
 
@@ -33,12 +34,12 @@ const (
 var (
 	VerificationType_name = map[int32]string{
 		0: "VERIFICATION_TYPE_UNSPECIFIED",
-		1: "VERIFICATION_TYPE_EMMAIL_CODE",
+		1: "VERIFICATION_TYPE_EMAIL_CODE",
 		2: "VERIFICATION_TYPE_EMAIL_LINK",
 	}
 	VerificationType_value = map[string]int32{
 		"VERIFICATION_TYPE_UNSPECIFIED": 0,
-		"VERIFICATION_TYPE_EMMAIL_CODE": 1,
+		"VERIFICATION_TYPE_EMAIL_CODE":  1,
 		"VERIFICATION_TYPE_EMAIL_LINK":  2,
 	}
 )
@@ -378,7 +379,7 @@ var File_auth_v1_verification_proto protoreflect.FileDescriptor
 
 const file_auth_v1_verification_proto_rawDesc = "" +
 	"\n" +
-	"\x1aauth/v1/verification.proto\x12\aauth.v1\x1a\x14auth/v1/common.proto\"S\n" +
+	"\x1aauth/v1/verification.proto\x12\aauth.v1\x1a\x14auth/v1/common.proto\x1a\x15common/v1/types.proto\"S\n" +
 	"\fVerification\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x12\x1d\n" +
@@ -393,19 +394,19 @@ const file_auth_v1_verification_proto_rawDesc = "" +
 	"\x12CheckStatusRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"J\n" +
 	"\x13CheckStatusResponse\x123\n" +
-	"\x06status\x18\x01 \x01(\x0e2\x1b.auth.v1.VerificationStatusR\x06status*z\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x1b.auth.v1.VerificationStatusR\x06status*y\n" +
 	"\x10VerificationType\x12!\n" +
-	"\x1dVERIFICATION_TYPE_UNSPECIFIED\x10\x00\x12!\n" +
-	"\x1dVERIFICATION_TYPE_EMMAIL_CODE\x10\x01\x12 \n" +
+	"\x1dVERIFICATION_TYPE_UNSPECIFIED\x10\x00\x12 \n" +
+	"\x1cVERIFICATION_TYPE_EMAIL_CODE\x10\x01\x12 \n" +
 	"\x1cVERIFICATION_TYPE_EMAIL_LINK\x10\x02*\x9a\x01\n" +
 	"\x12VerificationStatus\x12#\n" +
 	"\x1fVERIFICATION_STATUS_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18VERIFICATION_STATUS_WAIT\x10\x01\x12\x1f\n" +
 	"\x1bVERIFICATION_STATUS_EXPIRES\x10\x02\x12 \n" +
-	"\x1cVERIFICATION_STATUS_VERIFIED\x10\x032\xdd\x01\n" +
-	"\x13VerificationService\x12A\n" +
+	"\x1cVERIFICATION_STATUS_VERIFIED\x10\x032\xdf\x01\n" +
+	"\x13VerificationService\x12C\n" +
 	"\n" +
-	"Verificate\x12\x1a.auth.v1.VerificateRequest\x1a\x17.auth.v1.StatusResponse\x129\n" +
+	"Verificate\x12\x1a.auth.v1.VerificateRequest\x1a\x19.common.v1.StatusResponse\x129\n" +
 	"\aRefresh\x12\x17.auth.v1.RefreshRequest\x1a\x15.auth.v1.Verification\x12H\n" +
 	"\vCheckStatus\x12\x1b.auth.v1.CheckStatusRequest\x1a\x1c.auth.v1.CheckStatusResponseB\x91\x01\n" +
 	"\vcom.auth.v1B\x11VerificationProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
@@ -432,7 +433,7 @@ var file_auth_v1_verification_proto_goTypes = []any{
 	(*RefreshRequest)(nil),      // 4: auth.v1.RefreshRequest
 	(*CheckStatusRequest)(nil),  // 5: auth.v1.CheckStatusRequest
 	(*CheckStatusResponse)(nil), // 6: auth.v1.CheckStatusResponse
-	(*StatusResponse)(nil),      // 7: auth.v1.StatusResponse
+	(*v1.StatusResponse)(nil),   // 7: common.v1.StatusResponse
 }
 var file_auth_v1_verification_proto_depIdxs = []int32{
 	0, // 0: auth.v1.RefreshRequest.type:type_name -> auth.v1.VerificationType
@@ -440,7 +441,7 @@ var file_auth_v1_verification_proto_depIdxs = []int32{
 	3, // 2: auth.v1.VerificationService.Verificate:input_type -> auth.v1.VerificateRequest
 	4, // 3: auth.v1.VerificationService.Refresh:input_type -> auth.v1.RefreshRequest
 	5, // 4: auth.v1.VerificationService.CheckStatus:input_type -> auth.v1.CheckStatusRequest
-	7, // 5: auth.v1.VerificationService.Verificate:output_type -> auth.v1.StatusResponse
+	7, // 5: auth.v1.VerificationService.Verificate:output_type -> common.v1.StatusResponse
 	2, // 6: auth.v1.VerificationService.Refresh:output_type -> auth.v1.Verification
 	6, // 7: auth.v1.VerificationService.CheckStatus:output_type -> auth.v1.CheckStatusResponse
 	5, // [5:8] is the sub-list for method output_type

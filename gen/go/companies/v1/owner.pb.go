@@ -7,7 +7,7 @@
 package companiesv1
 
 import (
-	models "github.com/ssoeasy-dev/proto/gen/go/companies/v1/models"
+	v1 "github.com/ssoeasy-dev/proto/gen/go/common/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -25,8 +25,8 @@ const (
 type RegisterOwnerRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	FirstName     string                 `protobuf:"bytes,2,opt,name=first_name,json=firstName,proto3" json:"first_name,omitempty"`
-	LastName      string                 `protobuf:"bytes,3,opt,name=last_name,json=lastName,proto3" json:"last_name,omitempty"`
+	Firstname     string                 `protobuf:"bytes,2,opt,name=firstname,proto3" json:"firstname,omitempty"`
+	Lastname      string                 `protobuf:"bytes,3,opt,name=lastname,proto3" json:"lastname,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -68,28 +68,28 @@ func (x *RegisterOwnerRequest) GetEmail() string {
 	return ""
 }
 
-func (x *RegisterOwnerRequest) GetFirstName() string {
+func (x *RegisterOwnerRequest) GetFirstname() string {
 	if x != nil {
-		return x.FirstName
+		return x.Firstname
 	}
 	return ""
 }
 
-func (x *RegisterOwnerRequest) GetLastName() string {
+func (x *RegisterOwnerRequest) GetLastname() string {
 	if x != nil {
-		return x.LastName
+		return x.Lastname
 	}
 	return ""
 }
 
 type RegisterOwnerResponse struct {
-	state           protoimpl.MessageState  `protogen:"open.v1"`
-	Company         *models.Company         `protobuf:"bytes,1,opt,name=company,proto3" json:"company,omitempty"`
-	Employee        *models.Employee        `protobuf:"bytes,2,opt,name=employee,proto3" json:"employee,omitempty"`
-	Subscription    *models.Subscription    `protobuf:"bytes,3,opt,name=subscription,proto3" json:"subscription,omitempty"`
-	EmployeeCompany *models.EmployeeCompany `protobuf:"bytes,4,opt,name=employee_company,json=employeeCompany,proto3" json:"employee_company,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	CompanyId         string                 `protobuf:"bytes,1,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	EmployeeId        string                 `protobuf:"bytes,2,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
+	SubscriptionId    string                 `protobuf:"bytes,3,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
+	EmployeeCompanyId string                 `protobuf:"bytes,4,opt,name=employee_company_id,json=employeeCompanyId,proto3" json:"employee_company_id,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *RegisterOwnerResponse) Reset() {
@@ -122,150 +122,30 @@ func (*RegisterOwnerResponse) Descriptor() ([]byte, []int) {
 	return file_companies_v1_owner_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *RegisterOwnerResponse) GetCompany() *models.Company {
-	if x != nil {
-		return x.Company
-	}
-	return nil
-}
-
-func (x *RegisterOwnerResponse) GetEmployee() *models.Employee {
-	if x != nil {
-		return x.Employee
-	}
-	return nil
-}
-
-func (x *RegisterOwnerResponse) GetSubscription() *models.Subscription {
-	if x != nil {
-		return x.Subscription
-	}
-	return nil
-}
-
-func (x *RegisterOwnerResponse) GetEmployeeCompany() *models.EmployeeCompany {
-	if x != nil {
-		return x.EmployeeCompany
-	}
-	return nil
-}
-
-type RegisterOwnerCompinsateRequest struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	CompanyId         string                 `protobuf:"bytes,1,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
-	EmployeeId        string                 `protobuf:"bytes,2,opt,name=employee_id,json=employeeId,proto3" json:"employee_id,omitempty"`
-	SubscriptionId    string                 `protobuf:"bytes,3,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
-	EmployeeCompanyId string                 `protobuf:"bytes,4,opt,name=employee_company_id,json=employeeCompanyId,proto3" json:"employee_company_id,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
-}
-
-func (x *RegisterOwnerCompinsateRequest) Reset() {
-	*x = RegisterOwnerCompinsateRequest{}
-	mi := &file_companies_v1_owner_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RegisterOwnerCompinsateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegisterOwnerCompinsateRequest) ProtoMessage() {}
-
-func (x *RegisterOwnerCompinsateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_companies_v1_owner_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegisterOwnerCompinsateRequest.ProtoReflect.Descriptor instead.
-func (*RegisterOwnerCompinsateRequest) Descriptor() ([]byte, []int) {
-	return file_companies_v1_owner_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *RegisterOwnerCompinsateRequest) GetCompanyId() string {
+func (x *RegisterOwnerResponse) GetCompanyId() string {
 	if x != nil {
 		return x.CompanyId
 	}
 	return ""
 }
 
-func (x *RegisterOwnerCompinsateRequest) GetEmployeeId() string {
+func (x *RegisterOwnerResponse) GetEmployeeId() string {
 	if x != nil {
 		return x.EmployeeId
 	}
 	return ""
 }
 
-func (x *RegisterOwnerCompinsateRequest) GetSubscriptionId() string {
+func (x *RegisterOwnerResponse) GetSubscriptionId() string {
 	if x != nil {
 		return x.SubscriptionId
 	}
 	return ""
 }
 
-func (x *RegisterOwnerCompinsateRequest) GetEmployeeCompanyId() string {
+func (x *RegisterOwnerResponse) GetEmployeeCompanyId() string {
 	if x != nil {
 		return x.EmployeeCompanyId
-	}
-	return ""
-}
-
-type RegisterOwnerCompinsateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RegisterOwnerCompinsateResponse) Reset() {
-	*x = RegisterOwnerCompinsateResponse{}
-	mi := &file_companies_v1_owner_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RegisterOwnerCompinsateResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegisterOwnerCompinsateResponse) ProtoMessage() {}
-
-func (x *RegisterOwnerCompinsateResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_companies_v1_owner_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegisterOwnerCompinsateResponse.ProtoReflect.Descriptor instead.
-func (*RegisterOwnerCompinsateResponse) Descriptor() ([]byte, []int) {
-	return file_companies_v1_owner_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *RegisterOwnerCompinsateResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
-}
-
-func (x *RegisterOwnerCompinsateResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
 	}
 	return ""
 }
@@ -274,30 +154,21 @@ var File_companies_v1_owner_proto protoreflect.FileDescriptor
 
 const file_companies_v1_owner_proto_rawDesc = "" +
 	"\n" +
-	"\x18companies/v1/owner.proto\x12\fcompanies.v1\x1a!companies/v1/models/company.proto\x1a\"companies/v1/models/employee.proto\x1a*companies/v1/models/employee_company.proto\x1a&companies/v1/models/subscription.proto\"h\n" +
+	"\x18companies/v1/owner.proto\x12\fcompanies.v1\x1a\x15common/v1/types.proto\"f\n" +
 	"\x14RegisterOwnerRequest\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1d\n" +
-	"\n" +
-	"first_name\x18\x02 \x01(\tR\tfirstName\x12\x1b\n" +
-	"\tlast_name\x18\x03 \x01(\tR\blastName\"\xa2\x02\n" +
-	"\x15RegisterOwnerResponse\x126\n" +
-	"\acompany\x18\x01 \x01(\v2\x1c.companies.v1.models.CompanyR\acompany\x129\n" +
-	"\bemployee\x18\x02 \x01(\v2\x1d.companies.v1.models.EmployeeR\bemployee\x12E\n" +
-	"\fsubscription\x18\x03 \x01(\v2!.companies.v1.models.SubscriptionR\fsubscription\x12O\n" +
-	"\x10employee_company\x18\x04 \x01(\v2$.companies.v1.models.EmployeeCompanyR\x0femployeeCompany\"\xb9\x01\n" +
-	"\x1eRegisterOwnerCompinsateRequest\x12\x1d\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1c\n" +
+	"\tfirstname\x18\x02 \x01(\tR\tfirstname\x12\x1a\n" +
+	"\blastname\x18\x03 \x01(\tR\blastname\"\xb0\x01\n" +
+	"\x15RegisterOwnerResponse\x12\x1d\n" +
 	"\n" +
 	"company_id\x18\x01 \x01(\tR\tcompanyId\x12\x1f\n" +
 	"\vemployee_id\x18\x02 \x01(\tR\n" +
 	"employeeId\x12'\n" +
 	"\x0fsubscription_id\x18\x03 \x01(\tR\x0esubscriptionId\x12.\n" +
-	"\x13employee_company_id\x18\x04 \x01(\tR\x11employeeCompanyId\"U\n" +
-	"\x1fRegisterOwnerCompinsateResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage2\xe0\x01\n" +
+	"\x13employee_company_id\x18\x04 \x01(\tR\x11employeeCompanyId2\xc3\x01\n" +
 	"\fOwnerService\x12X\n" +
-	"\rRegisterOwner\x12\".companies.v1.RegisterOwnerRequest\x1a#.companies.v1.RegisterOwnerResponse\x12v\n" +
-	"\x17RegisterOwnerCompinsate\x12,.companies.v1.RegisterOwnerCompinsateRequest\x1a-.companies.v1.RegisterOwnerCompinsateResponseB\xad\x01\n" +
+	"\rRegisterOwner\x12\".companies.v1.RegisterOwnerRequest\x1a#.companies.v1.RegisterOwnerResponse\x12Y\n" +
+	"\x17RegisterOwnerCompensate\x12#.companies.v1.RegisterOwnerResponse\x1a\x19.common.v1.StatusResponseB\xad\x01\n" +
 	"\x10com.companies.v1B\n" +
 	"OwnerProtoP\x01Z<github.com/ssoeasy-dev/proto/gen/go/companies/v1;companiesv1\xa2\x02\x03CXX\xaa\x02\fCompanies.V1\xca\x02\fCompanies\\V1\xe2\x02\x18Companies\\V1\\GPBMetadata\xea\x02\rCompanies::V1b\x06proto3"
 
@@ -313,31 +184,22 @@ func file_companies_v1_owner_proto_rawDescGZIP() []byte {
 	return file_companies_v1_owner_proto_rawDescData
 }
 
-var file_companies_v1_owner_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_companies_v1_owner_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_companies_v1_owner_proto_goTypes = []any{
-	(*RegisterOwnerRequest)(nil),            // 0: companies.v1.RegisterOwnerRequest
-	(*RegisterOwnerResponse)(nil),           // 1: companies.v1.RegisterOwnerResponse
-	(*RegisterOwnerCompinsateRequest)(nil),  // 2: companies.v1.RegisterOwnerCompinsateRequest
-	(*RegisterOwnerCompinsateResponse)(nil), // 3: companies.v1.RegisterOwnerCompinsateResponse
-	(*models.Company)(nil),                  // 4: companies.v1.models.Company
-	(*models.Employee)(nil),                 // 5: companies.v1.models.Employee
-	(*models.Subscription)(nil),             // 6: companies.v1.models.Subscription
-	(*models.EmployeeCompany)(nil),          // 7: companies.v1.models.EmployeeCompany
+	(*RegisterOwnerRequest)(nil),  // 0: companies.v1.RegisterOwnerRequest
+	(*RegisterOwnerResponse)(nil), // 1: companies.v1.RegisterOwnerResponse
+	(*v1.StatusResponse)(nil),     // 2: common.v1.StatusResponse
 }
 var file_companies_v1_owner_proto_depIdxs = []int32{
-	4, // 0: companies.v1.RegisterOwnerResponse.company:type_name -> companies.v1.models.Company
-	5, // 1: companies.v1.RegisterOwnerResponse.employee:type_name -> companies.v1.models.Employee
-	6, // 2: companies.v1.RegisterOwnerResponse.subscription:type_name -> companies.v1.models.Subscription
-	7, // 3: companies.v1.RegisterOwnerResponse.employee_company:type_name -> companies.v1.models.EmployeeCompany
-	0, // 4: companies.v1.OwnerService.RegisterOwner:input_type -> companies.v1.RegisterOwnerRequest
-	2, // 5: companies.v1.OwnerService.RegisterOwnerCompinsate:input_type -> companies.v1.RegisterOwnerCompinsateRequest
-	1, // 6: companies.v1.OwnerService.RegisterOwner:output_type -> companies.v1.RegisterOwnerResponse
-	3, // 7: companies.v1.OwnerService.RegisterOwnerCompinsate:output_type -> companies.v1.RegisterOwnerCompinsateResponse
-	6, // [6:8] is the sub-list for method output_type
-	4, // [4:6] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	0, // 0: companies.v1.OwnerService.RegisterOwner:input_type -> companies.v1.RegisterOwnerRequest
+	1, // 1: companies.v1.OwnerService.RegisterOwnerCompensate:input_type -> companies.v1.RegisterOwnerResponse
+	1, // 2: companies.v1.OwnerService.RegisterOwner:output_type -> companies.v1.RegisterOwnerResponse
+	2, // 3: companies.v1.OwnerService.RegisterOwnerCompensate:output_type -> common.v1.StatusResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_companies_v1_owner_proto_init() }
@@ -351,7 +213,7 @@ func file_companies_v1_owner_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_companies_v1_owner_proto_rawDesc), len(file_companies_v1_owner_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
