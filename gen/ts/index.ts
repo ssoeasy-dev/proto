@@ -5,6 +5,6 @@
 
 /* eslint-disable */
 
-export * as auth from "./index.auth";
 export * as common from "./index.common";
+export * as auth from "./index.auth";
 export * as companies from "./index.companies";

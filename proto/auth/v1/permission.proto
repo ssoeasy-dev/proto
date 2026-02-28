@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package auth.v1;
 
-import "auth/v1/common.proto";
 import "common/v1/types.proto";
 
 service PermissionService {

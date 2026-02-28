@@ -86,7 +86,7 @@ var File_auth_v1_permission_proto protoreflect.FileDescriptor
 
 const file_auth_v1_permission_proto_rawDesc = "" +
 	"\n" +
-	"\x18auth/v1/permission.proto\x12\aauth.v1\x1a\x14auth/v1/common.proto\x1a\x15common/v1/types.proto\"q\n" +
+	"\x18auth/v1/permission.proto\x12\aauth.v1\x1a\x15common/v1/types.proto\"q\n" +
 	"\x16CheckPermissionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05token\x18\x02 \x01(\tR\x05token\x12\"\n" +
@@ -129,7 +129,6 @@ func file_auth_v1_permission_proto_init() {
 	if File_auth_v1_permission_proto != nil {
 		return
 	}
-	file_auth_v1_common_proto_init()
 	file_auth_v1_permission_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
