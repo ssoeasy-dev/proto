@@ -1,254 +1,153 @@
-# Workflow работы с изменениями в proto репозитории
+# Workflow — Proto Repository
 
-## 📋 Обзор
+## Ветки
 
-Репозиторий proto использует Git Flow с автоматизацией через GitHub Actions:
-- **main** - стабильная production ветка
-- **develop** - ветка разработки
-- **feature ветки** - для разработки новых функций
+- **`main`** — production. Мерж сюда → автоматический релиз.
+- **`develop`** — ветка разработки. Мерж сюда → автоматическая beta версия.
+- **`feat/*`**, **`fix/*`** и т.д. — feature ветки, создаются от `develop`.
 
-## 🔄 Типы версий
+## Версионирование
 
-### 1. Dev версии (dev-*)
-- **Формат**: `dev-<branch-name>` (например: `dev-feat-user-registration`)
-- **Создание**: Автоматически при открытии PR в develop/main
-- **Удаление**: Автоматически при закрытии PR
-- **Использование**: Для тестирования изменений в feature ветках
+Формат: [Semantic Versioning](https://semver.org/)
 
-### 2. Pre-release версии (beta/rc/alpha)
-- **Формат**: `v<major>.<minor>.<patch>-<type>.<number>` (например: `v1.0.0-beta.1`, `v1.0.0-rc.2`)
-- **Создание**: 
-  - Автоматически при мерже PR в develop
-  - Вручную через GitHub Actions (Pre-Release workflow)
-- **Ветка**: Только из develop
-- **Использование**: Для тестирования в develop окружении
+| Тип        | Формат                    | Когда создаётся                                         |
+| ---------- | ------------------------- | ------------------------------------------------------- |
+| Dev        | `v1.1.1-dev-{branch}.{N}` | Автоматически при каждом push в открытый PR в `develop` |
+| Beta       | `v1.1.1-beta.{N}`         | Автоматически при мерже PR в `develop`                  |
+| Production | `v1.1.1`                  | Автоматически при мерже в `main`                        |
 
-### 3. Production версии
-- **Формат**: `v<major>.<minor>.<patch>` (например: `v1.0.0`)
-- **Создание**: Вручную через GitHub Actions (Production Release workflow) или тег
-- **Ветка**: Только из main
-- **Использование**: Стабильные релизы для production
+Версия для production и beta берётся из `package.json`. **Обновляй `package.json` вручную** перед мержем в `main`.
 
-## 🚀 Процесс работы с изменениями
+## Процесс работы с изменениями
 
-### Шаг 1: Подготовка изменений
+### Шаг 1: Подготовка
 
 ```bash
-# 1. Создать feature ветку от develop
 git checkout develop
 git pull origin develop
 git checkout -b feat/my-feature
 
-# 2. Внести изменения в proto файлы
-vim proto/companies/v1/company.proto
+# Внести изменения в proto файлы
+vim proto/auth/v1/my_service.proto
 
-# 3. Проверить форматирование и линтинг
-make format
-make lint
+# Проверить
+make format && make lint
 
-# 4. Проверить breaking changes (сравнение с main)
+# Проверить breaking changes относительно main
 make breaking
 
-# 5. Сгенерировать код
+# Сгенерировать код
 make generate
 
-# 6. Проверить что все работает
-go mod tidy
-```
-
-### Шаг 2: Коммит и Push
-
-```bash
-# 1. Добавить изменения (proto файлы + сгенерированный код)
+# Закоммитить proto + gen/ вместе (CI проверяет синхронизацию)
 git add proto/ gen/
-
-# 2. Закоммитить
-git commit -m "feat: add new field to Company"
-
-# 3. Запушить ветку
+git commit -m "feat: add MyService"
 git push origin feat/my-feature
 ```
 
-**⚠️ ВАЖНО**: 
-- Всегда коммитьте и proto файлы, и сгенерированный код (gen/)
-- CI проверяет, что сгенерированный код синхронизирован
+### Шаг 2: Pull Request в `develop`
 
-### Шаг 3: Создание Pull Request
+Создай PR из `feat/my-feature` → `develop`.
 
-1. Создайте PR из `feat/my-feature` в `develop`
-2. GitHub Actions автоматически:
-   - ✅ Проверит линтинг и форматирование
-   - ✅ Проверит breaking changes
-   - ✅ Проверит что код сгенерирован
-   - ✅ Создаст dev версию `dev-feat-my-feature`
-   - ✅ Добавит комментарий в PR с инструкциями по использованию
+GitHub Actions автоматически:
 
-### Шаг 4: Использование dev версии
+- Проверит линтинг и форматирование
+- Проверит breaking changes относительно `main`
+- Проверит что `gen/` синхронизирован с `proto/`
+- Создаст dev версию: `v1.1.1-dev-feat-my-feature.1`
+- Добавит комментарий в PR с инструкцией по использованию
 
-После создания PR, вы можете использовать dev версию в других сервисах:
+При каждом следующем push в ветку — создаётся новая dev версия (`.2`, `.3`, ...).
+
+### Шаг 3: Использование dev версии
 
 ```bash
-# В вашем микросервисе
-go get github.com/ssoeasy-dev/proto@dev-feat-my-feature
+# Go сервис
+go get github.com/ssoeasy-dev/proto@v1.1.1-dev-feat-my-feature.1
 go mod tidy
+
+# TypeScript (auth.api)
+npm install @ssoeasy-dev/proto@dev-feat-my-feature
 ```
 
-### Шаг 5: Мерж в develop
+### Шаг 4: Мерж в `develop`
 
 После ревью и апрува:
 
-1. Мержите PR в `develop`
-2. GitHub Actions автоматически:
-   - ✅ Удалит dev версию `dev-feat-my-feature`
-   - ✅ Создаст новую beta версию (например: `v0.1.0-beta.2`)
-   - ✅ Добавит комментарий в PR с новой версией
-
-### Шаг 6: Использование beta версии
-
-После мержа в develop, используйте beta версию:
+- Мержи PR в `develop`
+- GitHub Actions автоматически:
+  - Удалит dev теги для этой ветки
+  - Создаст beta версию: `v1.1.1-beta.N`
+  - Опубликует beta в npm
 
 ```bash
-# В вашем микросервисе
-go get github.com/ssoeasy-dev/proto@v0.1.0-beta.2
-go mod tidy
+# Использование beta
+go get github.com/ssoeasy-dev/proto@v1.1.1-beta.1
 ```
 
-### Шаг 7: Production релиз
+### Шаг 5: Production релиз
 
-Когда накопилось достаточно изменений в develop:
+Когда `develop` готов к релизу:
 
-#### Вариант A: Через GitHub Actions (рекомендуется)
-
-1. Переключитесь на main и обновите:
 ```bash
-git checkout main
-git pull origin main
+# 1. Обновить версию в package.json (например с 1.1.1 на 1.2.0)
+vim package.json  # "version": "1.2.0"
+git commit -am "chore: bump version to 1.2.0"
+git push origin develop
+
+# 2. Создать PR develop → main и смержить
 ```
 
-2. Мержите develop в main:
-```bash
-git merge develop
-git push origin main
-```
+GitHub Actions при мерже в `main` автоматически:
 
-3. В GitHub: Actions → Production Release → Run workflow
-4. Введите версию (например: `v1.0.0`)
-5. Workflow создаст тег и релиз
+- Создаст git тег с версией из `package.json`
+- Опубликует npm пакет с тегом `latest`
+- Создаст GitHub Release (если тег соответствует `v*`)
 
-#### Вариант B: Через Makefile
+## CI проверки (на каждый PR)
 
-```bash
-# 1. Переключиться на main
-git checkout main
-git pull origin main
+| Проверка  | Что делает                                     |
+| --------- | ---------------------------------------------- |
+| Lint      | `buf lint` — валидация proto файлов            |
+| Format    | `buf format` — проверка форматирования         |
+| Breaking  | `buf breaking` — сравнение с `main`            |
+| Generate  | Проверка что `gen/` синхронизирован с `proto/` |
+| Go import | `go build` сгенерированного Go кода            |
 
-# 2. Мерж develop
-git merge develop
-git push origin main
+## Правила семантического версионирования
 
-# 3. Создать тег
-make tag VERSION=v1.0.0
-```
+- **PATCH** (`v1.0.0 → v1.0.1`): исправления, некритичные изменения
+- **MINOR** (`v1.0.0 → v1.1.0`): новые поля, новые сервисы (обратно совместимо)
+- **MAJOR** (`v1.0.0 → v2.0.0`): breaking changes (удаление полей, переименование)
 
-**⚠️ ВАЖНО**: 
-- Production релизы можно создавать ТОЛЬКО из main ветки
-- Тег должен быть в формате `v<major>.<minor>.<patch>` (без суффиксов)
+> Breaking changes будут пойманы `make breaking` и CI.
 
-## 📝 Правила версионирования (Semantic Versioning)
+## Частые ошибки
 
-- **MAJOR** (v1.0.0 → v2.0.0): Breaking changes
-- **MINOR** (v1.0.0 → v1.1.0): Новые функции без breaking changes
-- **PATCH** (v1.0.0 → v1.0.1): Исправления багов без breaking changes
-
-## 🔍 Проверки перед коммитом
-
-Перед каждым коммитом убедитесь:
+**"Generated code is out of sync"**
 
 ```bash
-# 1. Форматирование
-make format
-
-# 2. Линтинг
-make lint
-
-# 3. Breaking changes (если нужно)
-make breaking
-
-# 4. Генерация кода
 make generate
-
-# 5. Проверка что все закоммичено
-git status
+git add proto/ gen/
+git commit -m "chore: sync generated code"
 ```
 
-## 🚨 Частые ошибки
-
-### ❌ Ошибка: "Generated code is out of sync"
-**Решение**: Запустите `make generate` и закоммитьте изменения в `gen/`
-
-### ❌ Ошибка: "Proto files are not formatted"
-**Решение**: Запустите `make format` и закоммитьте изменения
-
-### ❌ Ошибка: "Breaking changes detected"
-**Решение**: 
-- Проверьте изменения: `make breaking`
-- Если breaking changes намеренные, увеличьте MAJOR версию
-- Если нет, исправьте изменения чтобы они были обратно совместимы
-
-### ❌ Ошибка: "Pre-release tags can only be created from develop"
-**Решение**: Убедитесь что вы создаете pre-release тег из develop ветки
-
-### ❌ Ошибка: "Production releases can only be created from main"
-**Решение**: Убедитесь что вы создаете production релиз из main ветки
-
-## 📊 Схема workflow
-
-```
-feature branch
-    │
-    ├─→ PR → develop ──→ beta версии (v1.0.0-beta.N)
-    │                        │
-    │                        └─→ (накопление изменений)
-    │                                    │
-    └────────────────────────────────────┘
-                                         │
-                                    merge to main
-                                         │
-                                         └─→ production (v1.0.0)
-```
-
-## 🛠️ Полезные команды
+**"Proto files are not formatted"**
 
 ```bash
-# Показать все команды
-make help
-
-# Установить инструменты
-make install-tools
-
-# Очистить сгенерированный код
-make clean
-
-# Проверить все перед коммитом
-make format && make lint && make generate
-
-# Посмотреть существующие теги
-git tag --sort=-creatordate
-
-# Посмотреть информацию о теге
-git show v1.0.0
+make format
+git add proto/
+git commit -m "style: format proto files"
 ```
 
-## 📌 Чеклист перед релизом
+**"Breaking changes detected"**
+Проверь изменения: `make breaking`. Если breaking change намеренный — увеличь MAJOR версию в `package.json`.
 
-- [ ] Все изменения закоммичены
-- [ ] Все тесты пройдены
-- [ ] Линтинг пройден (`make lint`)
-- [ ] Форматирование применено (`make format`)
-- [ ] Breaking changes проверены (`make breaking`)
-- [ ] Код сгенерирован (`make generate`)
-- [ ] Изменения закоммичены в gen/
-- [ ] PR создан и прошел все проверки CI
-- [ ] PR замержен в develop (для beta) или main (для production)
-- [ ] Версия соответствует Semantic Versioning
+## Полезные команды
 
+```bash
+make help                          # Все доступные команды
+make format && make lint           # Проверить перед коммитом
+make generate                      # Сгенерировать весь код
+git tag --sort=-creatordate | head # Последние теги
+```

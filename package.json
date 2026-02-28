@@ -17,14 +17,6 @@
       "types": "./gen/ts/index.companies.ts",
       "default": "./gen/ts/index.companies.ts"
     },
-    "./services": {
-      "types": "./gen/ts/index.services.ts",
-      "default": "./gen/ts/index.services.ts"
-    },
-    "./abac": {
-      "types": "./gen/ts/index.abac.ts",
-      "default": "./gen/ts/index.abac.ts"
-    },
     "./common": {
       "types": "./gen/ts/index.common.ts",
       "default": "./gen/ts/index.common.ts"
