@@ -9,7 +9,6 @@ package commonv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -22,28 +21,27 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AuditMetadata struct {
+type StatusResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AuditMetadata) Reset() {
-	*x = AuditMetadata{}
+func (x *StatusResponse) Reset() {
+	*x = StatusResponse{}
 	mi := &file_common_v1_types_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AuditMetadata) String() string {
+func (x *StatusResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AuditMetadata) ProtoMessage() {}
+func (*StatusResponse) ProtoMessage() {}
 
-func (x *AuditMetadata) ProtoReflect() protoreflect.Message {
+func (x *StatusResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_common_v1_types_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,35 +53,25 @@ func (x *AuditMetadata) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AuditMetadata.ProtoReflect.Descriptor instead.
-func (*AuditMetadata) Descriptor() ([]byte, []int) {
+// Deprecated: Use StatusResponse.ProtoReflect.Descriptor instead.
+func (*StatusResponse) Descriptor() ([]byte, []int) {
 	return file_common_v1_types_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AuditMetadata) GetCreatedAt() *timestamppb.Timestamp {
+func (x *StatusResponse) GetSuccess() bool {
 	if x != nil {
-		return x.CreatedAt
+		return x.Success
 	}
-	return nil
-}
-
-func (x *AuditMetadata) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
+	return false
 }
 
 var File_common_v1_types_proto protoreflect.FileDescriptor
 
 const file_common_v1_types_proto_rawDesc = "" +
 	"\n" +
-	"\x15common/v1/types.proto\x12\tcommon.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x85\x01\n" +
-	"\rAuditMetadata\x129\n" +
-	"\n" +
-	"created_at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
-	"\n" +
-	"updated_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\x98\x01\n" +
+	"\x15common/v1/types.proto\x12\tcommon.v1\"*\n" +
+	"\x0eStatusResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccessB\x98\x01\n" +
 	"\rcom.common.v1B\n" +
 	"TypesProtoP\x01Z6github.com/ssoeasy-dev/proto/gen/go/common/v1;commonv1\xa2\x02\x03CXX\xaa\x02\tCommon.V1\xca\x02\tCommon\\V1\xe2\x02\x15Common\\V1\\GPBMetadata\xea\x02\n" +
 	"Common::V1b\x06proto3"
@@ -102,17 +90,14 @@ func file_common_v1_types_proto_rawDescGZIP() []byte {
 
 var file_common_v1_types_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_common_v1_types_proto_goTypes = []any{
-	(*AuditMetadata)(nil),         // 0: common.v1.AuditMetadata
-	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
+	(*StatusResponse)(nil), // 0: common.v1.StatusResponse
 }
 var file_common_v1_types_proto_depIdxs = []int32{
-	1, // 0: common.v1.AuditMetadata.created_at:type_name -> google.protobuf.Timestamp
-	1, // 1: common.v1.AuditMetadata.updated_at:type_name -> google.protobuf.Timestamp
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // [0:0] is the sub-list for method output_type
+	0, // [0:0] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_common_v1_types_proto_init() }

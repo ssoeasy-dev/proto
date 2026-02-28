@@ -2,9 +2,6 @@ syntax = "proto3";
 
 package common.v1;
 
-import "google/protobuf/timestamp.proto";
-
-message AuditMetadata {
-  google.protobuf.Timestamp created_at = 1;
-  google.protobuf.Timestamp updated_at = 2;
+message StatusResponse {
+  bool success = 1;
 }

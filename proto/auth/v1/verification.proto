@@ -2,24 +2,47 @@ syntax = "proto3";
 
 package auth.v1;
 
+import "common/v1/types.proto";
+
 service VerificationService {
-  rpc Verificate(VerificateRequest) returns (VerificateResponse);
+  rpc Verificate(VerificateRequest) returns (common.v1.StatusResponse);
+  rpc Refresh(RefreshRequest) returns (Verification);
+  rpc CheckStatus(CheckStatusRequest) returns (CheckStatusResponse);
 }
 
 enum VerificationType {
-  email_code = 0;
-  email_link = 1;
+  VERIFICATION_TYPE_UNSPECIFIED = 0;
+  VERIFICATION_TYPE_EMAIL_CODE = 1;
+  VERIFICATION_TYPE_EMAIL_LINK = 2;
+}
+
+message Verification {
+	string id = 1;
+	string value = 2;
+	int64 expires_at = 3;
 }
 
 message VerificateRequest {
   string id = 1;
   string value = 2;
-  string type = 3;
-  string company_id = 4;
-  string service_id = 5;
 }
 
-message VerificateResponse {
-  string access = 1;
-  string refresh = 2;
+message RefreshRequest {
+  string user_id = 1;
+  VerificationType type = 2;
+}
+
+enum VerificationStatus {
+  VERIFICATION_STATUS_UNSPECIFIED = 0;
+  VERIFICATION_STATUS_WAIT = 1;
+  VERIFICATION_STATUS_EXPIRES = 2;
+  VERIFICATION_STATUS_VERIFIED = 3;
+}
+
+message CheckStatusRequest {
+  string id = 1;
+}
+
+message CheckStatusResponse {
+  VerificationStatus status = 1;
 }

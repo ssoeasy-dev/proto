@@ -8,6 +8,7 @@ package companiesv1
 
 import (
 	context "context"
+	v1 "github.com/ssoeasy-dev/proto/gen/go/common/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,7 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	OwnerService_RegisterOwner_FullMethodName           = "/companies.v1.OwnerService/RegisterOwner"
-	OwnerService_RegisterOwnerCompinsate_FullMethodName = "/companies.v1.OwnerService/RegisterOwnerCompinsate"
+	OwnerService_RegisterOwnerCompensate_FullMethodName = "/companies.v1.OwnerService/RegisterOwnerCompensate"
 )
 
 // OwnerServiceClient is the client API for OwnerService service.
@@ -28,7 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OwnerServiceClient interface {
 	RegisterOwner(ctx context.Context, in *RegisterOwnerRequest, opts ...grpc.CallOption) (*RegisterOwnerResponse, error)
-	RegisterOwnerCompinsate(ctx context.Context, in *RegisterOwnerCompinsateRequest, opts ...grpc.CallOption) (*RegisterOwnerCompinsateResponse, error)
+	RegisterOwnerCompensate(ctx context.Context, in *RegisterOwnerResponse, opts ...grpc.CallOption) (*v1.StatusResponse, error)
 }
 
 type ownerServiceClient struct {
@@ -49,10 +50,10 @@ func (c *ownerServiceClient) RegisterOwner(ctx context.Context, in *RegisterOwne
 	return out, nil
 }
 
-func (c *ownerServiceClient) RegisterOwnerCompinsate(ctx context.Context, in *RegisterOwnerCompinsateRequest, opts ...grpc.CallOption) (*RegisterOwnerCompinsateResponse, error) {
+func (c *ownerServiceClient) RegisterOwnerCompensate(ctx context.Context, in *RegisterOwnerResponse, opts ...grpc.CallOption) (*v1.StatusResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RegisterOwnerCompinsateResponse)
-	err := c.cc.Invoke(ctx, OwnerService_RegisterOwnerCompinsate_FullMethodName, in, out, cOpts...)
+	out := new(v1.StatusResponse)
+	err := c.cc.Invoke(ctx, OwnerService_RegisterOwnerCompensate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +65,7 @@ func (c *ownerServiceClient) RegisterOwnerCompinsate(ctx context.Context, in *Re
 // for forward compatibility.
 type OwnerServiceServer interface {
 	RegisterOwner(context.Context, *RegisterOwnerRequest) (*RegisterOwnerResponse, error)
-	RegisterOwnerCompinsate(context.Context, *RegisterOwnerCompinsateRequest) (*RegisterOwnerCompinsateResponse, error)
+	RegisterOwnerCompensate(context.Context, *RegisterOwnerResponse) (*v1.StatusResponse, error)
 	mustEmbedUnimplementedOwnerServiceServer()
 }
 
@@ -78,8 +79,8 @@ type UnimplementedOwnerServiceServer struct{}
 func (UnimplementedOwnerServiceServer) RegisterOwner(context.Context, *RegisterOwnerRequest) (*RegisterOwnerResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RegisterOwner not implemented")
 }
-func (UnimplementedOwnerServiceServer) RegisterOwnerCompinsate(context.Context, *RegisterOwnerCompinsateRequest) (*RegisterOwnerCompinsateResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method RegisterOwnerCompinsate not implemented")
+func (UnimplementedOwnerServiceServer) RegisterOwnerCompensate(context.Context, *RegisterOwnerResponse) (*v1.StatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RegisterOwnerCompensate not implemented")
 }
 func (UnimplementedOwnerServiceServer) mustEmbedUnimplementedOwnerServiceServer() {}
 func (UnimplementedOwnerServiceServer) testEmbeddedByValue()                      {}
@@ -120,20 +121,20 @@ func _OwnerService_RegisterOwner_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OwnerService_RegisterOwnerCompinsate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegisterOwnerCompinsateRequest)
+func _OwnerService_RegisterOwnerCompensate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterOwnerResponse)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OwnerServiceServer).RegisterOwnerCompinsate(ctx, in)
+		return srv.(OwnerServiceServer).RegisterOwnerCompensate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OwnerService_RegisterOwnerCompinsate_FullMethodName,
+		FullMethod: OwnerService_RegisterOwnerCompensate_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OwnerServiceServer).RegisterOwnerCompinsate(ctx, req.(*RegisterOwnerCompinsateRequest))
+		return srv.(OwnerServiceServer).RegisterOwnerCompensate(ctx, req.(*RegisterOwnerResponse))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -150,8 +151,8 @@ var OwnerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OwnerService_RegisterOwner_Handler,
 		},
 		{
-			MethodName: "RegisterOwnerCompinsate",
-			Handler:    _OwnerService_RegisterOwnerCompinsate_Handler,
+			MethodName: "RegisterOwnerCompensate",
+			Handler:    _OwnerService_RegisterOwnerCompensate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

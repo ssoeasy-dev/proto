@@ -3,37 +3,65 @@ syntax = "proto3";
 package auth.v1;
 
 import "auth/v1/verification.proto";
+import "auth/v1/user_policy.proto";
+import "auth/v1/common.proto";
+import "common/v1/types.proto";
 
 service AuthService {
   rpc Registration(RegistrationRequest) returns (RegistrationResponse);
-  rpc RegistrationCompensate(RegistrationCompensateRequest) returns (StatusResponse);
+  rpc RegistrationCompensate(RegistrationCompensateRequest) returns (common.v1.StatusResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Authorize(AuthorizeRequest) returns (auth.v1.Tokens);
+  rpc Logout(Tokens) returns (common.v1.StatusResponse);
+}
+
+message AuthCode {
+	string id = 1;
+	string value = 2;
+	int64 expires_at = 3;
 }
 
 message RegistrationRequest {
-    string user_id = 1;
-	string service_id = 2;
-	string company_id = 3;
-	string attribute_name = 4;
-	string attribute_value = 5;
-	string contact = 6;
-	auth.v1.VerificationType verification_type = 7;
-	string password = 8;
+	string login = 1;
+	string password = 2;
+	optional auth.v1.VerificationType verification_type = 3;
+	repeated auth.v1.UserPolicyRequest policies = 4;
 }
 
 message RegistrationResponse {
-    string credential_id = 1;
-    string attribute_id = 2;
-    string verification_id = 3;
-    string value = 4;
-    int64 expires_at = 5;
+	string user_id = 1;
+    string credential_id = 2;
+    repeated auth.v1.UserPolicyResponse policies = 3;
+	optional auth.v1.Verification verification = 4;
 }
 
 message RegistrationCompensateRequest {
-	string credential_id = 1;
-	string verification_id = 2;
-	string user_attribute_id = 3;
+	string user_id = 1;
+	string credential_id = 2;
+	optional string verification_id = 3;
+	repeated string policy_ids = 4;
 }
 
-message StatusResponse {
-    bool success = 1;
+message LoginRequest {
+	string login = 1;
+	string password = 2;
+	string code_challenge = 3;
+	string service_id = 4;
+	optional auth.v1.VerificationType verification_type = 5;
+}
+
+message LoginResponse {
+    optional AuthCode code = 1;
+	optional auth.v1.Verification verification = 2;
+}
+
+message CodeVerifier {
+	string code = 1;
+	string verifier = 2;
+}
+
+message AuthorizeRequest {
+	string service_id = 1;
+	optional auth.v1.Tokens tokens = 2;
+	optional CodeVerifier code = 3;
 }

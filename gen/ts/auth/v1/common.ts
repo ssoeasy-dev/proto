@@ -2,43 +2,55 @@
 // versions:
 //   protoc-gen-ts_proto  v2.11.4
 //   protoc               unknown
-// source: common/v1/types.proto
+// source: auth/v1/common.proto
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
-export interface StatusResponse {
-  $type: "common.v1.StatusResponse";
-  success: boolean;
+export interface Tokens {
+  $type: "auth.v1.Tokens";
+  access: string;
+  refresh: string;
 }
 
-function createBaseStatusResponse(): StatusResponse {
-  return { $type: "common.v1.StatusResponse", success: false };
+function createBaseTokens(): Tokens {
+  return { $type: "auth.v1.Tokens", access: "", refresh: "" };
 }
 
-export const StatusResponse: MessageFns<StatusResponse, "common.v1.StatusResponse"> = {
-  $type: "common.v1.StatusResponse" as const,
+export const Tokens: MessageFns<Tokens, "auth.v1.Tokens"> = {
+  $type: "auth.v1.Tokens" as const,
 
-  encode(message: StatusResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.success !== false) {
-      writer.uint32(8).bool(message.success);
+  encode(message: Tokens, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.access !== "") {
+      writer.uint32(10).string(message.access);
+    }
+    if (message.refresh !== "") {
+      writer.uint32(18).string(message.refresh);
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): StatusResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): Tokens {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseStatusResponse();
+    const message = createBaseTokens();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1: {
-          if (tag !== 8) {
+          if (tag !== 10) {
             break;
           }
 
-          message.success = reader.bool();
+          message.access = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.refresh = reader.string();
           continue;
         }
       }
@@ -50,24 +62,32 @@ export const StatusResponse: MessageFns<StatusResponse, "common.v1.StatusRespons
     return message;
   },
 
-  fromJSON(object: any): StatusResponse {
-    return { $type: StatusResponse.$type, success: isSet(object.success) ? globalThis.Boolean(object.success) : false };
+  fromJSON(object: any): Tokens {
+    return {
+      $type: Tokens.$type,
+      access: isSet(object.access) ? globalThis.String(object.access) : "",
+      refresh: isSet(object.refresh) ? globalThis.String(object.refresh) : "",
+    };
   },
 
-  toJSON(message: StatusResponse): unknown {
+  toJSON(message: Tokens): unknown {
     const obj: any = {};
-    if (message.success !== false) {
-      obj.success = message.success;
+    if (message.access !== "") {
+      obj.access = message.access;
+    }
+    if (message.refresh !== "") {
+      obj.refresh = message.refresh;
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<StatusResponse>, I>>(base?: I): StatusResponse {
-    return StatusResponse.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<Tokens>, I>>(base?: I): Tokens {
+    return Tokens.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<StatusResponse>, I>>(object: I): StatusResponse {
-    const message = createBaseStatusResponse();
-    message.success = object.success ?? false;
+  fromPartial<I extends Exact<DeepPartial<Tokens>, I>>(object: I): Tokens {
+    const message = createBaseTokens();
+    message.access = object.access ?? "";
+    message.refresh = object.refresh ?? "";
     return message;
   },
 };

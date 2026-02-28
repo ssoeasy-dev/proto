@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package auth.v1;
+
+import "common/v1/types.proto";
+
+service PermissionService {
+  rpc CheckPermission(CheckPermissionRequest) returns (common.v1.StatusResponse);
+}
+
+message CheckPermissionRequest {
+  string id = 1;
+  string token = 2;
+  optional string company_id = 3;
+}
