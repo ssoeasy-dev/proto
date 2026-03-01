@@ -163,3 +163,9 @@ git commit -m "feat: add MyService"
 ## Лицензия
 
 MIT — см. [LICENSE](LICENSE).
+
+## Контакты
+
+- Email: morewiktor@yandex.ru
+- Telegram: [@MoreWiktor](https://t.me/MoreWiktor)
+- GitHub: [@MoreWiktor](https://github.com/MoreWiktor)
