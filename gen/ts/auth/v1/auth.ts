@@ -18,6 +18,16 @@ import {
   verificationTypeToNumber,
 } from "./verification";
 
+export interface GetMeRequest {
+  $type: "auth.v1.GetMeRequest";
+  token: string;
+}
+
+export interface GetMeResponse {
+  $type: "auth.v1.GetMeResponse";
+  userId: string;
+}
+
 export interface AuthCode {
   $type: "auth.v1.AuthCode";
   id: string;
@@ -76,6 +86,133 @@ export interface AuthorizeRequest {
   tokens?: Tokens | undefined;
   code?: CodeVerifier | undefined;
 }
+
+function createBaseGetMeRequest(): GetMeRequest {
+  return { $type: "auth.v1.GetMeRequest", token: "" };
+}
+
+export const GetMeRequest: MessageFns<GetMeRequest, "auth.v1.GetMeRequest"> = {
+  $type: "auth.v1.GetMeRequest" as const,
+
+  encode(message: GetMeRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.token !== "") {
+      writer.uint32(10).string(message.token);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetMeRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetMeRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.token = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetMeRequest {
+    return { $type: GetMeRequest.$type, token: isSet(object.token) ? globalThis.String(object.token) : "" };
+  },
+
+  toJSON(message: GetMeRequest): unknown {
+    const obj: any = {};
+    if (message.token !== "") {
+      obj.token = message.token;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetMeRequest>, I>>(base?: I): GetMeRequest {
+    return GetMeRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetMeRequest>, I>>(object: I): GetMeRequest {
+    const message = createBaseGetMeRequest();
+    message.token = object.token ?? "";
+    return message;
+  },
+};
+
+function createBaseGetMeResponse(): GetMeResponse {
+  return { $type: "auth.v1.GetMeResponse", userId: "" };
+}
+
+export const GetMeResponse: MessageFns<GetMeResponse, "auth.v1.GetMeResponse"> = {
+  $type: "auth.v1.GetMeResponse" as const,
+
+  encode(message: GetMeResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.userId !== "") {
+      writer.uint32(10).string(message.userId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetMeResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetMeResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.userId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetMeResponse {
+    return {
+      $type: GetMeResponse.$type,
+      userId: isSet(object.userId)
+        ? globalThis.String(object.userId)
+        : isSet(object.user_id)
+        ? globalThis.String(object.user_id)
+        : "",
+    };
+  },
+
+  toJSON(message: GetMeResponse): unknown {
+    const obj: any = {};
+    if (message.userId !== "") {
+      obj.userId = message.userId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetMeResponse>, I>>(base?: I): GetMeResponse {
+    return GetMeResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetMeResponse>, I>>(object: I): GetMeResponse {
+    const message = createBaseGetMeResponse();
+    message.userId = object.userId ?? "";
+    return message;
+  },
+};
 
 function createBaseAuthCode(): AuthCode {
   return { $type: "auth.v1.AuthCode", id: "", value: "", expiresAt: 0 };
@@ -1008,6 +1145,14 @@ export const AuthServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    getMe: {
+      name: "GetMe",
+      requestType: GetMeRequest,
+      requestStream: false,
+      responseType: GetMeResponse,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
@@ -1023,6 +1168,7 @@ export interface AuthServiceImplementation<CallContextExt = {}> {
   login(request: LoginRequest, context: CallContext & CallContextExt): Promise<DeepPartial<LoginResponse>>;
   authorize(request: AuthorizeRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Tokens>>;
   logout(request: Tokens, context: CallContext & CallContextExt): Promise<DeepPartial<StatusResponse>>;
+  getMe(request: GetMeRequest, context: CallContext & CallContextExt): Promise<DeepPartial<GetMeResponse>>;
 }
 
 export interface AuthServiceClient<CallOptionsExt = {}> {
@@ -1037,6 +1183,7 @@ export interface AuthServiceClient<CallOptionsExt = {}> {
   login(request: DeepPartial<LoginRequest>, options?: CallOptions & CallOptionsExt): Promise<LoginResponse>;
   authorize(request: DeepPartial<AuthorizeRequest>, options?: CallOptions & CallOptionsExt): Promise<Tokens>;
   logout(request: DeepPartial<Tokens>, options?: CallOptions & CallOptionsExt): Promise<StatusResponse>;
+  getMe(request: DeepPartial<GetMeRequest>, options?: CallOptions & CallOptionsExt): Promise<GetMeResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;

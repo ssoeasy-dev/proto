@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package companies.v1;
+
+service EmployeeService {
+  rpc GetByUserId(GetByUserIdRequest) returns (GetByUserIdResponse);
+}
+
+message GetByUserIdRequest {
+  string user_id = 1;
+}
+
+message EmployeeCompany {
+  string id = 1;
+  string name = 2;
+}
+
+message GetByUserIdResponse {
+  string firstname = 1;
+  string lastname = 2;
+  repeated EmployeeCompany companies = 3;
+}

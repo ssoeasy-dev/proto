@@ -5,5 +5,6 @@
 
 /* eslint-disable */
 
+export * from "./companies/v1/employee";
 export * from "./companies/v1/owner";
 export * from "./companies/v1/service";
