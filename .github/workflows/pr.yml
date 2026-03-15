@@ -68,7 +68,9 @@ jobs:
           node-version: "20"
 
       - name: Install ts-proto
-        run: npm install -g ts-proto
+        run: |
+          npm install -g ts-proto
+          echo "$(npm root -g)/.bin" >> $GITHUB_PATH
 
       - name: Setup Buf
         uses: bufbuild/buf-setup-action@v1
