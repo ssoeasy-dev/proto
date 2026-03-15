@@ -69,6 +69,7 @@ func (x *GetMeRequest) GetToken() string {
 type GetMeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Login         string                 `protobuf:"bytes,2,opt,name=login,proto3" json:"login,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -106,6 +107,13 @@ func (*GetMeResponse) Descriptor() ([]byte, []int) {
 func (x *GetMeResponse) GetUserId() string {
 	if x != nil {
 		return x.UserId
+	}
+	return ""
+}
+
+func (x *GetMeResponse) GetLogin() string {
+	if x != nil {
+		return x.Login
 	}
 	return ""
 }
@@ -620,9 +628,10 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
 	"\x12auth/v1/auth.proto\x12\aauth.v1\x1a\x1aauth/v1/verification.proto\x1a\x19auth/v1/user_policy.proto\x1a\x14auth/v1/common.proto\x1a\x15common/v1/types.proto\"$\n" +
 	"\fGetMeRequest\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\"(\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\">\n" +
 	"\rGetMeResponse\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\"O\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
+	"\x05login\x18\x02 \x01(\tR\x05login\"O\n" +
 	"\bAuthCode\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x12\x1d\n" +

@@ -2,7 +2,7 @@ version: v2
 managed:
   enabled: true
 plugins:
-  - remote: buf.build/community/stephenh-ts-proto
+  - local: protoc-gen-ts_proto
     out: gen/ts
     opt:
       - outputServices=nice-grpc
@@ -16,4 +16,3 @@ plugins:
       - useDate=string
       - outputTypeAnnotations=true
       - outputIndex=true
-

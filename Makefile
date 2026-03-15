@@ -41,6 +41,8 @@ install-tools: ## Установить buf и protoc плагины
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
 	@echo "📦 Установка protoc-gen-go-grpc..."
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
+	@echo "📦 Установка ts-proto..."
+	npm install -g ts-proto
 	@echo "📦 Установка pnpm зависимостей..."
 	pnpm install
 	@echo "✅ Все инструменты установлены"

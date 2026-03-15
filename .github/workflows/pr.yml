@@ -33,17 +33,17 @@ jobs:
       - name: Checkout PR Branch
         uses: actions/checkout@v4
         with:
-            fetch-depth: 0
+          fetch-depth: 0
 
       - name: Setup Buf
         uses: bufbuild/buf-setup-action@v1
 
       - name: Breaking Change Detection
         run: |
-            buf breaking --against "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git#branch=main,subdir=proto" || {
-              echo "⚠️ Cannot check breaking changes (main branch may not have proto files yet)"
-              exit 0
-            }
+          buf breaking --against "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git#branch=main,subdir=proto" || {
+            echo "⚠️ Cannot check breaking changes (main branch may not have proto files yet)"
+            exit 0
+          }
 
   generate:
     name: Verify Generated Code
@@ -55,18 +55,26 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: "1.24"
 
       - name: Install Protobuf Go Plugins
         run: |
           go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
           go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install ts-proto
+        run: npm install -g ts-proto
+
       - name: Setup Buf
         uses: bufbuild/buf-setup-action@v1
 
       - name: Generate
-        run: buf generate
+        run: make generate
 
       - name: Check Generated Code is Committed
         run: |
@@ -87,7 +95,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: "1.24"
 
       - name: Verify Module
         run: |
@@ -110,7 +118,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

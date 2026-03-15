@@ -22,6 +22,7 @@ message GetMeRequest {
 
 message GetMeResponse {
 	string user_id = 1;
+	string login = 2;
 }
 
 message AuthCode {
