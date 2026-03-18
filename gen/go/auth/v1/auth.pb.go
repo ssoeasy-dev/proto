@@ -567,6 +567,7 @@ type AuthorizeRequest struct {
 	ServiceId     string                 `protobuf:"bytes,1,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
 	Tokens        *Tokens                `protobuf:"bytes,2,opt,name=tokens,proto3,oneof" json:"tokens,omitempty"`
 	Code          *CodeVerifier          `protobuf:"bytes,3,opt,name=code,proto3,oneof" json:"code,omitempty"`
+	CompanyId     string                 `protobuf:"bytes,4,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -622,6 +623,109 @@ func (x *AuthorizeRequest) GetCode() *CodeVerifier {
 	return nil
 }
 
+func (x *AuthorizeRequest) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
+type GetCompanyIdByCodeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Code          string                 `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	ServiceId     string                 `protobuf:"bytes,2,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCompanyIdByCodeRequest) Reset() {
+	*x = GetCompanyIdByCodeRequest{}
+	mi := &file_auth_v1_auth_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCompanyIdByCodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCompanyIdByCodeRequest) ProtoMessage() {}
+
+func (x *GetCompanyIdByCodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCompanyIdByCodeRequest.ProtoReflect.Descriptor instead.
+func (*GetCompanyIdByCodeRequest) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetCompanyIdByCodeRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *GetCompanyIdByCodeRequest) GetServiceId() string {
+	if x != nil {
+		return x.ServiceId
+	}
+	return ""
+}
+
+type GetCompanyIdByCodeResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CompanyId     string                 `protobuf:"bytes,1,opt,name=company_id,json=companyId,proto3" json:"company_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCompanyIdByCodeResponse) Reset() {
+	*x = GetCompanyIdByCodeResponse{}
+	mi := &file_auth_v1_auth_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCompanyIdByCodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCompanyIdByCodeResponse) ProtoMessage() {}
+
+func (x *GetCompanyIdByCodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_v1_auth_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCompanyIdByCodeResponse.ProtoReflect.Descriptor instead.
+func (*GetCompanyIdByCodeResponse) Descriptor() ([]byte, []int) {
+	return file_auth_v1_auth_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetCompanyIdByCodeResponse) GetCompanyId() string {
+	if x != nil {
+		return x.CompanyId
+	}
+	return ""
+}
+
 var File_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_auth_v1_auth_proto_rawDesc = "" +
@@ -671,21 +775,31 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\r_verification\">\n" +
 	"\fCodeVerifier\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x1a\n" +
-	"\bverifier\x18\x02 \x01(\tR\bverifier\"\xa3\x01\n" +
+	"\bverifier\x18\x02 \x01(\tR\bverifier\"\xc2\x01\n" +
 	"\x10AuthorizeRequest\x12\x1d\n" +
 	"\n" +
 	"service_id\x18\x01 \x01(\tR\tserviceId\x12,\n" +
 	"\x06tokens\x18\x02 \x01(\v2\x0f.auth.v1.TokensH\x00R\x06tokens\x88\x01\x01\x12.\n" +
-	"\x04code\x18\x03 \x01(\v2\x15.auth.v1.CodeVerifierH\x01R\x04code\x88\x01\x01B\t\n" +
+	"\x04code\x18\x03 \x01(\v2\x15.auth.v1.CodeVerifierH\x01R\x04code\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x04 \x01(\tR\tcompanyIdB\t\n" +
 	"\a_tokensB\a\n" +
-	"\x05_code2\x96\x03\n" +
+	"\x05_code\"N\n" +
+	"\x19GetCompanyIdByCodeRequest\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\x12\x1d\n" +
+	"\n" +
+	"service_id\x18\x02 \x01(\tR\tserviceId\";\n" +
+	"\x1aGetCompanyIdByCodeResponse\x12\x1d\n" +
+	"\n" +
+	"company_id\x18\x01 \x01(\tR\tcompanyId2\xf5\x03\n" +
 	"\vAuthService\x12K\n" +
 	"\fRegistration\x12\x1c.auth.v1.RegistrationRequest\x1a\x1d.auth.v1.RegistrationResponse\x12[\n" +
 	"\x16RegistrationCompensate\x12&.auth.v1.RegistrationCompensateRequest\x1a\x19.common.v1.StatusResponse\x126\n" +
 	"\x05Login\x12\x15.auth.v1.LoginRequest\x1a\x16.auth.v1.LoginResponse\x127\n" +
 	"\tAuthorize\x12\x19.auth.v1.AuthorizeRequest\x1a\x0f.auth.v1.Tokens\x124\n" +
 	"\x06Logout\x12\x0f.auth.v1.Tokens\x1a\x19.common.v1.StatusResponse\x126\n" +
-	"\x05GetMe\x12\x15.auth.v1.GetMeRequest\x1a\x16.auth.v1.GetMeResponseB\x89\x01\n" +
+	"\x05GetMe\x12\x15.auth.v1.GetMeRequest\x1a\x16.auth.v1.GetMeResponse\x12]\n" +
+	"\x12GetCompanyIdByCode\x12\".auth.v1.GetCompanyIdByCodeRequest\x1a#.auth.v1.GetCompanyIdByCodeResponseB\x89\x01\n" +
 	"\vcom.auth.v1B\tAuthProtoP\x01Z2github.com/ssoeasy-dev/proto/gen/go/auth/v1;authv1\xa2\x02\x03AXX\xaa\x02\aAuth.V1\xca\x02\aAuth\\V1\xe2\x02\x13Auth\\V1\\GPBMetadata\xea\x02\bAuth::V1b\x06proto3"
 
 var (
@@ -700,7 +814,7 @@ func file_auth_v1_auth_proto_rawDescGZIP() []byte {
 	return file_auth_v1_auth_proto_rawDescData
 }
 
-var file_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_auth_v1_auth_proto_goTypes = []any{
 	(*GetMeRequest)(nil),                  // 0: auth.v1.GetMeRequest
 	(*GetMeResponse)(nil),                 // 1: auth.v1.GetMeResponse
@@ -712,37 +826,41 @@ var file_auth_v1_auth_proto_goTypes = []any{
 	(*LoginResponse)(nil),                 // 7: auth.v1.LoginResponse
 	(*CodeVerifier)(nil),                  // 8: auth.v1.CodeVerifier
 	(*AuthorizeRequest)(nil),              // 9: auth.v1.AuthorizeRequest
-	(VerificationType)(0),                 // 10: auth.v1.VerificationType
-	(*UserPolicyRequest)(nil),             // 11: auth.v1.UserPolicyRequest
-	(*UserPolicyResponse)(nil),            // 12: auth.v1.UserPolicyResponse
-	(*Verification)(nil),                  // 13: auth.v1.Verification
-	(*Tokens)(nil),                        // 14: auth.v1.Tokens
-	(*v1.StatusResponse)(nil),             // 15: common.v1.StatusResponse
+	(*GetCompanyIdByCodeRequest)(nil),     // 10: auth.v1.GetCompanyIdByCodeRequest
+	(*GetCompanyIdByCodeResponse)(nil),    // 11: auth.v1.GetCompanyIdByCodeResponse
+	(VerificationType)(0),                 // 12: auth.v1.VerificationType
+	(*UserPolicyRequest)(nil),             // 13: auth.v1.UserPolicyRequest
+	(*UserPolicyResponse)(nil),            // 14: auth.v1.UserPolicyResponse
+	(*Verification)(nil),                  // 15: auth.v1.Verification
+	(*Tokens)(nil),                        // 16: auth.v1.Tokens
+	(*v1.StatusResponse)(nil),             // 17: common.v1.StatusResponse
 }
 var file_auth_v1_auth_proto_depIdxs = []int32{
-	10, // 0: auth.v1.RegistrationRequest.verification_type:type_name -> auth.v1.VerificationType
-	11, // 1: auth.v1.RegistrationRequest.policies:type_name -> auth.v1.UserPolicyRequest
-	12, // 2: auth.v1.RegistrationResponse.policies:type_name -> auth.v1.UserPolicyResponse
-	13, // 3: auth.v1.RegistrationResponse.verification:type_name -> auth.v1.Verification
-	10, // 4: auth.v1.LoginRequest.verification_type:type_name -> auth.v1.VerificationType
+	12, // 0: auth.v1.RegistrationRequest.verification_type:type_name -> auth.v1.VerificationType
+	13, // 1: auth.v1.RegistrationRequest.policies:type_name -> auth.v1.UserPolicyRequest
+	14, // 2: auth.v1.RegistrationResponse.policies:type_name -> auth.v1.UserPolicyResponse
+	15, // 3: auth.v1.RegistrationResponse.verification:type_name -> auth.v1.Verification
+	12, // 4: auth.v1.LoginRequest.verification_type:type_name -> auth.v1.VerificationType
 	2,  // 5: auth.v1.LoginResponse.code:type_name -> auth.v1.AuthCode
-	13, // 6: auth.v1.LoginResponse.verification:type_name -> auth.v1.Verification
-	14, // 7: auth.v1.AuthorizeRequest.tokens:type_name -> auth.v1.Tokens
+	15, // 6: auth.v1.LoginResponse.verification:type_name -> auth.v1.Verification
+	16, // 7: auth.v1.AuthorizeRequest.tokens:type_name -> auth.v1.Tokens
 	8,  // 8: auth.v1.AuthorizeRequest.code:type_name -> auth.v1.CodeVerifier
 	3,  // 9: auth.v1.AuthService.Registration:input_type -> auth.v1.RegistrationRequest
 	5,  // 10: auth.v1.AuthService.RegistrationCompensate:input_type -> auth.v1.RegistrationCompensateRequest
 	6,  // 11: auth.v1.AuthService.Login:input_type -> auth.v1.LoginRequest
 	9,  // 12: auth.v1.AuthService.Authorize:input_type -> auth.v1.AuthorizeRequest
-	14, // 13: auth.v1.AuthService.Logout:input_type -> auth.v1.Tokens
+	16, // 13: auth.v1.AuthService.Logout:input_type -> auth.v1.Tokens
 	0,  // 14: auth.v1.AuthService.GetMe:input_type -> auth.v1.GetMeRequest
-	4,  // 15: auth.v1.AuthService.Registration:output_type -> auth.v1.RegistrationResponse
-	15, // 16: auth.v1.AuthService.RegistrationCompensate:output_type -> common.v1.StatusResponse
-	7,  // 17: auth.v1.AuthService.Login:output_type -> auth.v1.LoginResponse
-	14, // 18: auth.v1.AuthService.Authorize:output_type -> auth.v1.Tokens
-	15, // 19: auth.v1.AuthService.Logout:output_type -> common.v1.StatusResponse
-	1,  // 20: auth.v1.AuthService.GetMe:output_type -> auth.v1.GetMeResponse
-	15, // [15:21] is the sub-list for method output_type
-	9,  // [9:15] is the sub-list for method input_type
+	10, // 15: auth.v1.AuthService.GetCompanyIdByCode:input_type -> auth.v1.GetCompanyIdByCodeRequest
+	4,  // 16: auth.v1.AuthService.Registration:output_type -> auth.v1.RegistrationResponse
+	17, // 17: auth.v1.AuthService.RegistrationCompensate:output_type -> common.v1.StatusResponse
+	7,  // 18: auth.v1.AuthService.Login:output_type -> auth.v1.LoginResponse
+	16, // 19: auth.v1.AuthService.Authorize:output_type -> auth.v1.Tokens
+	17, // 20: auth.v1.AuthService.Logout:output_type -> common.v1.StatusResponse
+	1,  // 21: auth.v1.AuthService.GetMe:output_type -> auth.v1.GetMeResponse
+	11, // 22: auth.v1.AuthService.GetCompanyIdByCode:output_type -> auth.v1.GetCompanyIdByCodeResponse
+	16, // [16:23] is the sub-list for method output_type
+	9,  // [9:16] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name
 	9,  // [9:9] is the sub-list for extension extendee
 	0,  // [0:9] is the sub-list for field type_name
@@ -768,7 +886,7 @@ func file_auth_v1_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_v1_auth_proto_rawDesc), len(file_auth_v1_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

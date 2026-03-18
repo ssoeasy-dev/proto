@@ -86,6 +86,18 @@ export interface AuthorizeRequest {
   serviceId: string;
   tokens?: Tokens | undefined;
   code?: CodeVerifier | undefined;
+  companyId: string;
+}
+
+export interface GetCompanyIdByCodeRequest {
+  $type: "auth.v1.GetCompanyIdByCodeRequest";
+  code: string;
+  serviceId: string;
+}
+
+export interface GetCompanyIdByCodeResponse {
+  $type: "auth.v1.GetCompanyIdByCodeResponse";
+  companyId: string;
 }
 
 function createBaseGetMeRequest(): GetMeRequest {
@@ -1015,7 +1027,7 @@ export const CodeVerifier: MessageFns<CodeVerifier, "auth.v1.CodeVerifier"> = {
 };
 
 function createBaseAuthorizeRequest(): AuthorizeRequest {
-  return { $type: "auth.v1.AuthorizeRequest", serviceId: "", tokens: undefined, code: undefined };
+  return { $type: "auth.v1.AuthorizeRequest", serviceId: "", tokens: undefined, code: undefined, companyId: "" };
 }
 
 export const AuthorizeRequest: MessageFns<AuthorizeRequest, "auth.v1.AuthorizeRequest"> = {
@@ -1030,6 +1042,9 @@ export const AuthorizeRequest: MessageFns<AuthorizeRequest, "auth.v1.AuthorizeRe
     }
     if (message.code !== undefined) {
       CodeVerifier.encode(message.code, writer.uint32(26).fork()).join();
+    }
+    if (message.companyId !== "") {
+      writer.uint32(34).string(message.companyId);
     }
     return writer;
   },
@@ -1065,6 +1080,14 @@ export const AuthorizeRequest: MessageFns<AuthorizeRequest, "auth.v1.AuthorizeRe
           message.code = CodeVerifier.decode(reader, reader.uint32());
           continue;
         }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.companyId = reader.string();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -1084,6 +1107,11 @@ export const AuthorizeRequest: MessageFns<AuthorizeRequest, "auth.v1.AuthorizeRe
         : "",
       tokens: isSet(object.tokens) ? Tokens.fromJSON(object.tokens) : undefined,
       code: isSet(object.code) ? CodeVerifier.fromJSON(object.code) : undefined,
+      companyId: isSet(object.companyId)
+        ? globalThis.String(object.companyId)
+        : isSet(object.company_id)
+        ? globalThis.String(object.company_id)
+        : "",
     };
   },
 
@@ -1097,6 +1125,9 @@ export const AuthorizeRequest: MessageFns<AuthorizeRequest, "auth.v1.AuthorizeRe
     }
     if (message.code !== undefined) {
       obj.code = CodeVerifier.toJSON(message.code);
+    }
+    if (message.companyId !== "") {
+      obj.companyId = message.companyId;
     }
     return obj;
   },
@@ -1113,9 +1144,161 @@ export const AuthorizeRequest: MessageFns<AuthorizeRequest, "auth.v1.AuthorizeRe
     message.code = (object.code !== undefined && object.code !== null)
       ? CodeVerifier.fromPartial(object.code)
       : undefined;
+    message.companyId = object.companyId ?? "";
     return message;
   },
 };
+
+function createBaseGetCompanyIdByCodeRequest(): GetCompanyIdByCodeRequest {
+  return { $type: "auth.v1.GetCompanyIdByCodeRequest", code: "", serviceId: "" };
+}
+
+export const GetCompanyIdByCodeRequest: MessageFns<GetCompanyIdByCodeRequest, "auth.v1.GetCompanyIdByCodeRequest"> = {
+  $type: "auth.v1.GetCompanyIdByCodeRequest" as const,
+
+  encode(message: GetCompanyIdByCodeRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.code !== "") {
+      writer.uint32(10).string(message.code);
+    }
+    if (message.serviceId !== "") {
+      writer.uint32(18).string(message.serviceId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetCompanyIdByCodeRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetCompanyIdByCodeRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.code = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.serviceId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetCompanyIdByCodeRequest {
+    return {
+      $type: GetCompanyIdByCodeRequest.$type,
+      code: isSet(object.code) ? globalThis.String(object.code) : "",
+      serviceId: isSet(object.serviceId)
+        ? globalThis.String(object.serviceId)
+        : isSet(object.service_id)
+        ? globalThis.String(object.service_id)
+        : "",
+    };
+  },
+
+  toJSON(message: GetCompanyIdByCodeRequest): unknown {
+    const obj: any = {};
+    if (message.code !== "") {
+      obj.code = message.code;
+    }
+    if (message.serviceId !== "") {
+      obj.serviceId = message.serviceId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetCompanyIdByCodeRequest>, I>>(base?: I): GetCompanyIdByCodeRequest {
+    return GetCompanyIdByCodeRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetCompanyIdByCodeRequest>, I>>(object: I): GetCompanyIdByCodeRequest {
+    const message = createBaseGetCompanyIdByCodeRequest();
+    message.code = object.code ?? "";
+    message.serviceId = object.serviceId ?? "";
+    return message;
+  },
+};
+
+function createBaseGetCompanyIdByCodeResponse(): GetCompanyIdByCodeResponse {
+  return { $type: "auth.v1.GetCompanyIdByCodeResponse", companyId: "" };
+}
+
+export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, "auth.v1.GetCompanyIdByCodeResponse"> =
+  {
+    $type: "auth.v1.GetCompanyIdByCodeResponse" as const,
+
+    encode(message: GetCompanyIdByCodeResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+      if (message.companyId !== "") {
+        writer.uint32(10).string(message.companyId);
+      }
+      return writer;
+    },
+
+    decode(input: BinaryReader | Uint8Array, length?: number): GetCompanyIdByCodeResponse {
+      const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+      const end = length === undefined ? reader.len : reader.pos + length;
+      const message = createBaseGetCompanyIdByCodeResponse();
+      while (reader.pos < end) {
+        const tag = reader.uint32();
+        switch (tag >>> 3) {
+          case 1: {
+            if (tag !== 10) {
+              break;
+            }
+
+            message.companyId = reader.string();
+            continue;
+          }
+        }
+        if ((tag & 7) === 4 || tag === 0) {
+          break;
+        }
+        reader.skip(tag & 7);
+      }
+      return message;
+    },
+
+    fromJSON(object: any): GetCompanyIdByCodeResponse {
+      return {
+        $type: GetCompanyIdByCodeResponse.$type,
+        companyId: isSet(object.companyId)
+          ? globalThis.String(object.companyId)
+          : isSet(object.company_id)
+          ? globalThis.String(object.company_id)
+          : "",
+      };
+    },
+
+    toJSON(message: GetCompanyIdByCodeResponse): unknown {
+      const obj: any = {};
+      if (message.companyId !== "") {
+        obj.companyId = message.companyId;
+      }
+      return obj;
+    },
+
+    create<I extends Exact<DeepPartial<GetCompanyIdByCodeResponse>, I>>(base?: I): GetCompanyIdByCodeResponse {
+      return GetCompanyIdByCodeResponse.fromPartial(base ?? ({} as any));
+    },
+    fromPartial<I extends Exact<DeepPartial<GetCompanyIdByCodeResponse>, I>>(object: I): GetCompanyIdByCodeResponse {
+      const message = createBaseGetCompanyIdByCodeResponse();
+      message.companyId = object.companyId ?? "";
+      return message;
+    },
+  };
 
 export type AuthServiceDefinition = typeof AuthServiceDefinition;
 export const AuthServiceDefinition = {
@@ -1170,6 +1353,14 @@ export const AuthServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    getCompanyIdByCode: {
+      name: "GetCompanyIdByCode",
+      requestType: GetCompanyIdByCodeRequest as typeof GetCompanyIdByCodeRequest,
+      requestStream: false,
+      responseType: GetCompanyIdByCodeResponse as typeof GetCompanyIdByCodeResponse,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
@@ -1186,6 +1377,10 @@ export interface AuthServiceImplementation<CallContextExt = {}> {
   authorize(request: AuthorizeRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Tokens>>;
   logout(request: Tokens, context: CallContext & CallContextExt): Promise<DeepPartial<StatusResponse>>;
   getMe(request: GetMeRequest, context: CallContext & CallContextExt): Promise<DeepPartial<GetMeResponse>>;
+  getCompanyIdByCode(
+    request: GetCompanyIdByCodeRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<GetCompanyIdByCodeResponse>>;
 }
 
 export interface AuthServiceClient<CallOptionsExt = {}> {
@@ -1201,6 +1396,10 @@ export interface AuthServiceClient<CallOptionsExt = {}> {
   authorize(request: DeepPartial<AuthorizeRequest>, options?: CallOptions & CallOptionsExt): Promise<Tokens>;
   logout(request: DeepPartial<Tokens>, options?: CallOptions & CallOptionsExt): Promise<StatusResponse>;
   getMe(request: DeepPartial<GetMeRequest>, options?: CallOptions & CallOptionsExt): Promise<GetMeResponse>;
+  getCompanyIdByCode(
+    request: DeepPartial<GetCompanyIdByCodeRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<GetCompanyIdByCodeResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
