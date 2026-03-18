@@ -8,3 +8,4 @@
 export * from "./companies/v1/employee";
 export * from "./companies/v1/owner";
 export * from "./companies/v1/service";
+export * from "./companies/v1/subscription";

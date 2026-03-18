@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package companies.v1;
+
+import "common/v1/types.proto";
+
+service SubscriptionService {
+  rpc CheckSubscription(CheckSubscriptionRequest) returns (common.v1.StatusResponse);
+}
+
+message CheckSubscriptionRequest {
+  string company_id = 1;
+  string service_id = 2;
+}
+
