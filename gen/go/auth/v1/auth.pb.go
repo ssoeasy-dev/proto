@@ -851,7 +851,7 @@ var File_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x12auth/v1/auth.proto\x12\aauth.v1\x1a\x1aauth/v1/verification.proto\x1a\x19auth/v1/user_policy.proto\x1a\x14auth/v1/common.proto\x1a\x15common/v1/types.proto\"$\n" +
+	"\x12auth/v1/auth.proto\x12\aauth.v1\x1a\x14auth/v1/common.proto\x1a\x19auth/v1/user_policy.proto\x1a\x1aauth/v1/verification.proto\x1a\x15common/v1/types.proto\"$\n" +
 	"\fGetMeRequest\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\">\n" +
 	"\rGetMeResponse\x12\x17\n" +
@@ -1006,9 +1006,9 @@ func file_auth_v1_auth_proto_init() {
 	if File_auth_v1_auth_proto != nil {
 		return
 	}
-	file_auth_v1_verification_proto_init()
-	file_auth_v1_user_policy_proto_init()
 	file_auth_v1_common_proto_init()
+	file_auth_v1_user_policy_proto_init()
+	file_auth_v1_verification_proto_init()
 	file_auth_v1_auth_proto_msgTypes[3].OneofWrappers = []any{}
 	file_auth_v1_auth_proto_msgTypes[4].OneofWrappers = []any{}
 	file_auth_v1_auth_proto_msgTypes[5].OneofWrappers = []any{}
