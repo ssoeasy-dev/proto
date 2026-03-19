@@ -94,7 +94,7 @@ message GetCompanyIdByCodeRequest {
 }
 
 message GetCompanyIdByCodeResponse {
-	string company_id = 1;
+	optional string company_id = 1;
 }
 
 message UpdateProfileRequest {
