@@ -60,76 +60,16 @@ export function orderDirToNumber(object: OrderDir): number {
   }
 }
 
-export interface StatusResponse {
-  $type: "common.v1.StatusResponse";
-  success: boolean;
-}
-
 export interface Pagination {
   $type: "common.v1.Pagination";
   limit: number;
   page: number;
 }
 
-function createBaseStatusResponse(): StatusResponse {
-  return { $type: "common.v1.StatusResponse", success: false };
+export interface StatusResponse {
+  $type: "common.v1.StatusResponse";
+  success: boolean;
 }
-
-export const StatusResponse: MessageFns<StatusResponse, "common.v1.StatusResponse"> = {
-  $type: "common.v1.StatusResponse" as const,
-
-  encode(message: StatusResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-    if (message.success !== false) {
-      writer.uint32(8).bool(message.success);
-    }
-    return writer;
-  },
-
-  decode(input: BinaryReader | Uint8Array, length?: number): StatusResponse {
-    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
-    const end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseStatusResponse();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1: {
-          if (tag !== 8) {
-            break;
-          }
-
-          message.success = reader.bool();
-          continue;
-        }
-      }
-      if ((tag & 7) === 4 || tag === 0) {
-        break;
-      }
-      reader.skip(tag & 7);
-    }
-    return message;
-  },
-
-  fromJSON(object: any): StatusResponse {
-    return { $type: StatusResponse.$type, success: isSet(object.success) ? globalThis.Boolean(object.success) : false };
-  },
-
-  toJSON(message: StatusResponse): unknown {
-    const obj: any = {};
-    if (message.success !== false) {
-      obj.success = message.success;
-    }
-    return obj;
-  },
-
-  create<I extends Exact<DeepPartial<StatusResponse>, I>>(base?: I): StatusResponse {
-    return StatusResponse.fromPartial(base ?? ({} as any));
-  },
-  fromPartial<I extends Exact<DeepPartial<StatusResponse>, I>>(object: I): StatusResponse {
-    const message = createBaseStatusResponse();
-    message.success = object.success ?? false;
-    return message;
-  },
-};
 
 function createBasePagination(): Pagination {
   return { $type: "common.v1.Pagination", limit: 0, page: 0 };
@@ -206,6 +146,66 @@ export const Pagination: MessageFns<Pagination, "common.v1.Pagination"> = {
     const message = createBasePagination();
     message.limit = object.limit ?? 0;
     message.page = object.page ?? 0;
+    return message;
+  },
+};
+
+function createBaseStatusResponse(): StatusResponse {
+  return { $type: "common.v1.StatusResponse", success: false };
+}
+
+export const StatusResponse: MessageFns<StatusResponse, "common.v1.StatusResponse"> = {
+  $type: "common.v1.StatusResponse" as const,
+
+  encode(message: StatusResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.success !== false) {
+      writer.uint32(8).bool(message.success);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): StatusResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseStatusResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.success = reader.bool();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): StatusResponse {
+    return { $type: StatusResponse.$type, success: isSet(object.success) ? globalThis.Boolean(object.success) : false };
+  },
+
+  toJSON(message: StatusResponse): unknown {
+    const obj: any = {};
+    if (message.success !== false) {
+      obj.success = message.success;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<StatusResponse>, I>>(base?: I): StatusResponse {
+    return StatusResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<StatusResponse>, I>>(object: I): StatusResponse {
+    const message = createBaseStatusResponse();
+    message.success = object.success ?? false;
     return message;
   },
 };

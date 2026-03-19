@@ -14,26 +14,17 @@ service AuthService {
   rpc Authorize(AuthorizeRequest) returns (auth.v1.Tokens);
   rpc Logout(Tokens) returns (common.v1.StatusResponse);
   rpc GetMe(GetMeRequest) returns (GetMeResponse);
-  rpc GetCompanyIdByCode(GetCompanyIdByCodeRequest) returns (GetCompanyIdByCodeResponse);
   rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
+  rpc GetCompanyIdByCode(GetCompanyIdByCodeRequest) returns (GetCompanyIdByCodeResponse);
 }
 
 message GetMeRequest {
 	string token = 1;
 }
 
-message GetMeCompany {
-	string id = 1;
-	string name = 2;
-	string subscription = 3;
-}
-
 message GetMeResponse {
 	string user_id = 1;
 	string login = 2;
-	string firstname = 3;
-	string lastname = 4;
-	repeated GetMeCompany companies = 5;
 }
 
 message AuthCode {
@@ -88,16 +79,6 @@ message AuthorizeRequest {
 	string company_id = 4;
 }
 
-message GetCompanyIdByCodeRequest {
-	string code = 1;
-	string service_id = 2;
-}
-
-message GetCompanyIdByCodeResponse {
-	string user_id = 1;
-	optional string company_id = 2;
-}
-
 message UpdateProfileRequest {
 	string firstname = 1;
 	string lastname = 2;
@@ -107,4 +88,15 @@ message UpdateProfileResponse {
 	string user_id = 1;
 	string firstname = 2;
 	string lastname = 3;
+}
+
+message GetCompanyIdByCodeRequest {
+	string code = 1;
+	string service_id = 2;
+}
+
+message GetCompanyIdByCodeResponse {
+	// buf:lint:ignore FIELD_LOWER_SNAKE_CASE Legacy public contract kept for compatibility.
+	string userId = 1;
+	optional string company_id = 2;
 }

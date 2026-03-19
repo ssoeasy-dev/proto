@@ -70,50 +70,6 @@ func (OrderDir) EnumDescriptor() ([]byte, []int) {
 	return file_common_v1_types_proto_rawDescGZIP(), []int{0}
 }
 
-type StatusResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *StatusResponse) Reset() {
-	*x = StatusResponse{}
-	mi := &file_common_v1_types_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *StatusResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*StatusResponse) ProtoMessage() {}
-
-func (x *StatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_common_v1_types_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use StatusResponse.ProtoReflect.Descriptor instead.
-func (*StatusResponse) Descriptor() ([]byte, []int) {
-	return file_common_v1_types_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *StatusResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
-}
-
 type Pagination struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Limit         int32                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
@@ -124,7 +80,7 @@ type Pagination struct {
 
 func (x *Pagination) Reset() {
 	*x = Pagination{}
-	mi := &file_common_v1_types_proto_msgTypes[1]
+	mi := &file_common_v1_types_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -136,7 +92,7 @@ func (x *Pagination) String() string {
 func (*Pagination) ProtoMessage() {}
 
 func (x *Pagination) ProtoReflect() protoreflect.Message {
-	mi := &file_common_v1_types_proto_msgTypes[1]
+	mi := &file_common_v1_types_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -149,7 +105,7 @@ func (x *Pagination) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Pagination.ProtoReflect.Descriptor instead.
 func (*Pagination) Descriptor() ([]byte, []int) {
-	return file_common_v1_types_proto_rawDescGZIP(), []int{1}
+	return file_common_v1_types_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Pagination) GetLimit() int32 {
@@ -166,17 +122,61 @@ func (x *Pagination) GetPage() int32 {
 	return 0
 }
 
+type StatusResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StatusResponse) Reset() {
+	*x = StatusResponse{}
+	mi := &file_common_v1_types_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StatusResponse) ProtoMessage() {}
+
+func (x *StatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_common_v1_types_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StatusResponse.ProtoReflect.Descriptor instead.
+func (*StatusResponse) Descriptor() ([]byte, []int) {
+	return file_common_v1_types_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *StatusResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 var File_common_v1_types_proto protoreflect.FileDescriptor
 
 const file_common_v1_types_proto_rawDesc = "" +
 	"\n" +
-	"\x15common/v1/types.proto\x12\tcommon.v1\"*\n" +
-	"\x0eStatusResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"6\n" +
+	"\x15common/v1/types.proto\x12\tcommon.v1\"6\n" +
 	"\n" +
 	"Pagination\x12\x14\n" +
 	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x12\n" +
-	"\x04page\x18\x02 \x01(\x05R\x04page*L\n" +
+	"\x04page\x18\x02 \x01(\x05R\x04page\"*\n" +
+	"\x0eStatusResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess*L\n" +
 	"\bOrderDir\x12\x19\n" +
 	"\x15ORDER_DIR_UNSPECIFIED\x10\x00\x12\x11\n" +
 	"\rORDER_DIR_ASC\x10\x01\x12\x12\n" +
@@ -201,8 +201,8 @@ var file_common_v1_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_common_v1_types_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_common_v1_types_proto_goTypes = []any{
 	(OrderDir)(0),          // 0: common.v1.OrderDir
-	(*StatusResponse)(nil), // 1: common.v1.StatusResponse
-	(*Pagination)(nil),     // 2: common.v1.Pagination
+	(*Pagination)(nil),     // 1: common.v1.Pagination
+	(*StatusResponse)(nil), // 2: common.v1.StatusResponse
 }
 var file_common_v1_types_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
