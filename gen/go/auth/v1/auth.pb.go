@@ -768,7 +768,8 @@ func (x *GetCompanyIdByCodeRequest) GetServiceId() string {
 
 type GetCompanyIdByCodeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CompanyId     *string                `protobuf:"bytes,1,opt,name=company_id,json=companyId,proto3,oneof" json:"company_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	CompanyId     *string                `protobuf:"bytes,2,opt,name=company_id,json=companyId,proto3,oneof" json:"company_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -801,6 +802,13 @@ func (x *GetCompanyIdByCodeResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetCompanyIdByCodeResponse.ProtoReflect.Descriptor instead.
 func (*GetCompanyIdByCodeResponse) Descriptor() ([]byte, []int) {
 	return file_auth_v1_auth_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetCompanyIdByCodeResponse) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
 }
 
 func (x *GetCompanyIdByCodeResponse) GetCompanyId() string {
@@ -991,10 +999,11 @@ const file_auth_v1_auth_proto_rawDesc = "" +
 	"\x19GetCompanyIdByCodeRequest\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x1d\n" +
 	"\n" +
-	"service_id\x18\x02 \x01(\tR\tserviceId\"O\n" +
-	"\x1aGetCompanyIdByCodeResponse\x12\"\n" +
+	"service_id\x18\x02 \x01(\tR\tserviceId\"h\n" +
+	"\x1aGetCompanyIdByCodeResponse\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\"\n" +
 	"\n" +
-	"company_id\x18\x01 \x01(\tH\x00R\tcompanyId\x88\x01\x01B\r\n" +
+	"company_id\x18\x02 \x01(\tH\x00R\tcompanyId\x88\x01\x01B\r\n" +
 	"\v_company_id\"P\n" +
 	"\x14UpdateProfileRequest\x12\x1c\n" +
 	"\tfirstname\x18\x01 \x01(\tR\tfirstname\x12\x1a\n" +
