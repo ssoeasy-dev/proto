@@ -12,4 +12,3 @@ message CheckSubscriptionRequest {
   string company_id = 1;
   string service_id = 2;
 }
-

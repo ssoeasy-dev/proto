@@ -2,6 +2,17 @@ syntax = "proto3";
 
 package common.v1;
 
+message Pagination {
+  int32 limit = 1;
+  int32 page = 2;
+}
+
+enum OrderDir {
+  ORDER_DIR_UNSPECIFIED = 0;
+  ORDER_DIR_ASC = 1;
+  ORDER_DIR_DESC = 2;
+}
+
 message StatusResponse {
   bool success = 1;
 }

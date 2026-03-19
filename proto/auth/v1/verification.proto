@@ -17,9 +17,9 @@ enum VerificationType {
 }
 
 message Verification {
-	string id = 1;
-	string value = 2;
-	int64 expires_at = 3;
+  string id = 1;
+  string value = 2;
+  int64 expires_at = 3;
 }
 
 message VerificateRequest {

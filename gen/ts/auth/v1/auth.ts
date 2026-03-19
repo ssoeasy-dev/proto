@@ -89,6 +89,19 @@ export interface AuthorizeRequest {
   companyId: string;
 }
 
+export interface UpdateProfileRequest {
+  $type: "auth.v1.UpdateProfileRequest";
+  firstname: string;
+  lastname: string;
+}
+
+export interface UpdateProfileResponse {
+  $type: "auth.v1.UpdateProfileResponse";
+  userId: string;
+  firstname: string;
+  lastname: string;
+}
+
 export interface GetCompanyIdByCodeRequest {
   $type: "auth.v1.GetCompanyIdByCodeRequest";
   code: string;
@@ -97,6 +110,7 @@ export interface GetCompanyIdByCodeRequest {
 
 export interface GetCompanyIdByCodeResponse {
   $type: "auth.v1.GetCompanyIdByCodeResponse";
+  /** buf:lint:ignore FIELD_LOWER_SNAKE_CASE Legacy public contract kept for compatibility. */
   userId: string;
   companyId?: string | undefined;
 }
@@ -1150,6 +1164,184 @@ export const AuthorizeRequest: MessageFns<AuthorizeRequest, "auth.v1.AuthorizeRe
   },
 };
 
+function createBaseUpdateProfileRequest(): UpdateProfileRequest {
+  return { $type: "auth.v1.UpdateProfileRequest", firstname: "", lastname: "" };
+}
+
+export const UpdateProfileRequest: MessageFns<UpdateProfileRequest, "auth.v1.UpdateProfileRequest"> = {
+  $type: "auth.v1.UpdateProfileRequest" as const,
+
+  encode(message: UpdateProfileRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.firstname !== "") {
+      writer.uint32(10).string(message.firstname);
+    }
+    if (message.lastname !== "") {
+      writer.uint32(18).string(message.lastname);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UpdateProfileRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateProfileRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.firstname = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.lastname = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateProfileRequest {
+    return {
+      $type: UpdateProfileRequest.$type,
+      firstname: isSet(object.firstname) ? globalThis.String(object.firstname) : "",
+      lastname: isSet(object.lastname) ? globalThis.String(object.lastname) : "",
+    };
+  },
+
+  toJSON(message: UpdateProfileRequest): unknown {
+    const obj: any = {};
+    if (message.firstname !== "") {
+      obj.firstname = message.firstname;
+    }
+    if (message.lastname !== "") {
+      obj.lastname = message.lastname;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UpdateProfileRequest>, I>>(base?: I): UpdateProfileRequest {
+    return UpdateProfileRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<UpdateProfileRequest>, I>>(object: I): UpdateProfileRequest {
+    const message = createBaseUpdateProfileRequest();
+    message.firstname = object.firstname ?? "";
+    message.lastname = object.lastname ?? "";
+    return message;
+  },
+};
+
+function createBaseUpdateProfileResponse(): UpdateProfileResponse {
+  return { $type: "auth.v1.UpdateProfileResponse", userId: "", firstname: "", lastname: "" };
+}
+
+export const UpdateProfileResponse: MessageFns<UpdateProfileResponse, "auth.v1.UpdateProfileResponse"> = {
+  $type: "auth.v1.UpdateProfileResponse" as const,
+
+  encode(message: UpdateProfileResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.userId !== "") {
+      writer.uint32(10).string(message.userId);
+    }
+    if (message.firstname !== "") {
+      writer.uint32(18).string(message.firstname);
+    }
+    if (message.lastname !== "") {
+      writer.uint32(26).string(message.lastname);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UpdateProfileResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateProfileResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.userId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.firstname = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.lastname = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateProfileResponse {
+    return {
+      $type: UpdateProfileResponse.$type,
+      userId: isSet(object.userId)
+        ? globalThis.String(object.userId)
+        : isSet(object.user_id)
+        ? globalThis.String(object.user_id)
+        : "",
+      firstname: isSet(object.firstname) ? globalThis.String(object.firstname) : "",
+      lastname: isSet(object.lastname) ? globalThis.String(object.lastname) : "",
+    };
+  },
+
+  toJSON(message: UpdateProfileResponse): unknown {
+    const obj: any = {};
+    if (message.userId !== "") {
+      obj.userId = message.userId;
+    }
+    if (message.firstname !== "") {
+      obj.firstname = message.firstname;
+    }
+    if (message.lastname !== "") {
+      obj.lastname = message.lastname;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UpdateProfileResponse>, I>>(base?: I): UpdateProfileResponse {
+    return UpdateProfileResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<UpdateProfileResponse>, I>>(object: I): UpdateProfileResponse {
+    const message = createBaseUpdateProfileResponse();
+    message.userId = object.userId ?? "";
+    message.firstname = object.firstname ?? "";
+    message.lastname = object.lastname ?? "";
+    return message;
+  },
+};
+
 function createBaseGetCompanyIdByCodeRequest(): GetCompanyIdByCodeRequest {
   return { $type: "auth.v1.GetCompanyIdByCodeRequest", code: "", serviceId: "" };
 }
@@ -1370,6 +1562,14 @@ export const AuthServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    updateProfile: {
+      name: "UpdateProfile",
+      requestType: UpdateProfileRequest as typeof UpdateProfileRequest,
+      requestStream: false,
+      responseType: UpdateProfileResponse as typeof UpdateProfileResponse,
+      responseStream: false,
+      options: {},
+    },
     getCompanyIdByCode: {
       name: "GetCompanyIdByCode",
       requestType: GetCompanyIdByCodeRequest as typeof GetCompanyIdByCodeRequest,
@@ -1394,6 +1594,10 @@ export interface AuthServiceImplementation<CallContextExt = {}> {
   authorize(request: AuthorizeRequest, context: CallContext & CallContextExt): Promise<DeepPartial<Tokens>>;
   logout(request: Tokens, context: CallContext & CallContextExt): Promise<DeepPartial<StatusResponse>>;
   getMe(request: GetMeRequest, context: CallContext & CallContextExt): Promise<DeepPartial<GetMeResponse>>;
+  updateProfile(
+    request: UpdateProfileRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<UpdateProfileResponse>>;
   getCompanyIdByCode(
     request: GetCompanyIdByCodeRequest,
     context: CallContext & CallContextExt,
@@ -1413,6 +1617,10 @@ export interface AuthServiceClient<CallOptionsExt = {}> {
   authorize(request: DeepPartial<AuthorizeRequest>, options?: CallOptions & CallOptionsExt): Promise<Tokens>;
   logout(request: DeepPartial<Tokens>, options?: CallOptions & CallOptionsExt): Promise<StatusResponse>;
   getMe(request: DeepPartial<GetMeRequest>, options?: CallOptions & CallOptionsExt): Promise<GetMeResponse>;
+  updateProfile(
+    request: DeepPartial<UpdateProfileRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<UpdateProfileResponse>;
   getCompanyIdByCode(
     request: DeepPartial<GetCompanyIdByCodeRequest>,
     options?: CallOptions & CallOptionsExt,
