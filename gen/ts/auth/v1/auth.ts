@@ -97,7 +97,7 @@ export interface GetCompanyIdByCodeRequest {
 
 export interface GetCompanyIdByCodeResponse {
   $type: "auth.v1.GetCompanyIdByCodeResponse";
-  companyId: string;
+  companyId?: string | undefined;
 }
 
 function createBaseGetMeRequest(): GetMeRequest {
@@ -1233,7 +1233,7 @@ export const GetCompanyIdByCodeRequest: MessageFns<GetCompanyIdByCodeRequest, "a
 };
 
 function createBaseGetCompanyIdByCodeResponse(): GetCompanyIdByCodeResponse {
-  return { $type: "auth.v1.GetCompanyIdByCodeResponse", companyId: "" };
+  return { $type: "auth.v1.GetCompanyIdByCodeResponse", companyId: undefined };
 }
 
 export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, "auth.v1.GetCompanyIdByCodeResponse"> =
@@ -1241,7 +1241,7 @@ export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, 
     $type: "auth.v1.GetCompanyIdByCodeResponse" as const,
 
     encode(message: GetCompanyIdByCodeResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
-      if (message.companyId !== "") {
+      if (message.companyId !== undefined) {
         writer.uint32(10).string(message.companyId);
       }
       return writer;
@@ -1278,13 +1278,13 @@ export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, 
           ? globalThis.String(object.companyId)
           : isSet(object.company_id)
           ? globalThis.String(object.company_id)
-          : "",
+          : undefined,
       };
     },
 
     toJSON(message: GetCompanyIdByCodeResponse): unknown {
       const obj: any = {};
-      if (message.companyId !== "") {
+      if (message.companyId !== undefined) {
         obj.companyId = message.companyId;
       }
       return obj;
@@ -1295,7 +1295,7 @@ export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, 
     },
     fromPartial<I extends Exact<DeepPartial<GetCompanyIdByCodeResponse>, I>>(object: I): GetCompanyIdByCodeResponse {
       const message = createBaseGetCompanyIdByCodeResponse();
-      message.companyId = object.companyId ?? "";
+      message.companyId = object.companyId ?? undefined;
       return message;
     },
   };
