@@ -24,6 +24,7 @@ const (
 type GetByUserIdRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ServiceId     *string                `protobuf:"bytes,2,opt,name=service_id,json=serviceId,proto3,oneof" json:"service_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -65,12 +66,22 @@ func (x *GetByUserIdRequest) GetUserId() string {
 	return ""
 }
 
+func (x *GetByUserIdRequest) GetServiceId() string {
+	if x != nil && x.ServiceId != nil {
+		return *x.ServiceId
+	}
+	return ""
+}
+
 type EmployeeCompany struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	Id                   string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ServiceName          *string                `protobuf:"bytes,3,opt,name=service_name,json=serviceName,proto3,oneof" json:"service_name,omitempty"`
+	SubscriptionId       *string                `protobuf:"bytes,4,opt,name=subscription_id,json=subscriptionId,proto3,oneof" json:"subscription_id,omitempty"`
+	SubscriptionIsActive *bool                  `protobuf:"varint,5,opt,name=subscription_is_active,json=subscriptionIsActive,proto3,oneof" json:"subscription_is_active,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *EmployeeCompany) Reset() {
@@ -115,6 +126,27 @@ func (x *EmployeeCompany) GetName() string {
 		return x.Name
 	}
 	return ""
+}
+
+func (x *EmployeeCompany) GetServiceName() string {
+	if x != nil && x.ServiceName != nil {
+		return *x.ServiceName
+	}
+	return ""
+}
+
+func (x *EmployeeCompany) GetSubscriptionId() string {
+	if x != nil && x.SubscriptionId != nil {
+		return *x.SubscriptionId
+	}
+	return ""
+}
+
+func (x *EmployeeCompany) GetSubscriptionIsActive() bool {
+	if x != nil && x.SubscriptionIsActive != nil {
+		return *x.SubscriptionIsActive
+	}
+	return false
 }
 
 type GetByUserIdResponse struct {
@@ -181,12 +213,21 @@ var File_companies_v1_employee_proto protoreflect.FileDescriptor
 
 const file_companies_v1_employee_proto_rawDesc = "" +
 	"\n" +
-	"\x1bcompanies/v1/employee.proto\x12\fcompanies.v1\"-\n" +
+	"\x1bcompanies/v1/employee.proto\x12\fcompanies.v1\"`\n" +
 	"\x12GetByUserIdRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\tR\x06userId\"5\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\"\n" +
+	"\n" +
+	"service_id\x18\x02 \x01(\tH\x00R\tserviceId\x88\x01\x01B\r\n" +
+	"\v_service_id\"\x86\x02\n" +
 	"\x0fEmployeeCompany\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"\x8c\x01\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12&\n" +
+	"\fservice_name\x18\x03 \x01(\tH\x00R\vserviceName\x88\x01\x01\x12,\n" +
+	"\x0fsubscription_id\x18\x04 \x01(\tH\x01R\x0esubscriptionId\x88\x01\x01\x129\n" +
+	"\x16subscription_is_active\x18\x05 \x01(\bH\x02R\x14subscriptionIsActive\x88\x01\x01B\x0f\n" +
+	"\r_service_nameB\x12\n" +
+	"\x10_subscription_idB\x19\n" +
+	"\x17_subscription_is_active\"\x8c\x01\n" +
 	"\x13GetByUserIdResponse\x12\x1c\n" +
 	"\tfirstname\x18\x01 \x01(\tR\tfirstname\x12\x1a\n" +
 	"\blastname\x18\x02 \x01(\tR\blastname\x12;\n" +
@@ -229,6 +270,8 @@ func file_companies_v1_employee_proto_init() {
 	if File_companies_v1_employee_proto != nil {
 		return
 	}
+	file_companies_v1_employee_proto_msgTypes[0].OneofWrappers = []any{}
+	file_companies_v1_employee_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

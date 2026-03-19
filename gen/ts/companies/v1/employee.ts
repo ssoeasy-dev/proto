@@ -11,12 +11,16 @@ import type { CallContext, CallOptions } from "nice-grpc-common";
 export interface GetByUserIdRequest {
   $type: "companies.v1.GetByUserIdRequest";
   userId: string;
+  serviceId?: string | undefined;
 }
 
 export interface EmployeeCompany {
   $type: "companies.v1.EmployeeCompany";
   id: string;
   name: string;
+  serviceName?: string | undefined;
+  subscriptionId?: string | undefined;
+  subscriptionIsActive?: boolean | undefined;
 }
 
 export interface GetByUserIdResponse {
@@ -27,7 +31,7 @@ export interface GetByUserIdResponse {
 }
 
 function createBaseGetByUserIdRequest(): GetByUserIdRequest {
-  return { $type: "companies.v1.GetByUserIdRequest", userId: "" };
+  return { $type: "companies.v1.GetByUserIdRequest", userId: "", serviceId: undefined };
 }
 
 export const GetByUserIdRequest: MessageFns<GetByUserIdRequest, "companies.v1.GetByUserIdRequest"> = {
@@ -36,6 +40,9 @@ export const GetByUserIdRequest: MessageFns<GetByUserIdRequest, "companies.v1.Ge
   encode(message: GetByUserIdRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.userId !== "") {
       writer.uint32(10).string(message.userId);
+    }
+    if (message.serviceId !== undefined) {
+      writer.uint32(18).string(message.serviceId);
     }
     return writer;
   },
@@ -55,6 +62,14 @@ export const GetByUserIdRequest: MessageFns<GetByUserIdRequest, "companies.v1.Ge
           message.userId = reader.string();
           continue;
         }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.serviceId = reader.string();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -72,6 +87,11 @@ export const GetByUserIdRequest: MessageFns<GetByUserIdRequest, "companies.v1.Ge
         : isSet(object.user_id)
         ? globalThis.String(object.user_id)
         : "",
+      serviceId: isSet(object.serviceId)
+        ? globalThis.String(object.serviceId)
+        : isSet(object.service_id)
+        ? globalThis.String(object.service_id)
+        : undefined,
     };
   },
 
@@ -79,6 +99,9 @@ export const GetByUserIdRequest: MessageFns<GetByUserIdRequest, "companies.v1.Ge
     const obj: any = {};
     if (message.userId !== "") {
       obj.userId = message.userId;
+    }
+    if (message.serviceId !== undefined) {
+      obj.serviceId = message.serviceId;
     }
     return obj;
   },
@@ -89,12 +112,20 @@ export const GetByUserIdRequest: MessageFns<GetByUserIdRequest, "companies.v1.Ge
   fromPartial<I extends Exact<DeepPartial<GetByUserIdRequest>, I>>(object: I): GetByUserIdRequest {
     const message = createBaseGetByUserIdRequest();
     message.userId = object.userId ?? "";
+    message.serviceId = object.serviceId ?? undefined;
     return message;
   },
 };
 
 function createBaseEmployeeCompany(): EmployeeCompany {
-  return { $type: "companies.v1.EmployeeCompany", id: "", name: "" };
+  return {
+    $type: "companies.v1.EmployeeCompany",
+    id: "",
+    name: "",
+    serviceName: undefined,
+    subscriptionId: undefined,
+    subscriptionIsActive: undefined,
+  };
 }
 
 export const EmployeeCompany: MessageFns<EmployeeCompany, "companies.v1.EmployeeCompany"> = {
@@ -106,6 +137,15 @@ export const EmployeeCompany: MessageFns<EmployeeCompany, "companies.v1.Employee
     }
     if (message.name !== "") {
       writer.uint32(18).string(message.name);
+    }
+    if (message.serviceName !== undefined) {
+      writer.uint32(26).string(message.serviceName);
+    }
+    if (message.subscriptionId !== undefined) {
+      writer.uint32(34).string(message.subscriptionId);
+    }
+    if (message.subscriptionIsActive !== undefined) {
+      writer.uint32(40).bool(message.subscriptionIsActive);
     }
     return writer;
   },
@@ -133,6 +173,30 @@ export const EmployeeCompany: MessageFns<EmployeeCompany, "companies.v1.Employee
           message.name = reader.string();
           continue;
         }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.serviceName = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.subscriptionId = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 40) {
+            break;
+          }
+
+          message.subscriptionIsActive = reader.bool();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -147,6 +211,21 @@ export const EmployeeCompany: MessageFns<EmployeeCompany, "companies.v1.Employee
       $type: EmployeeCompany.$type,
       id: isSet(object.id) ? globalThis.String(object.id) : "",
       name: isSet(object.name) ? globalThis.String(object.name) : "",
+      serviceName: isSet(object.serviceName)
+        ? globalThis.String(object.serviceName)
+        : isSet(object.service_name)
+        ? globalThis.String(object.service_name)
+        : undefined,
+      subscriptionId: isSet(object.subscriptionId)
+        ? globalThis.String(object.subscriptionId)
+        : isSet(object.subscription_id)
+        ? globalThis.String(object.subscription_id)
+        : undefined,
+      subscriptionIsActive: isSet(object.subscriptionIsActive)
+        ? globalThis.Boolean(object.subscriptionIsActive)
+        : isSet(object.subscription_is_active)
+        ? globalThis.Boolean(object.subscription_is_active)
+        : undefined,
     };
   },
 
@@ -158,6 +237,15 @@ export const EmployeeCompany: MessageFns<EmployeeCompany, "companies.v1.Employee
     if (message.name !== "") {
       obj.name = message.name;
     }
+    if (message.serviceName !== undefined) {
+      obj.serviceName = message.serviceName;
+    }
+    if (message.subscriptionId !== undefined) {
+      obj.subscriptionId = message.subscriptionId;
+    }
+    if (message.subscriptionIsActive !== undefined) {
+      obj.subscriptionIsActive = message.subscriptionIsActive;
+    }
     return obj;
   },
 
@@ -168,6 +256,9 @@ export const EmployeeCompany: MessageFns<EmployeeCompany, "companies.v1.Employee
     const message = createBaseEmployeeCompany();
     message.id = object.id ?? "";
     message.name = object.name ?? "";
+    message.serviceName = object.serviceName ?? undefined;
+    message.subscriptionId = object.subscriptionId ?? undefined;
+    message.subscriptionIsActive = object.subscriptionIsActive ?? undefined;
     return message;
   },
 };
