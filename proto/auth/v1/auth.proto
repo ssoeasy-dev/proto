@@ -15,15 +15,25 @@ service AuthService {
   rpc Logout(Tokens) returns (common.v1.StatusResponse);
   rpc GetMe(GetMeRequest) returns (GetMeResponse);
   rpc GetCompanyIdByCode(GetCompanyIdByCodeRequest) returns (GetCompanyIdByCodeResponse);
+  rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
 }
 
 message GetMeRequest {
 	string token = 1;
 }
 
+message GetMeCompany {
+	string id = 1;
+	string name = 2;
+	string subscription = 3;
+}
+
 message GetMeResponse {
 	string user_id = 1;
 	string login = 2;
+	string firstname = 3;
+	string lastname = 4;
+	repeated GetMeCompany companies = 5;
 }
 
 message AuthCode {
@@ -82,7 +92,18 @@ message GetCompanyIdByCodeRequest {
 	string code = 1;
 	string service_id = 2;
 }
-  
+
 message GetCompanyIdByCodeResponse {
 	string company_id = 1;
+}
+
+message UpdateProfileRequest {
+	string firstname = 1;
+	string lastname = 2;
+}
+
+message UpdateProfileResponse {
+	string user_id = 1;
+	string firstname = 2;
+	string lastname = 3;
 }

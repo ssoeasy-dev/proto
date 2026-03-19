@@ -7,9 +7,68 @@
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
 
+export enum OrderDir {
+  ORDER_DIR_UNSPECIFIED = "ORDER_DIR_UNSPECIFIED",
+  ORDER_DIR_ASC = "ORDER_DIR_ASC",
+  ORDER_DIR_DESC = "ORDER_DIR_DESC",
+  UNRECOGNIZED = "UNRECOGNIZED",
+}
+
+export function orderDirFromJSON(object: any): OrderDir {
+  switch (object) {
+    case 0:
+    case "ORDER_DIR_UNSPECIFIED":
+      return OrderDir.ORDER_DIR_UNSPECIFIED;
+    case 1:
+    case "ORDER_DIR_ASC":
+      return OrderDir.ORDER_DIR_ASC;
+    case 2:
+    case "ORDER_DIR_DESC":
+      return OrderDir.ORDER_DIR_DESC;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return OrderDir.UNRECOGNIZED;
+  }
+}
+
+export function orderDirToJSON(object: OrderDir): string {
+  switch (object) {
+    case OrderDir.ORDER_DIR_UNSPECIFIED:
+      return "ORDER_DIR_UNSPECIFIED";
+    case OrderDir.ORDER_DIR_ASC:
+      return "ORDER_DIR_ASC";
+    case OrderDir.ORDER_DIR_DESC:
+      return "ORDER_DIR_DESC";
+    case OrderDir.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
+export function orderDirToNumber(object: OrderDir): number {
+  switch (object) {
+    case OrderDir.ORDER_DIR_UNSPECIFIED:
+      return 0;
+    case OrderDir.ORDER_DIR_ASC:
+      return 1;
+    case OrderDir.ORDER_DIR_DESC:
+      return 2;
+    case OrderDir.UNRECOGNIZED:
+    default:
+      return -1;
+  }
+}
+
 export interface StatusResponse {
   $type: "common.v1.StatusResponse";
   success: boolean;
+}
+
+export interface Pagination {
+  $type: "common.v1.Pagination";
+  limit: number;
+  page: number;
 }
 
 function createBaseStatusResponse(): StatusResponse {
@@ -68,6 +127,85 @@ export const StatusResponse: MessageFns<StatusResponse, "common.v1.StatusRespons
   fromPartial<I extends Exact<DeepPartial<StatusResponse>, I>>(object: I): StatusResponse {
     const message = createBaseStatusResponse();
     message.success = object.success ?? false;
+    return message;
+  },
+};
+
+function createBasePagination(): Pagination {
+  return { $type: "common.v1.Pagination", limit: 0, page: 0 };
+}
+
+export const Pagination: MessageFns<Pagination, "common.v1.Pagination"> = {
+  $type: "common.v1.Pagination" as const,
+
+  encode(message: Pagination, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.limit !== 0) {
+      writer.uint32(8).int32(message.limit);
+    }
+    if (message.page !== 0) {
+      writer.uint32(16).int32(message.page);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): Pagination {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBasePagination();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 8) {
+            break;
+          }
+
+          message.limit = reader.int32();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.page = reader.int32();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Pagination {
+    return {
+      $type: Pagination.$type,
+      limit: isSet(object.limit) ? globalThis.Number(object.limit) : 0,
+      page: isSet(object.page) ? globalThis.Number(object.page) : 0,
+    };
+  },
+
+  toJSON(message: Pagination): unknown {
+    const obj: any = {};
+    if (message.limit !== 0) {
+      obj.limit = Math.round(message.limit);
+    }
+    if (message.page !== 0) {
+      obj.page = Math.round(message.page);
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<Pagination>, I>>(base?: I): Pagination {
+    return Pagination.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<Pagination>, I>>(object: I): Pagination {
+    const message = createBasePagination();
+    message.limit = object.limit ?? 0;
+    message.page = object.page ?? 0;
     return message;
   },
 };

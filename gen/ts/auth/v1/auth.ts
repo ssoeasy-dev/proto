@@ -23,10 +23,20 @@ export interface GetMeRequest {
   token: string;
 }
 
+export interface GetMeCompany {
+  $type: "auth.v1.GetMeCompany";
+  id: string;
+  name: string;
+  subscription: string;
+}
+
 export interface GetMeResponse {
   $type: "auth.v1.GetMeResponse";
   userId: string;
   login: string;
+  firstname: string;
+  lastname: string;
+  companies: GetMeCompany[];
 }
 
 export interface AuthCode {
@@ -100,6 +110,19 @@ export interface GetCompanyIdByCodeResponse {
   companyId: string;
 }
 
+export interface UpdateProfileRequest {
+  $type: "auth.v1.UpdateProfileRequest";
+  firstname: string;
+  lastname: string;
+}
+
+export interface UpdateProfileResponse {
+  $type: "auth.v1.UpdateProfileResponse";
+  userId: string;
+  firstname: string;
+  lastname: string;
+}
+
 function createBaseGetMeRequest(): GetMeRequest {
   return { $type: "auth.v1.GetMeRequest", token: "" };
 }
@@ -160,8 +183,103 @@ export const GetMeRequest: MessageFns<GetMeRequest, "auth.v1.GetMeRequest"> = {
   },
 };
 
+function createBaseGetMeCompany(): GetMeCompany {
+  return { $type: "auth.v1.GetMeCompany", id: "", name: "", subscription: "" };
+}
+
+export const GetMeCompany: MessageFns<GetMeCompany, "auth.v1.GetMeCompany"> = {
+  $type: "auth.v1.GetMeCompany" as const,
+
+  encode(message: GetMeCompany, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.id !== "") {
+      writer.uint32(10).string(message.id);
+    }
+    if (message.name !== "") {
+      writer.uint32(18).string(message.name);
+    }
+    if (message.subscription !== "") {
+      writer.uint32(26).string(message.subscription);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetMeCompany {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetMeCompany();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.id = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.name = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.subscription = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetMeCompany {
+    return {
+      $type: GetMeCompany.$type,
+      id: isSet(object.id) ? globalThis.String(object.id) : "",
+      name: isSet(object.name) ? globalThis.String(object.name) : "",
+      subscription: isSet(object.subscription) ? globalThis.String(object.subscription) : "",
+    };
+  },
+
+  toJSON(message: GetMeCompany): unknown {
+    const obj: any = {};
+    if (message.id !== "") {
+      obj.id = message.id;
+    }
+    if (message.name !== "") {
+      obj.name = message.name;
+    }
+    if (message.subscription !== "") {
+      obj.subscription = message.subscription;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetMeCompany>, I>>(base?: I): GetMeCompany {
+    return GetMeCompany.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetMeCompany>, I>>(object: I): GetMeCompany {
+    const message = createBaseGetMeCompany();
+    message.id = object.id ?? "";
+    message.name = object.name ?? "";
+    message.subscription = object.subscription ?? "";
+    return message;
+  },
+};
+
 function createBaseGetMeResponse(): GetMeResponse {
-  return { $type: "auth.v1.GetMeResponse", userId: "", login: "" };
+  return { $type: "auth.v1.GetMeResponse", userId: "", login: "", firstname: "", lastname: "", companies: [] };
 }
 
 export const GetMeResponse: MessageFns<GetMeResponse, "auth.v1.GetMeResponse"> = {
@@ -173,6 +291,15 @@ export const GetMeResponse: MessageFns<GetMeResponse, "auth.v1.GetMeResponse"> =
     }
     if (message.login !== "") {
       writer.uint32(18).string(message.login);
+    }
+    if (message.firstname !== "") {
+      writer.uint32(26).string(message.firstname);
+    }
+    if (message.lastname !== "") {
+      writer.uint32(34).string(message.lastname);
+    }
+    for (const v of message.companies) {
+      GetMeCompany.encode(v!, writer.uint32(42).fork()).join();
     }
     return writer;
   },
@@ -200,6 +327,30 @@ export const GetMeResponse: MessageFns<GetMeResponse, "auth.v1.GetMeResponse"> =
           message.login = reader.string();
           continue;
         }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.firstname = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.lastname = reader.string();
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.companies.push(GetMeCompany.decode(reader, reader.uint32()));
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -218,6 +369,11 @@ export const GetMeResponse: MessageFns<GetMeResponse, "auth.v1.GetMeResponse"> =
         ? globalThis.String(object.user_id)
         : "",
       login: isSet(object.login) ? globalThis.String(object.login) : "",
+      firstname: isSet(object.firstname) ? globalThis.String(object.firstname) : "",
+      lastname: isSet(object.lastname) ? globalThis.String(object.lastname) : "",
+      companies: globalThis.Array.isArray(object?.companies)
+        ? object.companies.map((e: any) => GetMeCompany.fromJSON(e))
+        : [],
     };
   },
 
@@ -229,6 +385,15 @@ export const GetMeResponse: MessageFns<GetMeResponse, "auth.v1.GetMeResponse"> =
     if (message.login !== "") {
       obj.login = message.login;
     }
+    if (message.firstname !== "") {
+      obj.firstname = message.firstname;
+    }
+    if (message.lastname !== "") {
+      obj.lastname = message.lastname;
+    }
+    if (message.companies?.length) {
+      obj.companies = message.companies.map((e) => GetMeCompany.toJSON(e));
+    }
     return obj;
   },
 
@@ -239,6 +404,9 @@ export const GetMeResponse: MessageFns<GetMeResponse, "auth.v1.GetMeResponse"> =
     const message = createBaseGetMeResponse();
     message.userId = object.userId ?? "";
     message.login = object.login ?? "";
+    message.firstname = object.firstname ?? "";
+    message.lastname = object.lastname ?? "";
+    message.companies = object.companies?.map((e) => GetMeCompany.fromPartial(e)) || [];
     return message;
   },
 };
@@ -1300,6 +1468,184 @@ export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, 
     },
   };
 
+function createBaseUpdateProfileRequest(): UpdateProfileRequest {
+  return { $type: "auth.v1.UpdateProfileRequest", firstname: "", lastname: "" };
+}
+
+export const UpdateProfileRequest: MessageFns<UpdateProfileRequest, "auth.v1.UpdateProfileRequest"> = {
+  $type: "auth.v1.UpdateProfileRequest" as const,
+
+  encode(message: UpdateProfileRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.firstname !== "") {
+      writer.uint32(10).string(message.firstname);
+    }
+    if (message.lastname !== "") {
+      writer.uint32(18).string(message.lastname);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UpdateProfileRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateProfileRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.firstname = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.lastname = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateProfileRequest {
+    return {
+      $type: UpdateProfileRequest.$type,
+      firstname: isSet(object.firstname) ? globalThis.String(object.firstname) : "",
+      lastname: isSet(object.lastname) ? globalThis.String(object.lastname) : "",
+    };
+  },
+
+  toJSON(message: UpdateProfileRequest): unknown {
+    const obj: any = {};
+    if (message.firstname !== "") {
+      obj.firstname = message.firstname;
+    }
+    if (message.lastname !== "") {
+      obj.lastname = message.lastname;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UpdateProfileRequest>, I>>(base?: I): UpdateProfileRequest {
+    return UpdateProfileRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<UpdateProfileRequest>, I>>(object: I): UpdateProfileRequest {
+    const message = createBaseUpdateProfileRequest();
+    message.firstname = object.firstname ?? "";
+    message.lastname = object.lastname ?? "";
+    return message;
+  },
+};
+
+function createBaseUpdateProfileResponse(): UpdateProfileResponse {
+  return { $type: "auth.v1.UpdateProfileResponse", userId: "", firstname: "", lastname: "" };
+}
+
+export const UpdateProfileResponse: MessageFns<UpdateProfileResponse, "auth.v1.UpdateProfileResponse"> = {
+  $type: "auth.v1.UpdateProfileResponse" as const,
+
+  encode(message: UpdateProfileResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.userId !== "") {
+      writer.uint32(10).string(message.userId);
+    }
+    if (message.firstname !== "") {
+      writer.uint32(18).string(message.firstname);
+    }
+    if (message.lastname !== "") {
+      writer.uint32(26).string(message.lastname);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): UpdateProfileResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseUpdateProfileResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.userId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.firstname = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.lastname = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): UpdateProfileResponse {
+    return {
+      $type: UpdateProfileResponse.$type,
+      userId: isSet(object.userId)
+        ? globalThis.String(object.userId)
+        : isSet(object.user_id)
+        ? globalThis.String(object.user_id)
+        : "",
+      firstname: isSet(object.firstname) ? globalThis.String(object.firstname) : "",
+      lastname: isSet(object.lastname) ? globalThis.String(object.lastname) : "",
+    };
+  },
+
+  toJSON(message: UpdateProfileResponse): unknown {
+    const obj: any = {};
+    if (message.userId !== "") {
+      obj.userId = message.userId;
+    }
+    if (message.firstname !== "") {
+      obj.firstname = message.firstname;
+    }
+    if (message.lastname !== "") {
+      obj.lastname = message.lastname;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<UpdateProfileResponse>, I>>(base?: I): UpdateProfileResponse {
+    return UpdateProfileResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<UpdateProfileResponse>, I>>(object: I): UpdateProfileResponse {
+    const message = createBaseUpdateProfileResponse();
+    message.userId = object.userId ?? "";
+    message.firstname = object.firstname ?? "";
+    message.lastname = object.lastname ?? "";
+    return message;
+  },
+};
+
 export type AuthServiceDefinition = typeof AuthServiceDefinition;
 export const AuthServiceDefinition = {
   name: "AuthService",
@@ -1361,6 +1707,14 @@ export const AuthServiceDefinition = {
       responseStream: false,
       options: {},
     },
+    updateProfile: {
+      name: "UpdateProfile",
+      requestType: UpdateProfileRequest as typeof UpdateProfileRequest,
+      requestStream: false,
+      responseType: UpdateProfileResponse as typeof UpdateProfileResponse,
+      responseStream: false,
+      options: {},
+    },
   },
 } as const;
 
@@ -1381,6 +1735,10 @@ export interface AuthServiceImplementation<CallContextExt = {}> {
     request: GetCompanyIdByCodeRequest,
     context: CallContext & CallContextExt,
   ): Promise<DeepPartial<GetCompanyIdByCodeResponse>>;
+  updateProfile(
+    request: UpdateProfileRequest,
+    context: CallContext & CallContextExt,
+  ): Promise<DeepPartial<UpdateProfileResponse>>;
 }
 
 export interface AuthServiceClient<CallOptionsExt = {}> {
@@ -1400,6 +1758,10 @@ export interface AuthServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<GetCompanyIdByCodeRequest>,
     options?: CallOptions & CallOptionsExt,
   ): Promise<GetCompanyIdByCodeResponse>;
+  updateProfile(
+    request: DeepPartial<UpdateProfileRequest>,
+    options?: CallOptions & CallOptionsExt,
+  ): Promise<UpdateProfileResponse>;
 }
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;

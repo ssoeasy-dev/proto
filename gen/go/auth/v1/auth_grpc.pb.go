@@ -27,6 +27,7 @@ const (
 	AuthService_Logout_FullMethodName                 = "/auth.v1.AuthService/Logout"
 	AuthService_GetMe_FullMethodName                  = "/auth.v1.AuthService/GetMe"
 	AuthService_GetCompanyIdByCode_FullMethodName     = "/auth.v1.AuthService/GetCompanyIdByCode"
+	AuthService_UpdateProfile_FullMethodName          = "/auth.v1.AuthService/UpdateProfile"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -40,6 +41,7 @@ type AuthServiceClient interface {
 	Logout(ctx context.Context, in *Tokens, opts ...grpc.CallOption) (*v1.StatusResponse, error)
 	GetMe(ctx context.Context, in *GetMeRequest, opts ...grpc.CallOption) (*GetMeResponse, error)
 	GetCompanyIdByCode(ctx context.Context, in *GetCompanyIdByCodeRequest, opts ...grpc.CallOption) (*GetCompanyIdByCodeResponse, error)
+	UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*UpdateProfileResponse, error)
 }
 
 type authServiceClient struct {
@@ -120,6 +122,16 @@ func (c *authServiceClient) GetCompanyIdByCode(ctx context.Context, in *GetCompa
 	return out, nil
 }
 
+func (c *authServiceClient) UpdateProfile(ctx context.Context, in *UpdateProfileRequest, opts ...grpc.CallOption) (*UpdateProfileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateProfileResponse)
+	err := c.cc.Invoke(ctx, AuthService_UpdateProfile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -131,6 +143,7 @@ type AuthServiceServer interface {
 	Logout(context.Context, *Tokens) (*v1.StatusResponse, error)
 	GetMe(context.Context, *GetMeRequest) (*GetMeResponse, error)
 	GetCompanyIdByCode(context.Context, *GetCompanyIdByCodeRequest) (*GetCompanyIdByCodeResponse, error)
+	UpdateProfile(context.Context, *UpdateProfileRequest) (*UpdateProfileResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -161,6 +174,9 @@ func (UnimplementedAuthServiceServer) GetMe(context.Context, *GetMeRequest) (*Ge
 }
 func (UnimplementedAuthServiceServer) GetCompanyIdByCode(context.Context, *GetCompanyIdByCodeRequest) (*GetCompanyIdByCodeResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCompanyIdByCode not implemented")
+}
+func (UnimplementedAuthServiceServer) UpdateProfile(context.Context, *UpdateProfileRequest) (*UpdateProfileResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateProfile not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -309,6 +325,24 @@ func _AuthService_GetCompanyIdByCode_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_UpdateProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateProfileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).UpdateProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_UpdateProfile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).UpdateProfile(ctx, req.(*UpdateProfileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -343,6 +377,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCompanyIdByCode",
 			Handler:    _AuthService_GetCompanyIdByCode_Handler,
+		},
+		{
+			MethodName: "UpdateProfile",
+			Handler:    _AuthService_UpdateProfile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -21,6 +21,55 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type OrderDir int32
+
+const (
+	OrderDir_ORDER_DIR_UNSPECIFIED OrderDir = 0
+	OrderDir_ORDER_DIR_ASC         OrderDir = 1
+	OrderDir_ORDER_DIR_DESC        OrderDir = 2
+)
+
+// Enum value maps for OrderDir.
+var (
+	OrderDir_name = map[int32]string{
+		0: "ORDER_DIR_UNSPECIFIED",
+		1: "ORDER_DIR_ASC",
+		2: "ORDER_DIR_DESC",
+	}
+	OrderDir_value = map[string]int32{
+		"ORDER_DIR_UNSPECIFIED": 0,
+		"ORDER_DIR_ASC":         1,
+		"ORDER_DIR_DESC":        2,
+	}
+)
+
+func (x OrderDir) Enum() *OrderDir {
+	p := new(OrderDir)
+	*p = x
+	return p
+}
+
+func (x OrderDir) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (OrderDir) Descriptor() protoreflect.EnumDescriptor {
+	return file_common_v1_types_proto_enumTypes[0].Descriptor()
+}
+
+func (OrderDir) Type() protoreflect.EnumType {
+	return &file_common_v1_types_proto_enumTypes[0]
+}
+
+func (x OrderDir) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use OrderDir.Descriptor instead.
+func (OrderDir) EnumDescriptor() ([]byte, []int) {
+	return file_common_v1_types_proto_rawDescGZIP(), []int{0}
+}
+
 type StatusResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
@@ -65,13 +114,73 @@ func (x *StatusResponse) GetSuccess() bool {
 	return false
 }
 
+type Pagination struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Limit         int32                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"`
+	Page          int32                  `protobuf:"varint,2,opt,name=page,proto3" json:"page,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Pagination) Reset() {
+	*x = Pagination{}
+	mi := &file_common_v1_types_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Pagination) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Pagination) ProtoMessage() {}
+
+func (x *Pagination) ProtoReflect() protoreflect.Message {
+	mi := &file_common_v1_types_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Pagination.ProtoReflect.Descriptor instead.
+func (*Pagination) Descriptor() ([]byte, []int) {
+	return file_common_v1_types_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Pagination) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *Pagination) GetPage() int32 {
+	if x != nil {
+		return x.Page
+	}
+	return 0
+}
+
 var File_common_v1_types_proto protoreflect.FileDescriptor
 
 const file_common_v1_types_proto_rawDesc = "" +
 	"\n" +
 	"\x15common/v1/types.proto\x12\tcommon.v1\"*\n" +
 	"\x0eStatusResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccessB\x98\x01\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"6\n" +
+	"\n" +
+	"Pagination\x12\x14\n" +
+	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x12\n" +
+	"\x04page\x18\x02 \x01(\x05R\x04page*L\n" +
+	"\bOrderDir\x12\x19\n" +
+	"\x15ORDER_DIR_UNSPECIFIED\x10\x00\x12\x11\n" +
+	"\rORDER_DIR_ASC\x10\x01\x12\x12\n" +
+	"\x0eORDER_DIR_DESC\x10\x02B\x98\x01\n" +
 	"\rcom.common.v1B\n" +
 	"TypesProtoP\x01Z6github.com/ssoeasy-dev/proto/gen/go/common/v1;commonv1\xa2\x02\x03CXX\xaa\x02\tCommon.V1\xca\x02\tCommon\\V1\xe2\x02\x15Common\\V1\\GPBMetadata\xea\x02\n" +
 	"Common::V1b\x06proto3"
@@ -88,9 +197,12 @@ func file_common_v1_types_proto_rawDescGZIP() []byte {
 	return file_common_v1_types_proto_rawDescData
 }
 
-var file_common_v1_types_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_common_v1_types_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_common_v1_types_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_common_v1_types_proto_goTypes = []any{
-	(*StatusResponse)(nil), // 0: common.v1.StatusResponse
+	(OrderDir)(0),          // 0: common.v1.OrderDir
+	(*StatusResponse)(nil), // 1: common.v1.StatusResponse
+	(*Pagination)(nil),     // 2: common.v1.Pagination
 }
 var file_common_v1_types_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -110,13 +222,14 @@ func file_common_v1_types_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_common_v1_types_proto_rawDesc), len(file_common_v1_types_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   1,
+			NumEnums:      1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_common_v1_types_proto_goTypes,
 		DependencyIndexes: file_common_v1_types_proto_depIdxs,
+		EnumInfos:         file_common_v1_types_proto_enumTypes,
 		MessageInfos:      file_common_v1_types_proto_msgTypes,
 	}.Build()
 	File_common_v1_types_proto = out.File
