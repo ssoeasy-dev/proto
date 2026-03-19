@@ -84,5 +84,6 @@ message GetCompanyIdByCodeRequest {
 }
   
 message GetCompanyIdByCodeResponse {
-	optional string company_id = 1;
+	string userId = 1;
+	optional string company_id = 2;
 }

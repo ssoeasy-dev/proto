@@ -97,6 +97,7 @@ export interface GetCompanyIdByCodeRequest {
 
 export interface GetCompanyIdByCodeResponse {
   $type: "auth.v1.GetCompanyIdByCodeResponse";
+  userId: string;
   companyId?: string | undefined;
 }
 
@@ -1233,7 +1234,7 @@ export const GetCompanyIdByCodeRequest: MessageFns<GetCompanyIdByCodeRequest, "a
 };
 
 function createBaseGetCompanyIdByCodeResponse(): GetCompanyIdByCodeResponse {
-  return { $type: "auth.v1.GetCompanyIdByCodeResponse", companyId: undefined };
+  return { $type: "auth.v1.GetCompanyIdByCodeResponse", userId: "", companyId: undefined };
 }
 
 export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, "auth.v1.GetCompanyIdByCodeResponse"> =
@@ -1241,8 +1242,11 @@ export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, 
     $type: "auth.v1.GetCompanyIdByCodeResponse" as const,
 
     encode(message: GetCompanyIdByCodeResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+      if (message.userId !== "") {
+        writer.uint32(10).string(message.userId);
+      }
       if (message.companyId !== undefined) {
-        writer.uint32(10).string(message.companyId);
+        writer.uint32(18).string(message.companyId);
       }
       return writer;
     },
@@ -1256,6 +1260,14 @@ export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, 
         switch (tag >>> 3) {
           case 1: {
             if (tag !== 10) {
+              break;
+            }
+
+            message.userId = reader.string();
+            continue;
+          }
+          case 2: {
+            if (tag !== 18) {
               break;
             }
 
@@ -1274,6 +1286,7 @@ export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, 
     fromJSON(object: any): GetCompanyIdByCodeResponse {
       return {
         $type: GetCompanyIdByCodeResponse.$type,
+        userId: isSet(object.userId) ? globalThis.String(object.userId) : "",
         companyId: isSet(object.companyId)
           ? globalThis.String(object.companyId)
           : isSet(object.company_id)
@@ -1284,6 +1297,9 @@ export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, 
 
     toJSON(message: GetCompanyIdByCodeResponse): unknown {
       const obj: any = {};
+      if (message.userId !== "") {
+        obj.userId = message.userId;
+      }
       if (message.companyId !== undefined) {
         obj.companyId = message.companyId;
       }
@@ -1295,6 +1311,7 @@ export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, 
     },
     fromPartial<I extends Exact<DeepPartial<GetCompanyIdByCodeResponse>, I>>(object: I): GetCompanyIdByCodeResponse {
       const message = createBaseGetCompanyIdByCodeResponse();
+      message.userId = object.userId ?? "";
       message.companyId = object.companyId ?? undefined;
       return message;
     },
