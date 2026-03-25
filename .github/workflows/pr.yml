@@ -77,7 +77,10 @@ jobs:
 
       - name: Install dependencies (including ts-proto)
         run: pnpm install
-
+      
+      - name: Add node_modules/.bin to PATH
+        run: echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
+      
       - name: Generate
         run: make generate
 
@@ -142,7 +145,7 @@ jobs:
           {
             "compilerOptions": {
               "target": "ES2020",
-              "module": "ESNext",
+              "module": "Node16",
               "lib": ["ES2020"],
               "moduleResolution": "node16",
               "strict": true,

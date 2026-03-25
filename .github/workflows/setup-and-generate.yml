@@ -48,6 +48,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Add node_modules/.bin to PATH
+        run: echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -58,11 +61,6 @@ jobs:
         run: |
           go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
           go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
-
-      - name: Install ts-proto
-        run: |
-          npm install -g ts-proto
-          echo "$(npm root -g)/.bin" >> $GITHUB_PATH
 
       - name: Setup Buf
         uses: bufbuild/buf-setup-action@v1
