@@ -6,21 +6,37 @@ on:
     branches: [develop]
 
 jobs:
+  setup:
+    name: Setup and Generate
+    uses: ./.github/workflows/setup-and-generate.yml
+    with:
+      ref: ${{ github.head_ref }}
+      fetch-depth: 0
+
   create-dev-version:
     name: Create/Update Dev Version
     if: github.event.action != 'closed'
+    needs: setup
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
       id-token: write
     steps:
-      - name: Call reusable setup
-        id: setup
-        uses: ./.github/workflows/setup-and-generate.yml
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install semver
+        run: npm install -g semver
 
       - name: Determine bump type from commits
         id: bump
@@ -33,7 +49,7 @@ jobs:
       - name: Calculate target version
         id: target
         run: |
-          BASE_VERSION="${{ steps.setup.outputs.base_version }}"
+          BASE_VERSION="${{ needs.setup.outputs.base_version }}"
           BUMP_TYPE="${{ steps.bump.outputs.bump_type }}"
           if [ "$BUMP_TYPE" = "major" ]; then
             NEW_VERSION=$(node -e "const semver = require('semver'); console.log(semver.inc('$BASE_VERSION', 'major'))")

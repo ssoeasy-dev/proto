@@ -5,19 +5,35 @@ on:
     branches: [develop]
 
 jobs:
+  setup:
+    name: Setup and Generate
+    uses: ./.github/workflows/setup-and-generate.yml
+    with:
+      ref: develop
+      fetch-depth: 0
+
   create-beta-version:
     name: Create/Update Beta Version
+    needs: setup
     runs-on: ubuntu-latest
     permissions:
       contents: write
       id-token: write
     steps:
-      - name: Call reusable setup
-        id: setup
-        uses: ./.github/workflows/setup-and-generate.yml
+      - name: Checkout Develop Branch
+        uses: actions/checkout@v4
         with:
           ref: develop
           fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Install semver
+        run: npm install -g semver
 
       - name: Find maximum dev version across all branches
         id: max_dev
