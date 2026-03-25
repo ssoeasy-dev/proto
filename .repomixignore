@@ -41,8 +41,4 @@ ts-tools/
 # Temporary files
 buf.gen.ts.yaml.bak
 
-proto.repomix.md
-
-# ВАЖНО: gen/ НЕ игнорируется!
-# Сгенерированный код должен быть закоммичен для работы Go modules и npm пакета
-
+gen/

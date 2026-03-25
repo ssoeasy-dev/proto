@@ -29,6 +29,7 @@ jobs:
   breaking:
     name: Check Breaking Changes
     runs-on: ubuntu-latest
+    if: github.base_ref == 'main'
     steps:
       - name: Checkout PR Branch
         uses: actions/checkout@v4
@@ -49,34 +50,11 @@ jobs:
     name: Verify Generated Code
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PR Branch
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - name: Call reusable setup
+        uses: ./.github/workflows/setup-and-generate.yml
         with:
-          go-version: "1.24"
-
-      - name: Install Protobuf Go Plugins
-        run: |
-          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
-          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install ts-proto
-        run: |
-          npm install -g ts-proto
-          echo "$(npm root -g)/.bin" >> $GITHUB_PATH
-
-      - name: Setup Buf
-        uses: bufbuild/buf-setup-action@v1
-
-      - name: Generate
-        run: make generate
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
 
       - name: Check Generated Code is Committed
         run: |
@@ -98,6 +76,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.24"
+          cache: true
 
       - name: Verify Module
         run: |
@@ -105,41 +84,24 @@ jobs:
           go mod tidy
           git diff --exit-code go.mod go.sum
 
-      - name: Build Test
+      - name: Build all Go packages
         run: |
-          cd gen/go/companies/v1
-          go build .
+          for dir in gen/go/*/v1; do
+            (cd "$dir" && go build .) || exit 1
+          done
 
   test-import-ts:
     name: Test TypeScript Import
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PR Branch
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Call reusable setup
+        uses: ./.github/workflows/setup-and-generate.yml
         with:
-          node-version: "20"
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: latest
-
-      - name: Verify Package Files
-        run: |
-          pnpm install --frozen-lockfile
-          git diff --exit-code package.json pnpm-lock.yaml || (
-            echo "❌ Package files are out of sync!"
-            echo "Run 'pnpm install' and commit the changes."
-            git diff package.json pnpm-lock.yaml
-            exit 1
-          )
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
 
       - name: Install TypeScript
-        run: |
-          pnpm add -D typescript @types/node
+        run: pnpm add -D typescript @types/node
 
       - name: Create tsconfig.json for type checking
         run: |
@@ -166,8 +128,7 @@ jobs:
           EOF
 
       - name: Type Check
-        run: |
-          pnpm exec tsc --noEmit
+        run: pnpm exec tsc --noEmit
 
       - name: Test Exports
         run: |

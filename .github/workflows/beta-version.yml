@@ -12,194 +12,100 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - name: Checkout Develop Branch
-        uses: actions/checkout@v4
+      - name: Call reusable setup
+        id: setup
+        uses: ./.github/workflows/setup-and-generate.yml
         with:
           ref: develop
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          registry-url: "https://registry.npmjs.org"
-
-      - name: Setup Buf
-        uses: bufbuild/buf-setup-action@v1
-
-      - name: Prepare Beta Version
-        id: version
+      - name: Find maximum dev version across all branches
+        id: max_dev
         run: |
-          BASE_VERSION=$(node -e "console.log(require('./package.json').version)")
-
-          # Ищем существующие beta теги
-          EXISTING_BETA_TAGS=$(git tag -l "${BASE_VERSION}-beta.*" | sort -V)
-
-          if [ -n "$EXISTING_BETA_TAGS" ]; then
-            LAST_BETA_TAG=$(echo "$EXISTING_BETA_TAGS" | tail -n 1)
-            BETA_NUM=$(echo "$LAST_BETA_TAG" | sed -E "s/${BASE_VERSION}-beta\.([0-9]+)/\1/")
-            BETA_NUM=$((BETA_NUM + 1))
-          else
-            BETA_NUM=1
+          DEV_TAGS=$(git tag -l | grep -E ".*-dev-.*\.[0-9]+$" | sort -V)
+          MAX_VERSION=""
+          if [ -n "$DEV_TAGS" ]; then
+            VERSIONS=()
+            for TAG in $DEV_TAGS; do
+              VERSION=$(echo "$TAG" | sed -E 's/-dev-.*//')
+              VERSIONS+=("$VERSION")
+            done
+            MAX_VERSION=$(printf '%s\n' "${VERSIONS[@]}" | sort -V | tail -n1)
           fi
+          echo "max_version=$MAX_VERSION" >> $GITHUB_OUTPUT
 
-          VERSION="${BASE_VERSION}-beta.${BETA_NUM}"
-          NPM_DIST_TAG="beta"
-
-          echo "📦 Version: $VERSION"
-          echo "🏷️  NPM dist-tag: $NPM_DIST_TAG"
-          echo "🔢 Beta number: $BETA_NUM"
-
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "npm_dist_tag=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
-          echo "beta_number=$BETA_NUM" >> $GITHUB_OUTPUT
-          echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT
-
-      - name: Try to Detect Merged Branch and Cleanup
-        continue-on-error: true
+      - name: Compare with last beta
+        id: compare
         run: |
-          BASE_VERSION=$(node -e "console.log(require('./package.json').version)")
-
-          # Получаем последний коммит (мерж-коммит)
-          LAST_COMMIT=$(git log -1 --pretty=%B)
-
-          echo "🔍 Last commit message:"
-          echo "$LAST_COMMIT"
-          echo ""
-
-          # Пытаемся найти имя ветки из сообщения коммита (формат GitHub)
-          BRANCH_NAME=""
-          if echo "$LAST_COMMIT" | grep -q "Merge pull request"; then
-            # Формат: Merge pull request #123 from user/branch-name
-            BRANCH_NAME=$(echo "$LAST_COMMIT" | sed -E 's/.* from [^\/]*\/(.*)/\1/')
-            echo "✅ Detected merged branch from GitHub merge: $BRANCH_NAME"
-          elif echo "$LAST_COMMIT" | grep -q "Merge branch"; then
-            # Формат: Merge branch 'branch-name' into develop
-            BRANCH_NAME=$(echo "$LAST_COMMIT" | sed -E "s/.*Merge branch '([^']*)'.*/\1/")
-            echo "✅ Detected merged branch: $BRANCH_NAME"
+          MAX_VERSION="${{ steps.max_dev.outputs.max_version }}"
+          if [ -z "$MAX_VERSION" ]; then
+            echo "should_create=false" >> $GITHUB_OUTPUT
+            exit 0
           fi
 
-          if [ -n "$BRANCH_NAME" ]; then
-            # Нормализуем имя ветки
-            BRANCH_PART="${BRANCH_NAME//\//-}"
-            BRANCH_PART="${BRANCH_PART//_/-}"
-            BRANCH_PART=$(echo "$BRANCH_PART" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g')
-            
-            echo "🔍 Normalized branch name: $BRANCH_PART"
-            
-            # Ищем и удаляем все dev теги для этой ветки
-            DEV_TAGS=$(git tag -l "${BASE_VERSION}-dev-${BRANCH_PART}.*")
-            
-            if [ -n "$DEV_TAGS" ]; then
-              echo "🗑️  Deleting dev tags for merged branch '$BRANCH_NAME':"
-              git config user.name "github-actions[bot]"
-              git config user.email "github-actions[bot]@users.noreply.github.com"
-              
-              for TAG in $DEV_TAGS; do
-                echo "  - $TAG"
-                git tag -d "$TAG" 2>/dev/null || true
-                git push origin ":refs/tags/$TAG" 2>/dev/null || true
-              done
-              
-              echo "✅ Dev tags for branch '$BRANCH_NAME' deleted"
-              
-              # Также удаляем npm версии
-              if [ -n "$NODE_AUTH_TOKEN" ]; then
-                echo "🗑️  Unpublishing npm dev versions for branch '$BRANCH_NAME'..."
-                
-                # Получаем все версии из npm
-                ALL_VERSIONS=$(npm view @ssoeasy-dev/proto versions --json 2>/dev/null || echo "[]")
-                
-                # Фильтруем версии с префиксом этой ветки
-                VERSIONS_TO_DELETE=$(echo "$ALL_VERSIONS" | node -e "
-                  const versions = JSON.parse(require('fs').readFileSync(0, 'utf-8'));
-                  const prefix = process.argv[1];
-                  const matching = versions.filter(v => v.startsWith(prefix));
-                  console.log(matching.join(' '));
-                " "${BASE_VERSION}-dev-${BRANCH_PART}")
-                
-                if [ -n "$VERSIONS_TO_DELETE" ]; then
-                  for VERSION in $VERSIONS_TO_DELETE; do
-                    echo -n "   Unpublishing $VERSION... "
-                    npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>/dev/null && echo "✅" || echo "⚠️"
-                  done
-                fi
-                
-                # Удаляем dist-tag
-                npm dist-tag rm @ssoeasy-dev/proto "dev-${BRANCH_PART}" 2>/dev/null || true
-              fi
-            else
-              echo "ℹ️  No dev tags found for branch '$BRANCH_NAME'"
-            fi
+          LAST_BETA_TAG=$(git tag -l | grep -E ".*-beta$" | sort -V | tail -n1)
+          if [ -n "$LAST_BETA_TAG" ]; then
+            LAST_BETA_VERSION=$(echo "$LAST_BETA_TAG" | sed -E 's/-beta$//')
           else
-            echo "⚠️  Could not detect merged branch from commit message"
-            echo "ℹ️  Dev tags cleanup will be handled by PR close event"
+            LAST_BETA_VERSION="0.0.0"
           fi
+
+          GT=$(node -e "const semver = require('semver'); console.log(semver.gt('$MAX_VERSION', '$LAST_BETA_VERSION'))")
+          if [ "$GT" = "true" ]; then
+            echo "should_create=true" >> $GITHUB_OUTPUT
+            echo "new_version=$MAX_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "should_create=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update package.json version (beta)
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          VERSION="${{ steps.compare.outputs.new_version }}"
+          node -e "
+            const fs = require('fs');
+            const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            package.version = '$VERSION';
+            fs.writeFileSync('package.json', JSON.stringify(package, null, 2) + '\n');
+          "
+
+      - name: Commit updated package.json
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version to ${{ steps.compare.outputs.new_version }}" || echo "No changes"
+          git push
+
+      - name: Publish npm beta version
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm publish."
+            exit 0
+          fi
+          pnpm publish --no-git-checks --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create Beta Tag
+        if: steps.compare.outputs.should_create == 'true'
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ steps.compare.outputs.new_version }}"
+          BETA_TAG="${VERSION}-beta"
 
           echo "🔗 Branch: develop"
           echo "📝 Commit: ${{ github.sha }}"
-          echo "🏷️  Creating beta tag: $VERSION"
+          echo "🏷️  Creating beta tag: $BETA_TAG"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Создаем новый тег
-          git tag "$VERSION"
-          git push origin "$VERSION"
+          git tag "$BETA_TAG"
+          git push origin "$BETA_TAG"
 
-          echo "✅ Beta version $VERSION created!"
+          echo "✅ Beta version $BETA_TAG created!"
           echo ""
           echo "📋 Use in your services:"
-          echo "   go get github.com/${{ github.repository }}@$VERSION"
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.24'
-      
-      - name: Install Go protoc plugins
-        run: |
-          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
-          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
-      
-      - name: Install ts-proto
-        run: |
-          npm install -g ts-proto
-          echo "$(npm root -g)/.bin" >> $GITHUB_PATH
-      
-      - name: Generate TypeScript code
-        run: pnpm generate
-
-      - name: Update package.json version
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-
-          node -e "
-          const fs = require('fs');
-          const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          package.version = '$VERSION';
-          fs.writeFileSync('package.json', JSON.stringify(package, null, 2) + '\n');
-          "
-
-      - name: Publish npm beta version
-        run: |
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm publish."
-            echo "To enable npm publishing, add NPM_TOKEN secret to GitHub repository settings."
-            exit 0
-          fi
-          pnpm publish --no-git-checks --tag ${{ steps.version.outputs.npm_dist_tag }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          echo "   go get github.com/${{ github.repository }}@$BETA_TAG"

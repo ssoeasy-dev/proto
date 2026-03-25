@@ -13,63 +13,104 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-      issues: write
       id-token: write
     steps:
-      - name: Checkout PR Branch
-        uses: actions/checkout@v4
+      - name: Call reusable setup
+        id: setup
+        uses: ./.github/workflows/setup-and-generate.yml
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          registry-url: "https://registry.npmjs.org"
-
-      - name: Setup Buf
-        uses: bufbuild/buf-setup-action@v1
-
-      - name: Prepare Dev Version
-        id: version
+      - name: Determine bump type from commits
+        id: bump
         run: |
-          BASE_VERSION=$(node -e "console.log(require('./package.json').version)")
+          BASE_REV=$(git merge-base origin/${{ github.base_ref }} ${{ github.head_ref }})
+          BUMP_TYPE=$(./scripts/version-bump-type.sh "$BASE_REV" "${{ github.head_ref }}")
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+          echo "base_rev=$BASE_REV" >> $GITHUB_OUTPUT
+
+      - name: Calculate target version
+        id: target
+        run: |
+          BASE_VERSION="${{ steps.setup.outputs.base_version }}"
+          BUMP_TYPE="${{ steps.bump.outputs.bump_type }}"
+          if [ "$BUMP_TYPE" = "major" ]; then
+            NEW_VERSION=$(node -e "const semver = require('semver'); console.log(semver.inc('$BASE_VERSION', 'major'))")
+          elif [ "$BUMP_TYPE" = "minor" ]; then
+            NEW_VERSION=$(node -e "const semver = require('semver'); console.log(semver.inc('$BASE_VERSION', 'minor'))")
+          elif [ "$BUMP_TYPE" = "patch" ]; then
+            NEW_VERSION=$(node -e "const semver = require('semver'); console.log(semver.inc('$BASE_VERSION', 'patch'))")
+          else
+            NEW_VERSION="$BASE_VERSION"
+          fi
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Prepare branch identifier
+        id: branch
+        run: |
           BRANCH_NAME="${{ github.head_ref }}"
           BRANCH_PART="${BRANCH_NAME//\//-}"
           BRANCH_PART="${BRANCH_PART//_/-}"
           BRANCH_PART=$(echo "$BRANCH_PART" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g')
-
-          # Ищем существующие теги для этой ветки
-          EXISTING_TAGS=$(git tag -l "${BASE_VERSION}-dev-${BRANCH_PART}.*" | sort -V)
-
-          if [ -n "$EXISTING_TAGS" ]; then
-            LAST_TAG=$(echo "$EXISTING_TAGS" | tail -n 1)
-            # Извлекаем номер после последней точки
-            LAST_NUM=$(echo "$LAST_TAG" | sed -E "s/${BASE_VERSION}-dev-${BRANCH_PART}\\.//")
-            # Увеличиваем номер
-            NEW_NUM=$((LAST_NUM + 1))
-          else
-            NEW_NUM=1
-          fi
-
-          VERSION="${BASE_VERSION}-dev-${BRANCH_PART}.${NEW_NUM}"
-          GIT_TAG="${BASE_VERSION}-dev-${BRANCH_PART}.${NEW_NUM}"
-          NPM_DIST_TAG="dev-${BRANCH_PART}"
-
-          echo "📦 Version: $VERSION"
-          echo "🏷️  NPM dist-tag: $NPM_DIST_TAG"
-          echo "🔢 Build number: $NEW_NUM"
-
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "npm_dist_tag=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
-          echo "git_tag=$GIT_TAG" >> $GITHUB_OUTPUT
-          echo "build_number=$NEW_NUM" >> $GITHUB_OUTPUT
           echo "branch_part=$BRANCH_PART" >> $GITHUB_OUTPUT
 
-      - name: Create/Update Dev Tag
+      - name: Find existing dev tags for this branch
+        id: existing
         run: |
-          GIT_TAG="${{ steps.version.outputs.git_tag }}"
+          BRANCH_PART="${{ steps.branch.outputs.branch_part }}"
+          NEW_VERSION="${{ steps.target.outputs.new_version }}"
+          EXISTING_TAGS=$(git tag -l | grep -E ".*-dev-${BRANCH_PART}\.[0-9]+$" | sort -V)
+          if [ -n "$EXISTING_TAGS" ]; then
+            LAST_TAG=$(echo "$EXISTING_TAGS" | tail -n1)
+            LAST_VERSION=$(echo "$LAST_TAG" | sed -E 's/-dev-.*//')
+            LAST_BUILD=$(echo "$LAST_TAG" | grep -oE "\.[0-9]+$" | sed 's/\.//')
+          else
+            LAST_VERSION=""
+            LAST_BUILD=0
+          fi
+          echo "last_version=$LAST_VERSION" >> $GITHUB_OUTPUT
+          echo "last_build=$LAST_BUILD" >> $GITHUB_OUTPUT
+
+      - name: Determine build number
+        id: build
+        run: |
+          NEW_VERSION="${{ steps.target.outputs.new_version }}"
+          LAST_VERSION="${{ steps.existing.outputs.last_version }}"
+          LAST_BUILD="${{ steps.existing.outputs.last_build }}"
+          if [ "$NEW_VERSION" = "$LAST_VERSION" ]; then
+            BUILD=$((LAST_BUILD + 1))
+          else
+            BUILD=1
+          fi
+          echo "build_number=$BUILD" >> $GITHUB_OUTPUT
+
+      - name: Update package.json version
+        run: |
+          VERSION="${{ steps.target.outputs.new_version }}"
+          node -e "
+            const fs = require('fs');
+            const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            package.version = '$VERSION';
+            fs.writeFileSync('package.json', JSON.stringify(package, null, 2) + '\n');
+          "
+
+      - name: Publish npm dev version
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm publish."
+            exit 0
+          fi
+          pnpm publish --no-git-checks --tag ${{ steps.branch.outputs.branch_part }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create Dev Tag
+        run: |
+          VERSION="${{ steps.target.outputs.new_version }}"
+          BRANCH_PART="${{ steps.branch.outputs.branch_part }}"
+          BUILD="${{ steps.build.outputs.build_number }}"
+          GIT_TAG="${VERSION}-dev-${BRANCH_PART}.${BUILD}"
 
           echo "🔗 Branch: ${{ github.head_ref }}"
           echo "📝 Commit: ${{ github.event.pull_request.head.sha }}"
@@ -78,7 +119,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Создаем новый тег
           git tag "$GIT_TAG"
           git push origin "$GIT_TAG"
 
@@ -87,66 +127,23 @@ jobs:
           echo "📋 Use in your services:"
           echo "   go get github.com/${{ github.repository }}@$GIT_TAG"
 
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.24'
-      
-      - name: Install Go protoc plugins
-        run: |
-          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
-          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
-      
-      - name: Install ts-proto
-        run: |
-          npm install -g ts-proto
-          echo "$(npm root -g)/.bin" >> $GITHUB_PATH
-      
-      - name: Generate TypeScript code
-        run: pnpm generate
-
-      - name: Update package.json version
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-
-          node -e "
-          const fs = require('fs');
-          const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          package.version = '$VERSION';
-          fs.writeFileSync('package.json', JSON.stringify(package, null, 2) + '\n');
-          "
-
-      - name: Publish npm dev version
-        run: |
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm publish."
-            echo "To enable npm publishing, add NPM_TOKEN secret to GitHub repository settings."
-            exit 0
-          fi
-          pnpm publish --no-git-checks --tag ${{ steps.version.outputs.npm_dist_tag }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Comment on PR
         uses: actions/github-script@v6
         with:
           script: |
-            const version = '${{ steps.version.outputs.version }}';
-            const gitTag = '${{ steps.version.outputs.git_tag }}';
-            const npmDistTag = '${{ steps.version.outputs.npm_dist_tag }}';
-            const buildNumber = '${{ steps.version.outputs.build_number }}';
+            const version = '${{ steps.target.outputs.new_version }}';
+            const branchPart = '${{ steps.branch.outputs.branch_part }}';
+            const build = '${{ steps.build.outputs.build_number }}';
+            const bumpType = '${{ steps.bump.outputs.bump_type }}';
             const repoFullName = `${context.repo.owner}/${context.repo.repo}`;
+            const gitTag = `${version}-dev-${branchPart}.${build}`;
+            const npmDistTag = `dev-${branchPart}`;
 
             const body = [
-              `## 📦 Dev Version Created (Build #${buildNumber})`,
+              `## 📦 Dev Version Created (Build #${build})`,
               '',
-              `Dev version \`${gitTag}\` has been created for this PR.`,
+              `Bump type: **${bumpType}**`,
+              `Dev version: \`${gitTag}\``,
               '',
               '**Usage in Go services:**',
               '```bash',
@@ -165,7 +162,7 @@ jobs:
               '',
               `**Git tag:** \`${gitTag}\``,
               `**NPM version:** \`${version}\``,
-              `**Build number:** \`${buildNumber}\``,
+              `**Build number:** \`${build}\``,
               '',
               '> ⚠️ This is a temporary development version. New pushes will create new versions with incremented build numbers.',
               '> 🗑️  All dev versions will be automatically deleted when this PR is closed.'
@@ -204,8 +201,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
-      issues: write
       id-token: write
     steps:
       - name: Checkout
@@ -219,113 +214,60 @@ jobs:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Prepare Dev Version for Cleanup
-        id: version
+      - name: Prepare branch identifier
+        id: branch
         run: |
-          BASE_VERSION=$(node -e "console.log(require('./package.json').version)")
           BRANCH_NAME="${{ github.head_ref }}"
           BRANCH_PART="${BRANCH_NAME//\//-}"
           BRANCH_PART="${BRANCH_PART//_/-}"
           BRANCH_PART=$(echo "$BRANCH_PART" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]//g')
-
-          GIT_TAG_PREFIX="${BASE_VERSION}-dev-${BRANCH_PART}"
-          NPM_DIST_TAG="dev-${BRANCH_PART}"
-
-          echo "git_tag_prefix=$GIT_TAG_PREFIX" >> $GITHUB_OUTPUT
-          echo "npm_dist_tag=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
+          echo "branch_part=$BRANCH_PART" >> $GITHUB_OUTPUT
 
       - name: Delete Dev Tags
         run: |
-          GIT_TAG_PREFIX="${{ steps.version.outputs.git_tag_prefix }}"
-
-          echo "🗑️  Deleting all dev tags with prefix: $GIT_TAG_PREFIX"
-
+          BRANCH_PART="${{ steps.branch.outputs.branch_part }}"
+          echo "🗑️  Deleting all dev tags for branch: $BRANCH_PART"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Находим все теги с префиксом
-          TAGS_TO_DELETE=$(git tag -l "${GIT_TAG_PREFIX}.*")
-
+          TAGS_TO_DELETE=$(git tag -l | grep -E ".*-dev-${BRANCH_PART}\.[0-9]+$")
           if [ -n "$TAGS_TO_DELETE" ]; then
-            echo "📦 Found tags to delete:"
-            for TAG in $TAGS_TO_DELETE; do
-              echo "  - $TAG"
-            done
-            
             for TAG in $TAGS_TO_DELETE; do
               echo "🗑️  Deleting tag: $TAG"
               git tag -d "$TAG" 2>/dev/null || true
-              git push origin ":refs/tags/$TAG" 2>/dev/null || {
-                echo "  ⚠️  Could not delete tag $TAG (may not exist)"
-              }
+              git push origin ":refs/tags/$TAG" 2>/dev/null || true
             done
-            
-            echo "✅ All dev tags with prefix $GIT_TAG_PREFIX deleted"
+            echo "✅ Dev tags deleted"
           else
-            echo "ℹ️  No tags found with prefix $GIT_TAG_PREFIX"
+            echo "ℹ️  No dev tags found for branch $BRANCH_PART"
           fi
 
       - name: Unpublish npm dev versions
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm unpublish."
+            echo "⚠️  Skipping npm cleanup (no token)"
             exit 0
           fi
 
-          GIT_TAG_PREFIX="${{ steps.version.outputs.git_tag_prefix }}"
-          NPM_DIST_TAG="${{ steps.version.outputs.npm_dist_tag }}"
+          BRANCH_PART="${{ steps.branch.outputs.branch_part }}"
+          echo "🗑️  Cleaning up npm dev versions for branch: $BRANCH_PART"
 
-          echo "🗑️  Cleaning up npm dev versions with prefix: $GIT_TAG_PREFIX"
-
-          # Получаем все версии из npm
           ALL_VERSIONS=$(npm view @ssoeasy-dev/proto versions --json 2>/dev/null || echo "[]")
-
-          # Фильтруем версии с нужным префиксом
           VERSIONS_TO_DELETE=$(echo "$ALL_VERSIONS" | node -e "
             const versions = JSON.parse(require('fs').readFileSync(0, 'utf-8'));
-            const prefix = process.argv[1];
-            const matching = versions.filter(v => v.startsWith(prefix));
+            const branchPart = process.argv[1];
+            const matching = versions.filter(v => v.includes('-dev-' + branchPart + '.'));
             console.log(matching.join(' '));
-          " "$GIT_TAG_PREFIX")
+          " "$BRANCH_PART")
 
           if [ -n "$VERSIONS_TO_DELETE" ]; then
-            echo "📦 Found npm versions to delete:"
             for VERSION in $VERSIONS_TO_DELETE; do
-              echo "   - $VERSION"
+              echo "🗑️  Unpublishing $VERSION"
+              npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>/dev/null || true
             done
-            
-            echo ""
-            echo "🗑️  Attempting to unpublish versions..."
-            UNPUBLISHED_COUNT=0
-            FAILED_COUNT=0
-            
-            for VERSION in $VERSIONS_TO_DELETE; do
-              echo -n "   Unpublishing $VERSION... "
-              if npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>/dev/null; then
-                echo "✅"
-                UNPUBLISHED_COUNT=$((UNPUBLISHED_COUNT + 1))
-              else
-                echo "⚠️  (failed or doesn't exist)"
-                FAILED_COUNT=$((FAILED_COUNT + 1))
-              fi
-            done
-            
-            echo ""
-            echo "📊 Summary:"
-            echo "   ✅ Successfully unpublished: $UNPUBLISHED_COUNT"
-            echo "   ⚠️  Failed or not found: $FAILED_COUNT"
-          else
-            echo "ℹ️  No npm versions found matching prefix: $GIT_TAG_PREFIX"
           fi
 
-          echo ""
-          echo "🗑️  Removing npm dist-tag $NPM_DIST_TAG..."
-          if npm dist-tag rm @ssoeasy-dev/proto "$NPM_DIST_TAG" 2>/dev/null; then
-            echo "✅ NPM dist-tag $NPM_DIST_TAG removed"
-          else
-            echo "⚠️  Could not remove dist-tag $NPM_DIST_TAG (may not exist)"
-          fi
-
-          echo "✅ Cleanup completed"
+          npm dist-tag rm @ssoeasy-dev/proto "dev-${BRANCH_PART}" 2>/dev/null || true
+          echo "✅ npm cleanup completed"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -12,89 +12,112 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - name: Checkout Main Branch
-        uses: actions/checkout@v4
+      - name: Call reusable setup
+        id: setup
+        uses: ./.github/workflows/setup-and-generate.yml
         with:
           ref: main
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Setup Buf
-        uses: bufbuild/buf-setup-action@v1
-
-      - name: Prepare Main Version
-        id: version
+      - name: Find maximum beta version
+        id: max_beta
         run: |
-          BASE_VERSION=$(node -e "console.log(require('./package.json').version)")
+          BETA_TAGS=$(git tag -l | grep -E ".*-beta$" | sort -V)
+          MAX_VERSION=""
+          if [ -n "$BETA_TAGS" ]; then
+            MAX_VERSION=$(echo "$BETA_TAGS" | sed -E 's/-beta$//' | sort -V | tail -n1)
+          fi
+          echo "max_version=$MAX_VERSION" >> $GITHUB_OUTPUT
 
-          VERSION="$BASE_VERSION"
-          NPM_DIST_TAG="latest"
+      - name: Compare with last production
+        id: compare
+        run: |
+          MAX_VERSION="${{ steps.max_beta.outputs.max_version }}"
+          if [ -z "$MAX_VERSION" ]; then
+            echo "should_create=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
 
-          echo "📦 Version: $VERSION"
-          echo "🏷️  NPM dist-tag: $NPM_DIST_TAG"
+          LAST_PROD_TAG=$(git tag -l | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" | sort -V | tail -n1)
+          if [ -n "$LAST_PROD_TAG" ]; then
+            LAST_PROD_VERSION="$LAST_PROD_TAG"
+          else
+            LAST_PROD_VERSION="0.0.0"
+          fi
 
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "npm_dist_tag=$NPM_DIST_TAG" >> $GITHUB_OUTPUT
+          GT=$(node -e "const semver = require('semver'); console.log(semver.gt('$MAX_VERSION', '$LAST_PROD_VERSION'))")
+          if [ "$GT" = "true" ]; then
+            echo "should_create=true" >> $GITHUB_OUTPUT
+            echo "new_version=$MAX_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "should_create=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check that tag does not exist yet
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          VERSION="${{ steps.compare.outputs.new_version }}"
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "❌ Tag $VERSION already exists. Version in package.json may be outdated."
+            exit 1
+          fi
+
+      - name: Update package.json version (production)
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          VERSION="${{ steps.compare.outputs.new_version }}"
+          node -e "
+            const fs = require('fs');
+            const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            package.version = '$VERSION';
+            fs.writeFileSync('package.json', JSON.stringify(package, null, 2) + '\n');
+          "
+
+      - name: Commit updated package.json
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version to ${{ steps.compare.outputs.new_version }}" || echo "No changes"
+          git push
+
+      - name: Publish npm main version
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm publish."
+            exit 0
+          fi
+          pnpm publish --no-git-checks --tag latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create Main Tag
+        if: steps.compare.outputs.should_create == 'true'
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
+          VERSION="${{ steps.compare.outputs.new_version }}"
 
           echo "🔗 Branch: main"
           echo "📝 Commit: ${{ github.sha }}"
+          echo "🏷️  Creating production tag: $VERSION"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Удаляем старый тег, если существует
-          git tag -d "$VERSION" 2>/dev/null || true
-          git push origin ":refs/tags/$VERSION" 2>/dev/null || true
-
-          # Создаем новый тег
           git tag "$VERSION"
           git push origin "$VERSION"
 
-          echo "✅ Main version $VERSION tagged!"
+          echo "✅ Production version $VERSION tagged!"
           echo ""
           echo "📋 Use in your services:"
           echo "   go get github.com/${{ github.repository }}@$VERSION"
 
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.24'
-      
-      - name: Install Go protoc plugins
+      - name: Delete used beta tag
+        if: steps.compare.outputs.should_create == 'true'
         run: |
-          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
-          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
-      
-      - name: Install ts-proto
-        run: |
-          npm install -g ts-proto
-          echo "$(npm root -g)/.bin" >> $GITHUB_PATH
-      
-      - name: Generate TypeScript code
-        run: pnpm generate
-
-      - name: Publish npm main version
-        run: |
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm publish."
-            echo "To enable npm publishing, add NPM_TOKEN secret to GitHub repository settings."
-            exit 0
-          fi
-          pnpm publish --no-git-checks --tag ${{ steps.version.outputs.npm_dist_tag }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION="${{ steps.compare.outputs.new_version }}"
+          BETA_TAG="${VERSION}-beta"
+          echo "🗑️  Deleting beta tag $BETA_TAG"
+          git tag -d "$BETA_TAG" 2>/dev/null || true
+          git push origin ":refs/tags/$BETA_TAG" 2>/dev/null || true
