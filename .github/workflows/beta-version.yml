@@ -34,8 +34,8 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name: Install semver
-        run: npm install -g semver
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Find maximum dev version across all branches
         id: max_dev

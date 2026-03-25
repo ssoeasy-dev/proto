@@ -37,8 +37,8 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name: Install semver
-        run: npm install -g semver
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Determine bump type from commits
         id: bump

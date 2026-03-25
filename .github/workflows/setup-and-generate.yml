@@ -48,9 +48,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install semver globally
-        run: npm install -g semver
-
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
