@@ -40,13 +40,13 @@ jobs:
       - name: Find maximum beta version (including build numbers)
         id: max_beta
         run: |
-          BETA_TAGS=$(git tag -l | grep -E ".*-beta(\.[0-9]+)?$" | sort -V)
+          BETA_TAGS=$(git tag -l | grep -E ".*-beta\.[0-9]+$" | sort -V)
           MAX_VERSION=""
           if [ -n "$BETA_TAGS" ]; then
-            # Извлекаем версию без суффикса beta и номера
+            # Извлекаем версию без суффикса beta.N
             VERSIONS=()
             for TAG in $BETA_TAGS; do
-              VERSION=$(echo "$TAG" | sed -E 's/-beta(\.[0-9]+)?$//')
+              VERSION=$(echo "$TAG" | sed -E 's/-beta\.[0-9]+$//')
               VERSIONS+=("$VERSION")
             done
             MAX_VERSION=$(printf '%s\n' "${VERSIONS[@]}" | sort -V | tail -n1)
@@ -86,7 +86,7 @@ jobs:
             exit 1
           fi
 
-      - name: Temporarily update package.json version
+      - name: Update package.json with main version
         if: steps.compare.outputs.should_create == 'true'
         run: |
           VERSION="${{ steps.compare.outputs.new_version }}"
@@ -142,7 +142,7 @@ jobs:
         if: steps.compare.outputs.should_create == 'true'
         run: |
           VERSION="${{ steps.compare.outputs.new_version }}"
-          BETA_TAGS=$(git tag -l | grep -E "^${VERSION}-beta(\.[0-9]+)?$")
+          BETA_TAGS=$(git tag -l | grep -E "^${VERSION}-beta\.[0-9]+$")
           if [ -n "$BETA_TAGS" ]; then
             for TAG in $BETA_TAGS; do
               echo "🗑️  Deleting beta tag $TAG"

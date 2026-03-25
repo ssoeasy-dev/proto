@@ -103,14 +103,23 @@ jobs:
           fi
           echo "build_number=$BUILD" >> $GITHUB_OUTPUT
 
-      - name: Update package.json version
+      - name: Prepare full version
+        id: full_version
         run: |
           VERSION="${{ steps.target.outputs.new_version }}"
+          BRANCH_PART="${{ steps.branch.outputs.branch_part }}"
+          BUILD="${{ steps.build.outputs.build_number }}"
+          FULL_VERSION="${VERSION}-dev-${BRANCH_PART}.${BUILD}"
+          echo "full_version=$FULL_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update package.json with full version
+        run: |
+          FULL_VERSION="${{ steps.full_version.outputs.full_version }}"
           node -e "
             const fs = require('fs');
-            const package = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-            package.version = '$VERSION';
-            fs.writeFileSync('package.json', JSON.stringify(package, null, 2) + '\n');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.version = '$FULL_VERSION';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
           "
 
       - name: Setup npm authentication
@@ -131,52 +140,48 @@ jobs:
 
       - name: Create Dev Tag
         run: |
-          VERSION="${{ steps.target.outputs.new_version }}"
-          BRANCH_PART="${{ steps.branch.outputs.branch_part }}"
-          BUILD="${{ steps.build.outputs.build_number }}"
-          GIT_TAG="${VERSION}-dev-${BRANCH_PART}.${BUILD}"
+          FULL_VERSION="${{ steps.full_version.outputs.full_version }}"
 
           echo "🔗 Branch: ${{ github.head_ref }}"
           echo "📝 Commit: ${{ github.event.pull_request.head.sha }}"
-          echo "🏷️  Creating tag: $GIT_TAG"
+          echo "🏷️  Creating tag: $FULL_VERSION"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git tag "$GIT_TAG"
-          git push origin "$GIT_TAG"
+          git tag "$FULL_VERSION"
+          git push origin "$FULL_VERSION"
 
-          echo "✅ Dev version $GIT_TAG created!"
+          echo "✅ Dev version $FULL_VERSION created!"
           echo ""
           echo "📋 Use in your services:"
-          echo "   go get github.com/${{ github.repository }}@$GIT_TAG"
+          echo "   go get github.com/${{ github.repository }}@$FULL_VERSION"
 
       - name: Comment on PR
         uses: actions/github-script@v6
         with:
           script: |
-            const version = '${{ steps.target.outputs.new_version }}';
+            const version = '${{ steps.full_version.outputs.full_version }}';
             const branchPart = '${{ steps.branch.outputs.branch_part }}';
             const build = '${{ steps.build.outputs.build_number }}';
             const bumpType = '${{ steps.bump.outputs.bump_type }}';
             const repoFullName = `${context.repo.owner}/${context.repo.repo}`;
-            const gitTag = `${version}-dev-${branchPart}.${build}`;
             const npmDistTag = `dev-${branchPart}`;
 
             const body = [
               `## 📦 Dev Version Created (Build #${build})`,
               '',
               `Bump type: **${bumpType}**`,
-              `Dev version: \`${gitTag}\``,
+              `Dev version: \`${version}\``,
               '',
               '**Usage in Go services:**',
               '```bash',
-              `go get github.com/${repoFullName}@${gitTag}`,
+              `go get github.com/${repoFullName}@${version}`,
               '```',
               '',
               '**In go.mod:**',
               '```go',
-              `require github.com/${repoFullName} ${gitTag}`,
+              `require github.com/${repoFullName} ${version}`,
               '```',
               '',
               '**Usage in TypeScript/JavaScript:**',
@@ -184,7 +189,7 @@ jobs:
               `npm install @ssoeasy-dev/proto@${npmDistTag}`,
               '```',
               '',
-              `**Git tag:** \`${gitTag}\``,
+              `**Git tag:** \`${version}\``,
               `**NPM version:** \`${version}\``,
               `**Build number:** \`${build}\``,
               '',

@@ -61,8 +61,8 @@ jobs:
         id: beta_build
         run: |
           VERSION="${{ steps.max_dev.outputs.max_version }}"
-          # Найти все beta теги с этой версией (с номерами или без)
-          EXISTING_BETA=$(git tag -l | grep -E "^${VERSION}-beta(\.[0-9]+)?$" | sort -V)
+          # Найти все beta теги с этой версией (с номерами)
+          EXISTING_BETA=$(git tag -l | grep -E "^${VERSION}-beta\.[0-9]+$" | sort -V)
           if [ -z "$EXISTING_BETA" ]; then
             BUILD=1
           else
@@ -70,18 +70,26 @@ jobs:
             if [[ "$LAST" =~ -beta\.([0-9]+)$ ]]; then
               BUILD=$(( ${BASH_REMATCH[1]} + 1 ))
             else
-              BUILD=2
+              BUILD=1
             fi
           fi
           echo "build_number=$BUILD" >> $GITHUB_OUTPUT
 
-      - name: Temporarily update package.json version
+      - name: Prepare full beta version
+        id: full_version
         run: |
           VERSION="${{ steps.max_dev.outputs.max_version }}"
+          BUILD="${{ steps.beta_build.outputs.build_number }}"
+          FULL_VERSION="${VERSION}-beta.${BUILD}"
+          echo "full_version=$FULL_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update package.json with full beta version
+        run: |
+          FULL_VERSION="${{ steps.full_version.outputs.full_version }}"
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-            pkg.version = '$VERSION';
+            pkg.version = '$FULL_VERSION';
             fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
           "
 
@@ -106,24 +114,22 @@ jobs:
 
       - name: Create Beta Tag
         run: |
-          VERSION="${{ steps.max_dev.outputs.max_version }}"
-          BUILD="${{ steps.beta_build.outputs.build_number }}"
-          BETA_TAG="${VERSION}-beta.${BUILD}"
+          FULL_VERSION="${{ steps.full_version.outputs.full_version }}"
 
           echo "🔗 Branch: develop"
           echo "📝 Commit: ${{ github.sha }}"
-          echo "🏷️  Creating beta tag: $BETA_TAG"
+          echo "🏷️  Creating beta tag: $FULL_VERSION"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git tag "$BETA_TAG"
-          git push origin "$BETA_TAG"
+          git tag "$FULL_VERSION"
+          git push origin "$FULL_VERSION"
 
-          echo "✅ Beta version $BETA_TAG created!"
+          echo "✅ Beta version $FULL_VERSION created!"
           echo ""
           echo "📋 Use in your services:"
-          echo "   go get github.com/${{ github.repository }}@$BETA_TAG"
+          echo "   go get github.com/${{ github.repository }}@$FULL_VERSION"
 
       - name: Delete old beta tag without build number (if exists)
         run: |
