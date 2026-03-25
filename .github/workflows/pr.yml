@@ -72,13 +72,11 @@ jobs:
           go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
           go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
 
-      - name: Install ts-proto
-        run: |
-          npm install -g ts-proto
-          echo "$(npm root -g)/.bin" >> $GITHUB_PATH
-
       - name: Setup Buf
         uses: bufbuild/buf-setup-action@v1
+
+      - name: Install dependencies (including ts-proto)
+        run: pnpm install
 
       - name: Generate
         run: make generate
@@ -146,7 +144,7 @@ jobs:
               "target": "ES2020",
               "module": "ESNext",
               "lib": ["ES2020"],
-              "moduleResolution": "node",
+              "moduleResolution": "node16",
               "strict": true,
               "esModuleInterop": true,
               "skipLibCheck": true,

@@ -113,6 +113,12 @@ jobs:
             fs.writeFileSync('package.json', JSON.stringify(package, null, 2) + '\n');
           "
 
+      - name: Setup npm authentication
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        if: env.NODE_AUTH_TOKEN != ''
+
       - name: Publish npm dev version
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
@@ -259,6 +265,12 @@ jobs:
           else
             echo "ℹ️  No dev tags found for branch $BRANCH_PART"
           fi
+
+      - name: Setup npm authentication
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        if: env.NODE_AUTH_TOKEN != ''
 
       - name: Unpublish npm dev versions
         run: |

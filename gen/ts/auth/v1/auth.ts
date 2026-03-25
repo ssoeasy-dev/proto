@@ -1286,7 +1286,11 @@ export const GetCompanyIdByCodeResponse: MessageFns<GetCompanyIdByCodeResponse, 
     fromJSON(object: any): GetCompanyIdByCodeResponse {
       return {
         $type: GetCompanyIdByCodeResponse.$type,
-        userId: isSet(object.userId) ? globalThis.String(object.userId) : "",
+        userId: isSet(object.userId)
+          ? globalThis.String(object.userId)
+          : isSet(object.user_id)
+          ? globalThis.String(object.user_id)
+          : "",
         companyId: isSet(object.companyId)
           ? globalThis.String(object.companyId)
           : isSet(object.company_id)
