@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Find maximum dev version across all branches
+      - name: Find maximum dev version across all branches (or fallback to package.json)
         id: max_dev
         run: |
           DEV_TAGS=$(git tag -l | grep -E ".*-dev-.*\.[0-9]+$" | sort -V)
@@ -50,36 +50,34 @@ jobs:
             done
             MAX_VERSION=$(printf '%s\n' "${VERSIONS[@]}" | sort -V | tail -n1)
           fi
+          # Fallback: если нет dev-тегов, берём версию из package.json
+          if [ -z "$MAX_VERSION" ]; then
+            MAX_VERSION=$(node -e "console.log(require('./package.json').version)")
+            echo "No dev tags found, using package.json version: $MAX_VERSION"
+          fi
           echo "max_version=$MAX_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Compare with last beta
-        id: compare
+      - name: Determine beta build number
+        id: beta_build
         run: |
-          MAX_VERSION="${{ steps.max_dev.outputs.max_version }}"
-          if [ -z "$MAX_VERSION" ]; then
-            echo "should_create=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          LAST_BETA_TAG=$(git tag -l | grep -E ".*-beta$" | sort -V | tail -n1)
-          if [ -n "$LAST_BETA_TAG" ]; then
-            LAST_BETA_VERSION=$(echo "$LAST_BETA_TAG" | sed -E 's/-beta$//')
+          VERSION="${{ steps.max_dev.outputs.max_version }}"
+          # Найти все beta теги с этой версией (с номерами или без)
+          EXISTING_BETA=$(git tag -l | grep -E "^${VERSION}-beta(\.[0-9]+)?$" | sort -V)
+          if [ -z "$EXISTING_BETA" ]; then
+            BUILD=1
           else
-            LAST_BETA_VERSION="0.0.0"
+            LAST=$(echo "$EXISTING_BETA" | tail -n1)
+            if [[ "$LAST" =~ -beta\.([0-9]+)$ ]]; then
+              BUILD=$(( ${BASH_REMATCH[1]} + 1 ))
+            else
+              BUILD=2
+            fi
           fi
-
-          GT=$(node -e "const semver = require('semver'); console.log(semver.gt('$MAX_VERSION', '$LAST_BETA_VERSION'))")
-          if [ "$GT" = "true" ]; then
-            echo "should_create=true" >> $GITHUB_OUTPUT
-            echo "new_version=$MAX_VERSION" >> $GITHUB_OUTPUT
-          else
-            echo "should_create=false" >> $GITHUB_OUTPUT
-          fi
+          echo "build_number=$BUILD" >> $GITHUB_OUTPUT
 
       - name: Temporarily update package.json version
-        if: steps.compare.outputs.should_create == 'true'
         run: |
-          VERSION="${{ steps.compare.outputs.new_version }}"
+          VERSION="${{ steps.max_dev.outputs.max_version }}"
           node -e "
             const fs = require('fs');
             const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
@@ -94,7 +92,6 @@ jobs:
         if: env.NODE_AUTH_TOKEN != ''
 
       - name: Publish npm beta version
-        if: steps.compare.outputs.should_create == 'true'
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
             echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm publish."
@@ -105,14 +102,13 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Restore package.json
-        if: steps.compare.outputs.should_create == 'true'
         run: git checkout -- package.json
 
       - name: Create Beta Tag
-        if: steps.compare.outputs.should_create == 'true'
         run: |
-          VERSION="${{ steps.compare.outputs.new_version }}"
-          BETA_TAG="${VERSION}-beta"
+          VERSION="${{ steps.max_dev.outputs.max_version }}"
+          BUILD="${{ steps.beta_build.outputs.build_number }}"
+          BETA_TAG="${VERSION}-beta.${BUILD}"
 
           echo "🔗 Branch: develop"
           echo "📝 Commit: ${{ github.sha }}"
@@ -128,3 +124,13 @@ jobs:
           echo ""
           echo "📋 Use in your services:"
           echo "   go get github.com/${{ github.repository }}@$BETA_TAG"
+
+      - name: Delete old beta tag without build number (if exists)
+        run: |
+          VERSION="${{ steps.max_dev.outputs.max_version }}"
+          OLD_TAG="${VERSION}-beta"
+          if git rev-parse "$OLD_TAG" >/dev/null 2>&1; then
+            echo "🗑️  Deleting old beta tag: $OLD_TAG"
+            git tag -d "$OLD_TAG" 2>/dev/null || true
+            git push origin ":refs/tags/$OLD_TAG" 2>/dev/null || true
+          fi

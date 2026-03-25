@@ -6,12 +6,10 @@ on:
       ref:
         required: true
         type: string
-        description: "Git ref to checkout (branch, commit, tag)"
       fetch-depth:
         required: false
         type: number
         default: 0
-        description: "Depth for git checkout"
       node-version:
         required: false
         type: string
