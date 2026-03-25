@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   release:
@@ -20,7 +20,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: "1.24"
 
       - name: Get Tag
         id: tag
@@ -42,4 +42,3 @@ jobs:
           echo "✅ Release ${{ steps.tag.outputs.tag }} created!"
           echo "📦 Go developers can now use:"
           echo "   go get github.com/${{ github.repository }}@${{ steps.tag.outputs.tag }}"
-
