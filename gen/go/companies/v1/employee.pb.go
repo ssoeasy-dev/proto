@@ -80,6 +80,7 @@ type EmployeeCompany struct {
 	ServiceName          *string                `protobuf:"bytes,3,opt,name=service_name,json=serviceName,proto3,oneof" json:"service_name,omitempty"`
 	SubscriptionId       *string                `protobuf:"bytes,4,opt,name=subscription_id,json=subscriptionId,proto3,oneof" json:"subscription_id,omitempty"`
 	SubscriptionIsActive *bool                  `protobuf:"varint,5,opt,name=subscription_is_active,json=subscriptionIsActive,proto3,oneof" json:"subscription_is_active,omitempty"`
+	ServiceId            *string                `protobuf:"bytes,6,opt,name=service_id,json=serviceId,proto3,oneof" json:"service_id,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -147,6 +148,13 @@ func (x *EmployeeCompany) GetSubscriptionIsActive() bool {
 		return *x.SubscriptionIsActive
 	}
 	return false
+}
+
+func (x *EmployeeCompany) GetServiceId() string {
+	if x != nil && x.ServiceId != nil {
+		return *x.ServiceId
+	}
+	return ""
 }
 
 type GetByUserIdResponse struct {
@@ -218,16 +226,19 @@ const file_companies_v1_employee_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\"\n" +
 	"\n" +
 	"service_id\x18\x02 \x01(\tH\x00R\tserviceId\x88\x01\x01B\r\n" +
-	"\v_service_id\"\x86\x02\n" +
+	"\v_service_id\"\xb9\x02\n" +
 	"\x0fEmployeeCompany\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12&\n" +
 	"\fservice_name\x18\x03 \x01(\tH\x00R\vserviceName\x88\x01\x01\x12,\n" +
 	"\x0fsubscription_id\x18\x04 \x01(\tH\x01R\x0esubscriptionId\x88\x01\x01\x129\n" +
-	"\x16subscription_is_active\x18\x05 \x01(\bH\x02R\x14subscriptionIsActive\x88\x01\x01B\x0f\n" +
+	"\x16subscription_is_active\x18\x05 \x01(\bH\x02R\x14subscriptionIsActive\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"service_id\x18\x06 \x01(\tH\x03R\tserviceId\x88\x01\x01B\x0f\n" +
 	"\r_service_nameB\x12\n" +
 	"\x10_subscription_idB\x19\n" +
-	"\x17_subscription_is_active\"\x8c\x01\n" +
+	"\x17_subscription_is_activeB\r\n" +
+	"\v_service_id\"\x8c\x01\n" +
 	"\x13GetByUserIdResponse\x12\x1c\n" +
 	"\tfirstname\x18\x01 \x01(\tR\tfirstname\x12\x1a\n" +
 	"\blastname\x18\x02 \x01(\tR\blastname\x12;\n" +

@@ -21,6 +21,7 @@ export interface EmployeeCompany {
   serviceName?: string | undefined;
   subscriptionId?: string | undefined;
   subscriptionIsActive?: boolean | undefined;
+  serviceId?: string | undefined;
 }
 
 export interface GetByUserIdResponse {
@@ -125,6 +126,7 @@ function createBaseEmployeeCompany(): EmployeeCompany {
     serviceName: undefined,
     subscriptionId: undefined,
     subscriptionIsActive: undefined,
+    serviceId: undefined,
   };
 }
 
@@ -146,6 +148,9 @@ export const EmployeeCompany: MessageFns<EmployeeCompany, "companies.v1.Employee
     }
     if (message.subscriptionIsActive !== undefined) {
       writer.uint32(40).bool(message.subscriptionIsActive);
+    }
+    if (message.serviceId !== undefined) {
+      writer.uint32(50).string(message.serviceId);
     }
     return writer;
   },
@@ -197,6 +202,14 @@ export const EmployeeCompany: MessageFns<EmployeeCompany, "companies.v1.Employee
           message.subscriptionIsActive = reader.bool();
           continue;
         }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.serviceId = reader.string();
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -226,6 +239,11 @@ export const EmployeeCompany: MessageFns<EmployeeCompany, "companies.v1.Employee
         : isSet(object.subscription_is_active)
         ? globalThis.Boolean(object.subscription_is_active)
         : undefined,
+      serviceId: isSet(object.serviceId)
+        ? globalThis.String(object.serviceId)
+        : isSet(object.service_id)
+        ? globalThis.String(object.service_id)
+        : undefined,
     };
   },
 
@@ -246,6 +264,9 @@ export const EmployeeCompany: MessageFns<EmployeeCompany, "companies.v1.Employee
     if (message.subscriptionIsActive !== undefined) {
       obj.subscriptionIsActive = message.subscriptionIsActive;
     }
+    if (message.serviceId !== undefined) {
+      obj.serviceId = message.serviceId;
+    }
     return obj;
   },
 
@@ -259,6 +280,7 @@ export const EmployeeCompany: MessageFns<EmployeeCompany, "companies.v1.Employee
     message.serviceName = object.serviceName ?? undefined;
     message.subscriptionId = object.subscriptionId ?? undefined;
     message.subscriptionIsActive = object.subscriptionIsActive ?? undefined;
+    message.serviceId = object.serviceId ?? undefined;
     return message;
   },
 };

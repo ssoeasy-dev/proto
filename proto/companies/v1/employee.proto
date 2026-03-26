@@ -17,6 +17,7 @@ message EmployeeCompany {
   optional string service_name = 3;
   optional string subscription_id = 4;
   optional bool subscription_is_active = 5;
+  optional string service_id = 6;
 }
 
 message GetByUserIdResponse {
