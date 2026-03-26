@@ -1,0 +1,151 @@
+name: Main Version Management
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  setup:
+    name: Setup and Generate
+    uses: ./.github/workflows/setup-and-generate.yml
+    with:
+      ref: main
+      fetch-depth: 0
+
+  create-main-version:
+    name: Create Main Version
+    needs: setup
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout Main Branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Find maximum beta version (including build numbers)
+        id: max_beta
+        run: |
+          BETA_TAGS=$(git tag -l | grep -E "^v.*-beta\.[0-9]+$" | sort -V)
+          MAX_VERSION=""
+          if [ -n "$BETA_TAGS" ]; then
+            VERSIONS=()
+            for TAG in $BETA_TAGS; do
+              VERSION=$(echo "$TAG" | sed -E 's/-beta\.[0-9]+$//' | sed 's/^v//')   # удаляем v
+              VERSIONS+=("$VERSION")
+            done
+            MAX_VERSION=$(printf '%s\n' "${VERSIONS[@]}" | sort -V | tail -n1)
+          fi
+          echo "max_version=$MAX_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Compare with last production
+        id: compare
+        run: |
+          MAX_VERSION="${{ steps.max_beta.outputs.max_version }}"
+          if [ -z "$MAX_VERSION" ]; then
+            echo "should_create=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+      
+          LAST_PROD_TAG=$(git tag -l | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+$" | sort -V | tail -n1)
+          if [ -n "$LAST_PROD_TAG" ]; then
+            LAST_PROD_VERSION=$(echo "$LAST_PROD_TAG" | sed 's/^v//')
+          else
+            LAST_PROD_VERSION="0.0.0"
+          fi
+      
+          GT=$(node -e "const semver = require('semver'); console.log(semver.gt('$MAX_VERSION', '$LAST_PROD_VERSION'))")
+          if [ "$GT" = "true" ]; then
+            echo "should_create=true" >> $GITHUB_OUTPUT
+            echo "new_version=$MAX_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "should_create=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check that tag does not exist yet
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          VERSION="${{ steps.compare.outputs.new_version }}"
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "❌ Tag $VERSION already exists. Version in package.json may be outdated."
+            exit 1
+          fi
+
+      - name: Update package.json with main version
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          VERSION="${{ steps.compare.outputs.new_version }}"
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.version = '$VERSION';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+      - name: Setup npm authentication
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        if: env.NODE_AUTH_TOKEN != ''
+
+      - name: Publish npm main version
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "⚠️  Warning: NPM_TOKEN secret not set. Skipping npm publish."
+            exit 0
+          fi
+          pnpm publish --no-git-checks --tag latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Restore package.json
+        if: steps.compare.outputs.should_create == 'true'
+        run: git checkout -- package.json
+
+      - name: Create Main Tag
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          VERSION="v${{ steps.compare.outputs.new_version }}"
+
+          echo "🔗 Branch: main"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo "🏷️  Creating production tag: $VERSION"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git tag "$VERSION"
+          git push origin "$VERSION"
+
+          echo "✅ Production version $VERSION tagged!"
+          echo ""
+          echo "📋 Use in your services:"
+          echo "   go get github.com/${{ github.repository }}@$VERSION"
+
+      - name: Delete used beta tags (all with this version)
+        if: steps.compare.outputs.should_create == 'true'
+        run: |
+          VERSION="${{ steps.compare.outputs.new_version }}"
+          BETA_TAGS=$(git tag -l | grep -E "^v${VERSION}-beta\.[0-9]+$")
+          if [ -n "$BETA_TAGS" ]; then
+            for TAG in $BETA_TAGS; do
+              echo "🗑️  Deleting beta tag $TAG"
+              git tag -d "$TAG" 2>/dev/null || true
+              git push origin ":refs/tags/$TAG" 2>/dev/null || true
+            done
+          fi

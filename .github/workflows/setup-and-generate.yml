@@ -1,0 +1,73 @@
+name: Setup and Generate
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+      fetch-depth:
+        required: false
+        type: number
+        default: 0
+      node-version:
+        required: false
+        type: string
+        default: "20"
+      go-version:
+        required: false
+        type: string
+        default: "1.24"
+    outputs:
+      base_version:
+        description: "Current version from package.json"
+        value: ${{ jobs.setup.outputs.base_version }}
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      base_version: ${{ steps.package.outputs.base_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: ${{ inputs.fetch-depth }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Add node_modules/.bin to PATH
+        run: echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ inputs.go-version }}
+          cache: true
+
+      - name: Install Go protoc plugins
+        run: |
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Generate TypeScript code
+        run: pnpm generate
+
+      - name: Get base version
+        id: package
+        run: |
+          BASE_VERSION=$(node -e "console.log(require('./package.json').version)")
+          echo "base_version=$BASE_VERSION" >> $GITHUB_OUTPUT

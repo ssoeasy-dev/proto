@@ -1,0 +1,15 @@
+# Exclude development files and Go code
+scripts/
+gen/go/
+*.go
+go.mod
+go.sum
+Makefile
+buf.yaml
+buf.gen.yaml
+buf.gen.ts.yaml
+pnpm-lock.yaml
+node_modules/
+.github/
+.DS_Store
+*.log

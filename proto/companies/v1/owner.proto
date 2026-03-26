@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package companies.v1;
+
+import "common/v1/types.proto";
+
+service OwnerService {
+  rpc RegisterOwner(RegisterOwnerRequest) returns (RegisterOwnerResponse);
+  rpc RegisterOwnerCompensate(RegisterOwnerResponse) returns (common.v1.StatusResponse);
+}
+
+message RegisterOwnerRequest {
+  string email = 1;
+  string firstname = 2;
+  string lastname = 3;
+}
+
+message RegisterOwnerResponse {
+  string company_id = 1;
+  string employee_id = 2;
+  string subscription_id = 3;
+  string employee_company_id = 4;
+}

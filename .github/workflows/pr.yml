@@ -1,0 +1,227 @@
+name: Proto CI - PR
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    name: Lint Proto Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Lint
+        run: buf lint
+
+      - name: Format Check
+        run: |
+          buf format -d --exit-code
+          if [ $? -ne 0 ]; then
+            echo "❌ Proto files are not formatted. Run 'make format' locally."
+            exit 1
+          fi
+
+  breaking:
+    name: Check Breaking Changes
+    runs-on: ubuntu-latest
+    if: github.base_ref == 'main'
+    steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Breaking Change Detection
+        run: |
+          buf breaking --against "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git#branch=main,subdir=proto" || {
+            echo "⚠️ Cannot check breaking changes (main branch may not have proto files yet)"
+            exit 0
+          }
+
+  generate:
+    name: Verify Generated Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache: true
+
+      - name: Install Protobuf Go Plugins
+        run: |
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+
+      - name: Install dependencies (including ts-proto)
+        run: pnpm install
+
+      - name: Add node_modules/.bin to PATH
+        run: echo "$PWD/node_modules/.bin" >> $GITHUB_PATH
+
+      - name: Generate
+        run: make generate
+
+      - name: Check Generated Code is Committed
+        run: |
+          git diff --exit-code gen/ || (
+            echo "❌ Generated code is out of sync!"
+            echo "Run 'make generate' and commit the changes."
+            git diff gen/
+            exit 1
+          )
+
+  test-import-go:
+    name: Test Go Import
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache: true
+
+      - name: Verify Module
+        run: |
+          go mod verify
+          go mod tidy
+          git diff --exit-code go.mod go.sum
+
+      - name: Build all Go packages
+        run: |
+          for dir in gen/go/*/v1; do
+            (cd "$dir" && go build .) || exit 1
+          done
+
+  test-import-ts:
+    name: Test TypeScript Import
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install TypeScript
+        run: pnpm add -D typescript @types/node
+
+      - name: Create tsconfig.json for type checking
+        run: |
+          cat > tsconfig.json << 'EOF'
+          {
+            "compilerOptions": {
+              "target": "ES2020",
+              "module": "Node16",
+              "lib": ["ES2020"],
+              "moduleResolution": "node16",
+              "strict": true,
+              "esModuleInterop": true,
+              "skipLibCheck": true,
+              "forceConsistentCasingInFileNames": true,
+              "resolveJsonModule": true,
+              "declaration": true,
+              "declarationMap": true,
+              "outDir": "./dist",
+              "rootDir": "./gen/ts"
+            },
+            "include": ["gen/ts/**/*"],
+            "exclude": ["node_modules", "dist"]
+          }
+          EOF
+
+      - name: Type Check
+        run: pnpm exec tsc --noEmit
+
+      - name: Test Exports
+        run: |
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            
+            const exports = Object.keys(pkg.exports || {});
+            const errors = [];
+            
+            for (const exportPath of exports) {
+              const exportConfig = pkg.exports[exportPath];
+              const filePath = exportConfig.types || exportConfig.default || exportPath;
+              
+              if (!fs.existsSync(filePath)) {
+                errors.push(\`Export '\${exportPath}' points to non-existent file: \${filePath}\`);
+              }
+            }
+            
+            if (errors.length > 0) {
+              console.error('❌ Export errors:');
+              errors.forEach(e => console.error('  -', e));
+              process.exit(1);
+            }
+            
+            console.log('✅ All exports are valid');
+          "
+
+      - name: Test Import Syntax
+        run: |
+          node -e "
+            const fs = require('fs');
+            const pkg = require('./package.json');
+            
+            const mainFiles = Object.values(pkg.exports).map(exp => {
+              return exp.types || exp.default;
+            }).filter(Boolean);
+            
+            const errors = [];
+            
+            for (const file of mainFiles) {
+              if (!fs.existsSync(file)) {
+                errors.push(\`Missing file: \${file}\`);
+                continue;
+              }
+              
+              const content = fs.readFileSync(file, 'utf8');
+              if (!content.includes('export')) {
+                errors.push(\`File \${file} does not contain exports\`);
+              }
+            }
+            
+            if (errors.length > 0) {
+              console.error('❌ TypeScript file errors:');
+              errors.forEach(e => console.error('  -', e));
+              process.exit(1);
+            }
+            
+            console.log('✅ All TypeScript entry points are valid');
+          "

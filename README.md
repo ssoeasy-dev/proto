@@ -1,155 +1,171 @@
-# SSO Easy - Protocol Buffers
+# SSO Easy — Protocol Buffers
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/MoreWiktor/ssoeasy.proto.svg)](https://pkg.go.dev/github.com/MoreWiktor/ssoeasy.proto)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Централизованный репозиторий Protocol Buffers контрактов для SSO Easy микросервисной архитектуры.
 
-## 📦 Установка
+## Пространства имён
 
-```bash
-go get github.com/MoreWiktor/ssoeasy.proto@latest
+| Пакет          | Сервисы                                         | Потребители                 |
+| -------------- | ----------------------------------------------- | --------------------------- |
+| `auth.v1`      | AuthService, VerificationService                | `auth.api`, `auth.svc`      |
+| `companies.v1` | CompanyService, EmployeeService, ServiceService | `auth.api`, `companies.svc` |
+| `common.v1`    | Общие типы (StatusResponse и др.)               | все сервисы                 |
+
+## Структура проекта
+
+```
+.
+├── proto/                   # Исходные .proto файлы
+│   ├── auth/v1/             # AuthService, VerificationService
+│   ├── companies/v1/        # CompanyService, EmployeeService, ServiceService
+│   └── common/v1/           # Общие типы
+├── gen/go/                  # Сгенерированный Go код (коммитится)
+│   ├── auth/v1/
+│   ├── companies/v1/
+│   └── common/v1/
+├── gen/ts/                  # Сгенерированный TypeScript код (коммитится)
+│   ├── index.ts
+│   ├── index.auth.ts
+│   ├── index.companies.ts
+│   └── index.common.ts
+├── buf.yaml
+├── buf.gen.yaml             # Генерация Go кода
+├── buf.gen.ts.yaml          # Генерация TypeScript кода
+├── go.mod
+├── package.json
+├── Makefile
+├── workflow.md              # Процесс работы с изменениями и релизами
+└── README.md
 ```
 
-Или конкретная версия:
+## Использование в сервисах
 
-```bash
-go get github.com/MoreWiktor/ssoeasy.proto@v1.0.0
-```
+### `auth.svc` и `companies.svc` (Go)
 
-## 🚀 Использование
-
-### Импорт в Go проект
+Подключение в `go.mod`:
 
 ```go
-package main
+require github.com/ssoeasy-dev/proto v1.1.1
+```
 
+Импорт в коде:
+
+```go
 import (
-    pb "github.com/MoreWiktor/ssoeasy.proto/gen/go/companies/v1"
-    "google.golang.org/grpc"
+    authpb    "github.com/ssoeasy-dev/proto/gen/go/auth/v1"
+    companiespb "github.com/ssoeasy-dev/proto/gen/go/companies/v1"
+    commonpb  "github.com/ssoeasy-dev/proto/gen/go/common/v1"
 )
+```
 
-func main() {
-    conn, _ := grpc.Dial("localhost:50051", grpc.WithInsecure())
-    defer conn.Close()
-    
-    client := pb.NewCompanyServiceClient(conn)
-    // Используйте client...
+Обновление до последней версии:
+
+```bash
+go get github.com/ssoeasy-dev/proto@latest
+go mod tidy
+```
+
+### `auth.api` (TypeScript / NestJS)
+
+Подключение в `package.json`:
+
+```json
+"dependencies": {
+  "@ssoeasy-dev/proto": "1.1.1"
 }
 ```
 
-## 🛠️ Разработка
+Импорт в коде:
+
+```typescript
+// gRPC клиенты для auth.svc
+import {
+  AuthServiceClient,
+  VerificationServiceClient,
+} from "@ssoeasy-dev/proto/auth";
+
+// gRPC клиенты для companies.svc
+import {
+  CompanyServiceClient,
+  ServiceServiceClient,
+} from "@ssoeasy-dev/proto/companies";
+
+// Общие типы
+import { StatusResponse } from "@ssoeasy-dev/proto/common";
+```
+
+Подключение gRPC-клиентов через NestJS ClientsModule — см. `src/infra/grpc/grpc.module.ts` в `auth.api`.
+
+Обновление:
+
+```bash
+pnpm add @ssoeasy-dev/proto@latest
+```
+
+## Разработка
 
 ### Требования
 
 - Go 1.24+
+- Node.js 20+
+- pnpm
 - [Buf CLI](https://buf.build/docs/installation)
 
-### Установка Buf
+### Установка инструментов
 
 ```bash
-# macOS
-brew install bufbuild/buf/buf
-
-# Linux
-curl -sSL "https://github.com/bufbuild/buf/releases/latest/download/buf-$(uname -s)-$(uname -m)" \
-  -o "/usr/local/bin/buf"
-chmod +x /usr/local/bin/buf
-
-# Или через Go
 make install-tools
 ```
 
 ### Команды
 
 ```bash
-make help              # Показать все команды
-make generate          # Сгенерировать Go код из proto
-make lint              # Проверить proto файлы на ошибки
-make format            # Отформатировать proto файлы
-make breaking          # Проверить breaking changes
-make clean             # Очистить сгенерированные файлы
+make generate     # Сгенерировать весь код (Go + TypeScript)
+make generate-go  # Только Go
+make generate-ts  # Только TypeScript
+make lint         # Проверить proto файлы
+make format       # Отформатировать proto файлы
+make breaking     # Проверить breaking changes относительно main
+make clean        # Очистить gen/
 ```
 
-### Структура проекта
-
-```
-.
-├── proto/                          # Исходные .proto файлы
-│   ├── common/v1/                 # Общие типы
-│   ├── <group>/<version>/         # Протофайлы
-│   └── gateway/v1/                # Gateway
-├── gen/go/                        # ✅ Сгенерированный Go код (коммитится!)
-│   ├── common/v1/
-│   ├── <group>/<version>/
-│   └── gateway/v1/
-├── buf.yaml                       # Конфигурация Buf
-├── buf.gen.yaml                   # Генерация Go кода
-├── go.mod                         # Go модуль
-├── Makefile                       # Команды разработки
-└── README.md
-```
-
-## 📝 Workflow изменений
-
-### 1. Изменение proto файлов
+### Добавление нового proto файла
 
 ```bash
-# Отредактировать proto файл
-vim proto/companies/v1/company.proto
+# 1. Создать файл в нужном пространстве имён
+vim proto/auth/v1/my_service.proto
 
-# Проверить стиль
-make lint
+# 2. Проверить и отформатировать
+make format && make lint
 
-# Отформатировать
-make format
-
-# Проверить breaking changes
-make breaking
-```
-
-### 2. Генерация кода
-
-```bash
-# Сгенерировать Go код
+# 3. Сгенерировать код
 make generate
 
-# Проверить что все работает
-go mod tidy
-```
-
-### 3. Коммит и релиз
-
-```bash
-# Закоммитить изменения (proto + gen/)
+# 4. Закоммитить proto и сгенерированный код вместе
 git add proto/ gen/
-git commit -m "feat: add new field to Company"
-git push origin main
-
-# Создать релиз
-make tag VERSION=v1.1.0
+git commit -m "feat: add MyService"
 ```
 
-## 🔄 Обновление зависимости в проектах
+> **Важно:** всегда коммитьте `proto/` и `gen/` вместе. CI проверяет их синхронизацию.
 
-```bash
-# В вашем микросервисе
-cd <Микросервис>
+## Релизы
 
-# Обновить до последней версии
-go get github.com/MoreWiktor/ssoeasy.proto@latest
+Подробный процесс — в [workflow.md](./workflow.md). Кратко:
 
-# Или до конкретной версии
-go get github.com/MoreWiktor/ssoeasy.proto@v1.2.0
+| Событие                              | Результат                                                              |
+| ------------------------------------ | ---------------------------------------------------------------------- |
+| Открытие / обновление PR в `develop` | dev версия `v1.1.1-dev-{branch}.N`                                     |
+| Закрытие PR в `develop`              | dev версия удаляется                                                   |
+| Мерж в `develop`                     | beta версия `v1.1.1-beta.N`                                            |
+| Мерж в `main`                        | production версия из `package.json`, публикация в npm с тегом `latest` |
 
-go mod tidy
-```
+## Лицензия
 
-## 📄 Лицензия
+MIT — см. [LICENSE](LICENSE).
 
-MIT License - см. [LICENSE](LICENSE) файл.
+## Контакты
 
-## 📞 Контакты
-
+- Email: morewiktor@yandex.ru
+- Telegram: [@MoreWiktor](https://t.me/MoreWiktor)
 - GitHub: [@MoreWiktor](https://github.com/MoreWiktor)
-- Проект: [https://github.com/MoreWiktor/ssoeasy.proto](https://github.com/MoreWiktor/ssoeasy.proto)
