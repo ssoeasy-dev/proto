@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, closed]
     branches: [develop]
+    paths:
+      - 'proto/**'
+      - 'gen/**'
+      - 'package.json'
 
 jobs:
   setup:

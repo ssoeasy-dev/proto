@@ -3,6 +3,10 @@ name: Proto CI - PR
 on:
   pull_request:
     branches: [main, develop]
+    paths:
+      - 'proto/**'
+      - 'gen/**'
+      - 'package.json'
 
 jobs:
   lint:

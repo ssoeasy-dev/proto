@@ -3,6 +3,10 @@ name: Main Version Management
 on:
   push:
     branches: [main]
+    paths:
+      - 'proto/**'
+      - 'gen/**'
+      - 'package.json'
 
 jobs:
   setup:

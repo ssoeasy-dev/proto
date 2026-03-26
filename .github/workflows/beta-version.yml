@@ -3,6 +3,10 @@ name: Beta Version Management
 on:
   push:
     branches: [develop]
+    paths:
+      - 'proto/**'
+      - 'gen/**'
+      - 'package.json'
 
 jobs:
   setup:
