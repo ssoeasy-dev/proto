@@ -283,10 +283,10 @@ jobs:
             echo "⚠️  Skipping npm cleanup (no token)"
             exit 0
           fi
-
+      
           BRANCH_PART="${{ steps.branch.outputs.branch_part }}"
           echo "🗑️  Cleaning up npm dev versions for branch: $BRANCH_PART"
-
+      
           ALL_VERSIONS=$(npm view @ssoeasy-dev/proto versions --json 2>/dev/null || echo "[]")
           VERSIONS_TO_DELETE=$(echo "$ALL_VERSIONS" | node -e "
             const versions = JSON.parse(require('fs').readFileSync(0, 'utf-8'));
@@ -294,14 +294,15 @@ jobs:
             const matching = versions.filter(v => v.includes('-dev-' + branchPart + '.'));
             console.log(matching.join(' '));
           " "$BRANCH_PART")
-
+      
           if [ -n "$VERSIONS_TO_DELETE" ]; then
             for VERSION in $VERSIONS_TO_DELETE; do
-              echo "🗑️  Unpublishing $VERSION"
-              npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>/dev/null || true
+              echo "🗑️  Trying to unpublish $VERSION"
+              npm unpublish "@ssoeasy-dev/proto@$VERSION" 2>/dev/null || \
+                npm deprecate "@ssoeasy-dev/proto@$VERSION" "Dev version, no longer needed" || true
             done
           fi
-
+      
           npm dist-tag rm @ssoeasy-dev/proto "dev-${BRANCH_PART}" 2>/dev/null || true
           echo "✅ npm cleanup completed"
         env:
