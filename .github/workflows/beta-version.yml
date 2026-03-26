@@ -40,12 +40,12 @@ jobs:
       - name: Find maximum dev version across all branches (or fallback to package.json)
         id: max_dev
         run: |
-          DEV_TAGS=$(git tag -l | grep -E ".*-dev-.*\.[0-9]+$" | sort -V)
+          DEV_TAGS=$(git tag -l | grep -E "^v.*-dev-.*\.[0-9]+$" | sort -V)
           MAX_VERSION=""
           if [ -n "$DEV_TAGS" ]; then
             VERSIONS=()
             for TAG in $DEV_TAGS; do
-              VERSION=$(echo "$TAG" | sed -E 's/-dev-.*//')
+              VERSION=$(echo "$TAG" | sed -E 's/-dev-.*//' | sed 's/^v//')   # Удаляем v
               VERSIONS+=("$VERSION")
             done
             MAX_VERSION=$(printf '%s\n' "${VERSIONS[@]}" | sort -V | tail -n1)
@@ -62,7 +62,7 @@ jobs:
         run: |
           VERSION="${{ steps.max_dev.outputs.max_version }}"
           # Найти все beta теги с этой версией (с номерами)
-          EXISTING_BETA=$(git tag -l | grep -E "^${VERSION}-beta\.[0-9]+$" | sort -V)
+          EXISTING_BETA=$(git tag -l | grep -E "^v${VERSION}-beta\.[0-9]+$" | sort -V)
           if [ -z "$EXISTING_BETA" ]; then
             BUILD=1
           else
@@ -114,7 +114,7 @@ jobs:
 
       - name: Create Beta Tag
         run: |
-          FULL_VERSION="${{ steps.full_version.outputs.full_version }}"
+          FULL_VERSION="v${{ steps.full_version.outputs.full_version }}"
 
           echo "🔗 Branch: develop"
           echo "📝 Commit: ${{ github.sha }}"
@@ -134,7 +134,7 @@ jobs:
       - name: Delete old beta tag without build number (if exists)
         run: |
           VERSION="${{ steps.max_dev.outputs.max_version }}"
-          OLD_TAG="${VERSION}-beta"
+          OLD_TAG="v${VERSION}-beta"   # добавляем v
           if git rev-parse "$OLD_TAG" >/dev/null 2>&1; then
             echo "🗑️  Deleting old beta tag: $OLD_TAG"
             git tag -d "$OLD_TAG" 2>/dev/null || true

@@ -78,10 +78,10 @@ jobs:
         run: |
           BRANCH_PART="${{ steps.branch.outputs.branch_part }}"
           NEW_VERSION="${{ steps.target.outputs.new_version }}"
-          EXISTING_TAGS=$(git tag -l | grep -E ".*-dev-${BRANCH_PART}\.[0-9]+$" | sort -V)
+          EXISTING_TAGS=$(git tag -l | grep -E "^v.*-dev-${BRANCH_PART}\.[0-9]+$" | sort -V)
           if [ -n "$EXISTING_TAGS" ]; then
             LAST_TAG=$(echo "$EXISTING_TAGS" | tail -n1)
-            LAST_VERSION=$(echo "$LAST_TAG" | sed -E 's/-dev-.*//')
+            LAST_VERSION=$(echo "$LAST_TAG" | sed -E 's/-dev-.*//' | sed 's/^v//')   # удаляем v
             LAST_BUILD=$(echo "$LAST_TAG" | grep -oE "\.[0-9]+$" | sed 's/\.//')
           else
             LAST_VERSION=""
@@ -140,7 +140,7 @@ jobs:
 
       - name: Create Dev Tag
         run: |
-          FULL_VERSION="${{ steps.full_version.outputs.full_version }}"
+          FULL_VERSION="v${{ steps.full_version.outputs.full_version }}"
 
           echo "🔗 Branch: ${{ github.head_ref }}"
           echo "📝 Commit: ${{ github.event.pull_request.head.sha }}"
@@ -259,7 +259,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          TAGS_TO_DELETE=$(git tag -l | grep -E ".*-dev-${BRANCH_PART}\.[0-9]+$")
+          TAGS_TO_DELETE=$(git tag -l | grep -E "^v.*-dev-${BRANCH_PART}\.[0-9]+$")
           if [ -n "$TAGS_TO_DELETE" ]; then
             for TAG in $TAGS_TO_DELETE; do
               echo "🗑️  Deleting tag: $TAG"
